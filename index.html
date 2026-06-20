@@ -172,6 +172,7 @@ Explain am like I'm a goat.<br>
 Simple explanations, exam-focused tutorials,
 memory tricks, and likely CBT questions.
 </p>
+  
 <h3>📄 Upload Lecture Note</h3>
 
 <input
@@ -250,6 +251,23 @@ Built for Nigerian Students 🇳🇬
 
 <script>
 
+  let extractedText = "";
+
+document.addEventListener(
+"DOMContentLoaded",
+function(){
+
+const upload =
+document.getElementById(
+"pdfUpload"
+);
+
+upload.addEventListener(
+"change",
+readPDF
+);
+
+});
 let mode = "tutorial";
 
 function selectMode(element,value){
