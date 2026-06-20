@@ -257,10 +257,7 @@ onclick="selectMode(this,'exam')">
 
 </div>
 
-<button onclick="teachMe()">
-🚀 Teach Me
-</button>
-  if(mode==="cgpa"){
+<button onclick="teachMe(if(mode==="cgpa"){
 
 instruction=`
 Act as a professional Nigerian university CGPA calculator.
@@ -296,7 +293,10 @@ Provide a neat table and show all calculations step-by-step.
 Courses:
 `;
 
-}
+  })">
+🚀 Teach Me
+</button>
+  
 
 <button onclick="copyPrompt()">
 📋 Copy Prompt
