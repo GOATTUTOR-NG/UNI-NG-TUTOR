@@ -154,6 +154,7 @@ height:220px;
 }
 
 </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 
 <body>
@@ -171,7 +172,16 @@ Explain am like I'm a goat.<br>
 Simple explanations, exam-focused tutorials,
 memory tricks, and likely CBT questions.
 </p>
+<h3>📄 Upload Lecture Note</h3>
 
+<input
+type="file"
+id="pdfUpload"
+accept=".pdf">
+
+<p id="pdfStatus">
+No PDF selected
+</p>
 <textarea id="topic"
 placeholder="Paste your lecture note, topic, or course title here...
 
@@ -253,11 +263,80 @@ item.classList.remove('selected');
 
 element.classList.add('selected');
 }
+async function readPDF(event){
 
+const file =
+event.target.files[0];
+
+if(!file) return;
+
+document.getElementById(
+"pdfStatus"
+).innerHTML =
+"📄 Reading PDF...";
+
+const reader =
+new FileReader();
+
+reader.onload =
+async function(){
+
+const typedArray =
+new Uint8Array(
+reader.result
+);
+
+const pdf =
+await pdfjsLib.getDocument(
+typedArray
+).promise;
+
+let text = "";
+
+for(
+let pageNum=1;
+pageNum<=pdf.numPages;
+pageNum++
+){
+
+const page =
+await pdf.getPage(pageNum);
+
+const content =
+await page.getTextContent();
+
+text += content.items
+.map(item=>item.str)
+.join(" ");
+
+text += "\n\n";
+
+}
+
+extractedText = text;
+
+document.getElementById(
+"pdfStatus"
+).innerHTML =
+"✅ PDF Loaded Successfully";
+
+document.getElementById(
+"topic"
+).value =
+text.substring(0,5000);
+
+};
+
+reader.readAsArrayBuffer(file);
+
+  }
 function teachMe(){
 
 let topic =
-document.getElementById('topic').value;
+extractedText ||
+document.getElementById(
+'topic'
+).value;
 
 if(topic.trim()===""){
 alert("Please enter a topic first.");
