@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>🐐 GoatTutor NG</title>
+<title>GoatTutor NG 🐐</title>
 
 <style>
 
@@ -52,8 +52,15 @@ margin-bottom:10px;
 .tagline{
 text-align:center;
 color:#cbd5e1;
-margin-bottom:25px;
+margin-bottom:20px;
 line-height:1.6;
+}
+
+.mode-indicator{
+text-align:center;
+margin-bottom:10px;
+color:#60a5fa;
+font-weight:bold;
 }
 
 textarea{
@@ -73,43 +80,210 @@ textarea::placeholder{
 color:#94a3b8;
 }
 
+/* COURSE BUTTONS */
+.quick{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+gap:10px;
+margin-bottom:15px;
+}
+
+.quick div{
+background:#0f172a;
+padding:10px;
+border-radius:10px;
+text-align:center;
+cursor:pointer;
+border:1px solid #334155;
+}
+
+.quick div:hover{
+background:#111827;
+}
+
+/* MODES */
 .options{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-gap:12px;
-margin-top:20px;
+grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+gap:10px;
+margin-top:15px;
 }
 
 .option{
 background:#334155;
-padding:15px;
-border-radius:12px;
+padding:12px;
+border-radius:10px;
 cursor:pointer;
-transition:.3s;
 text-align:center;
-}
-
-.option:hover{
-transform:translateY(-2px);
 }
 
 .selected{
 background:#2563eb;
 }
 
+/* BUTTONS */
 button{
 width:100%;
-margin-top:15px;
-padding:18px;
+margin-top:12px;
+padding:15px;
 border:none;
-border-radius:14px;
+border-radius:12px;
 font-size:1rem;
 font-weight:bold;
 cursor:pointer;
 background:#3b82f6;
 color:white;
-transition:.3s;
 }
+
+button:hover{
+background:#2563eb;
+}
+
+.footer{
+margin-top:20px;
+text-align:center;
+font-size:.9rem;
+color:#94a3b8;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<div class="card">
+
+<div class="logo">🐐</div>
+
+<h1>GoatTutor NG</h1>
+
+<p class="tagline">
+Explain am like I'm a goat — simple, funny, exam-focused.
+</p>
+
+<div class="mode-indicator" id="modeText">
+Mode: Tutorial
+</div>
+
+<!-- COURSE QUICK BUTTONS -->
+<div class="quick">
+<div onclick="fill('PHY 101')">PHY 101</div>
+<div onclick="fill('PHY 102')">PHY 102</div>
+<div onclick="fill('CHM 101')">CHM 101</div>
+<div onclick="fill('CHM 102')">CHM 102</div>
+<div onclick="fill('MTH 101')">MTH 101</div>
+<div onclick="fill('GST 101')">GST 101</div>
+</div>
+
+<textarea id="topic" placeholder="Enter topic here..."></textarea>
+
+<!-- MODES -->
+<div class="options">
+
+<div class="option selected" onclick="setMode('tutorial',this)">
+📚 Tutorial
+</div>
+
+<div class="option" onclick="setMode('summary',this)">
+📝 Summary
+</div>
+
+<div class="option" onclick="setMode('mcq',this)">
+🎯 MCQ
+</div>
+
+<div class="option" onclick="setMode('revision',this)">
+⚡ Revision
+</div>
+
+<div class="option" onclick="setMode('exam',this)">
+🔥 Exam Mode
+</div>
+
+</div>
+
+<button onclick="teach()">🚀 Teach Me</button>
+
+<button onclick="copyPrompt()">📋 Copy Prompt</button>
+
+<div class="footer">
+Made for Nigerian Students 🇳🇬
+</div>
+
+</div>
+</div>
+
+<script>
+
+let mode = "tutorial";
+let strictStyle = "";
+
+function fill(text){
+document.getElementById("topic").value = text;
+}
+
+function setMode(m,el){
+
+mode = m;
+
+document.querySelectorAll(".option")
+.forEach(x=>x.classList.remove("selected"));
+
+el.classList.add("selected");
+
+let map = {
+tutorial:"Explain step-by-step with Nigerian analogies and memory tricks.",
+summary:"Give short exam-ready notes only.",
+mcq:"Generate tough MCQs only.",
+revision:"Give crash revision points only.",
+exam:"Focus only on likely exam questions and shortcuts."
+};
+
+strictStyle = map[m];
+
+document.getElementById("modeText").innerText =
+"Mode: " + m.toUpperCase();
+}
+
+function copyPrompt(){
+
+let t = document.getElementById("topic").value;
+if(!t) return alert("Enter topic first");
+
+navigator.clipboard.writeText(t);
+alert("Copied!");
+}
+
+function teach(){
+
+let topic = document.getElementById("topic").value;
+if(!topic) return alert("Enter topic");
+
+let prompt = `
+Act as GoatTutor AI.
+
+STRICT MODE:
+${strictStyle}
+
+Do NOT ignore instructions.
+
+Topic:
+${topic}
+`;
+
+let url =
+"https://chatgpt.com/?q=" +
+encodeURIComponent(prompt);
+
+window.open(url,"_blank");
+
+}
+
+</script>
+
+</body>
+</html>}
 
 button:hover{
 background:#2563eb;
