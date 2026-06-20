@@ -212,6 +212,10 @@ MTH 101
 GST 101
 </div>
 
+  <div class="option"
+onclick="selectMode(this,'cgpa')">
+📊 CGPA Calculator
+  </div>
 </div>
 
 <textarea id="topic"
@@ -256,6 +260,43 @@ onclick="selectMode(this,'exam')">
 <button onclick="teachMe()">
 🚀 Teach Me
 </button>
+  if(mode==="cgpa"){
+
+instruction=`
+Act as a professional Nigerian university CGPA calculator.
+
+Calculate GPA or CGPA accurately using the 5-point grading system.
+
+Requirements:
+
+- Accept courses in this format:
+Course - Unit - Grade
+
+Example:
+PHY101 - 3 - A
+CHM101 - 2 - B
+MTH101 - 3 - A
+
+- Show:
+1. Total Units
+2. Total Grade Points
+3. GPA/CGPA
+4. Interpretation (First Class, Second Class Upper, etc.)
+
+Nigerian Grading Scale:
+A = 5
+B = 4
+C = 3
+D = 2
+E = 1
+F = 0
+
+Provide a neat table and show all calculations step-by-step.
+
+Courses:
+`;
+
+}
 
 <button onclick="copyPrompt()">
 📋 Copy Prompt
