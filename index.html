@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>GoatTutor AI 🐐</title>
+<title>🐐 GoatTutor NG</title>
 
 <style>
 
@@ -52,7 +52,7 @@ margin-bottom:10px;
 .tagline{
 text-align:center;
 color:#cbd5e1;
-margin-bottom:30px;
+margin-bottom:25px;
 line-height:1.6;
 }
 
@@ -99,11 +99,11 @@ background:#2563eb;
 
 button{
 width:100%;
-margin-top:25px;
+margin-top:15px;
 padding:18px;
 border:none;
 border-radius:14px;
-font-size:1.1rem;
+font-size:1rem;
 font-weight:bold;
 cursor:pointer;
 background:#3b82f6;
@@ -117,21 +117,35 @@ background:#2563eb;
 
 .features{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-gap:15px;
-margin-top:25px;
+grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+gap:12px;
+margin-bottom:20px;
 }
 
 .feature{
 background:#0f172a;
+padding:12px;
+border-radius:12px;
+text-align:center;
+color:#cbd5e1;
+cursor:pointer;
+}
+
+.feature:hover{
+background:#172554;
+}
+
+.quote{
+margin-top:20px;
 padding:15px;
 border-radius:12px;
+background:#0f172a;
 text-align:center;
 color:#cbd5e1;
 }
 
 .footer{
-margin-top:25px;
+margin-top:20px;
 text-align:center;
 font-size:.9rem;
 color:#94a3b8;
@@ -154,7 +168,6 @@ height:220px;
 }
 
 </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 
 <body>
@@ -165,24 +178,42 @@ height:220px;
 
 <div class="logo">🐐</div>
 
-<h1>GoatTutor AI</h1>
+<h1>GoatTutor NG</h1>
 
 <p class="tagline">
 Explain am like I'm a goat.<br>
 Simple explanations, exam-focused tutorials,
-memory tricks, and likely CBT questions.
+memory tricks and likely CBT questions.
 </p>
-  
-<h3>📄 Upload Lecture Note</h3>
 
-<input
-type="file"
-id="pdfUpload"
-accept=".pdf">
+<div class="features">
 
-<p id="pdfStatus">
-No PDF selected
-</p>
+<div class="feature" onclick="fillTopic('PHY 101')">
+PHY 101
+</div>
+
+<div class="feature" onclick="fillTopic('PHY 102')">
+PHY 102
+</div>
+
+<div class="feature" onclick="fillTopic('CHM 101')">
+CHM 101
+</div>
+
+<div class="feature" onclick="fillTopic('CHM 102')">
+CHM 102
+</div>
+
+<div class="feature" onclick="fillTopic('MTH 101')">
+MTH 101
+</div>
+
+<div class="feature" onclick="fillTopic('GST 101')">
+GST 101
+</div>
+
+</div>
+
 <textarea id="topic"
 placeholder="Paste your lecture note, topic, or course title here...
 
@@ -215,13 +246,22 @@ onclick="selectMode(this,'revision')">
 ⚡ Crash Revision
 </div>
 
+<div class="option"
+onclick="selectMode(this,'exam')">
+🔥 Exam Tomorrow
+</div>
+
 </div>
 
 <button onclick="teachMe()">
 🚀 Teach Me
 </button>
 
-<div class="features">
+<button onclick="copyPrompt()">
+📋 Copy Prompt
+</button>
+
+<div class="features" style="margin-top:20px;">
 
 <div class="feature">
 🎓 University Level
@@ -241,8 +281,16 @@ onclick="selectMode(this,'revision')">
 
 </div>
 
+<div class="quote" id="quote">
+📚 Read today so exam won't read you tomorrow.
+</div>
+
+<div class="quote">
+🚀 Coming Soon: CGPA Calculator • Past Questions • Flashcards • Study Planner
+</div>
+
 <div class="footer">
-Built for Nigerian Students 🇳🇬
+Made by Students, for Students 🇳🇬
 </div>
 
 </div>
@@ -251,24 +299,30 @@ Built for Nigerian Students 🇳🇬
 
 <script>
 
-  let extractedText = "";
-
-document.addEventListener(
-"DOMContentLoaded",
-function(){
-
-const upload =
-document.getElementById(
-"pdfUpload"
-);
-
-upload.addEventListener(
-"change",
-readPDF
-);
-
-});
 let mode = "tutorial";
+
+const quotes = [
+
+"📚 Read today so exam won't read you tomorrow.",
+
+"🐐 Small reading every day beats overnight reading.",
+
+"🎓 Your CGPA is watching your decisions.",
+
+"🔥 Consistency beats motivation.",
+
+"🧠 If you can explain it simply, you understand it."
+
+];
+
+document.getElementById("quote").innerHTML =
+quotes[Math.floor(Math.random()*quotes.length)];
+
+function fillTopic(topic){
+
+document.getElementById("topic").value = topic;
+
+}
 
 function selectMode(element,value){
 
@@ -280,81 +334,29 @@ item.classList.remove('selected');
 });
 
 element.classList.add('selected');
-}
-async function readPDF(event){
-
-const file =
-event.target.files[0];
-
-if(!file) return;
-
-document.getElementById(
-"pdfStatus"
-).innerHTML =
-"📄 Reading PDF...";
-
-const reader =
-new FileReader();
-
-reader.onload =
-async function(){
-
-const typedArray =
-new Uint8Array(
-reader.result
-);
-
-const pdf =
-await pdfjsLib.getDocument(
-typedArray
-).promise;
-
-let text = "";
-
-for(
-let pageNum=1;
-pageNum<=pdf.numPages;
-pageNum++
-){
-
-const page =
-await pdf.getPage(pageNum);
-
-const content =
-await page.getTextContent();
-
-text += content.items
-.map(item=>item.str)
-.join(" ");
-
-text += "\n\n";
 
 }
 
-extractedText = text;
+function copyPrompt(){
 
-document.getElementById(
-"pdfStatus"
-).innerHTML =
-"✅ PDF Loaded Successfully";
+let topic =
+document.getElementById('topic').value;
 
-document.getElementById(
-"topic"
-).value =
-text.substring(0,5000);
+if(topic.trim()===""){
+alert("Enter a topic first.");
+return;
+}
 
-};
+navigator.clipboard.writeText(topic);
 
-reader.readAsArrayBuffer(file);
+alert("Copied successfully!");
 
-  }
+}
+
 function teachMe(){
 
 let topic =
-extractedText ||
-document.getElementById(
-'topic'
-).value;
+document.getElementById('topic').value;
 
 if(topic.trim()===""){
 alert("Please enter a topic first.");
@@ -429,6 +431,24 @@ Requirements:
 - Key points only.
 - Memory tricks.
 - Likely questions.
+
+Topic:
+`;
+
+}
+
+if(mode==="exam"){
+
+instruction=`
+Create an emergency exam guide.
+
+Requirements:
+
+- Most important concepts only.
+- Memory tricks.
+- Common exam questions.
+- Key formulas.
+- Topics likely to appear.
 
 Topic:
 `;
