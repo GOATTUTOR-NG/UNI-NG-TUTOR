@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GoatTutor NG v4 🐐</title>
+<title>GoatTutor NG v5 🐐</title>
 
 <style>
 *{
@@ -17,6 +17,7 @@ body{
 background:#0f172a;
 color:white;
 min-height:100vh;
+padding:15px;
 }
 
 /* HEADER */
@@ -24,80 +25,82 @@ header{
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:15px 20px;
+padding:12px 15px;
 background:#111827;
-position:sticky;
-top:0;
-z-index:10;
-}
-
-.logo{
-font-size:1.4rem;
-font-weight:bold;
-}
-
-.menu-btn{
-font-size:1.8rem;
-cursor:pointer;
-}
-
-/* SIDEBAR MENU */
-.sidebar{
-position:fixed;
-top:0;
-left:-250px;
-width:250px;
-height:100%;
-background:#1e293b;
-padding:20px;
-transition:.3s;
-z-index:20;
-}
-
-.sidebar.active{
-left:0;
-}
-
-.sidebar h3{
+border-radius:12px;
 margin-bottom:15px;
 }
 
-.sidebar div{
-padding:10px;
-margin:8px 0;
-background:#334155;
-border-radius:8px;
-cursor:pointer;
+.logo{
+font-weight:bold;
 }
 
-/* MAIN */
+/* CONTAINER */
 .container{
 max-width:900px;
 margin:auto;
-padding:20px;
 }
 
 .card{
 background:#1e293b;
-padding:20px;
-border-radius:20px;
+padding:18px;
+border-radius:18px;
 }
 
-textarea, input, select{
+/* TEXTAREA */
+textarea{
 width:100%;
+height:160px;
 padding:12px;
-border:none;
 border-radius:10px;
-margin-top:10px;
+border:none;
+outline:none;
 background:#0f172a;
 color:white;
+margin-top:10px;
 }
 
-textarea{height:160px;}
+/* QUICK BUTTONS */
+.quick{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:8px;
+margin-top:10px;
+}
 
+.quick div{
+background:#334155;
+padding:10px;
+border-radius:8px;
+text-align:center;
+cursor:pointer;
+font-size:14px;
+}
+
+/* MODES */
+.options{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:8px;
+margin-top:12px;
+}
+
+.option{
+background:#334155;
+padding:10px;
+border-radius:8px;
+text-align:center;
+cursor:pointer;
+}
+
+.selected{
+background:#2563eb;
+}
+
+/* BUTTONS */
 button{
 width:100%;
-padding:14px;
+padding:12px;
 margin-top:10px;
 border:none;
 border-radius:10px;
@@ -107,35 +110,20 @@ font-weight:bold;
 cursor:pointer;
 }
 
-button:hover{
-background:#2563eb;
-}
-
-/* MODES */
-.options{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:10px;
-margin-top:10px;
-}
-
-.option{
-background:#334155;
-padding:10px;
-text-align:center;
-border-radius:10px;
-cursor:pointer;
-}
-
-.selected{
-background:#2563eb;
-}
-
 /* CGPA */
 .row{
 display:flex;
-gap:10px;
-margin-top:10px;
+gap:8px;
+margin-top:8px;
+}
+
+input,select{
+flex:1;
+padding:10px;
+border-radius:8px;
+border:none;
+background:#0f172a;
+color:white;
 }
 
 #result{
@@ -146,6 +134,7 @@ font-size:1.2rem;
 
 /* MOBILE */
 @media(max-width:600px){
+.quick{grid-template-columns:repeat(2,1fr);}
 .options{grid-template-columns:1fr;}
 .row{flex-direction:column;}
 }
@@ -155,51 +144,44 @@ font-size:1.2rem;
 <body>
 
 <header>
-<div class="logo">🐐 GoatTutor NG v4</div>
-<div class="menu-btn" onclick="toggleMenu()">☰</div>
+<div class="logo">🐐 GoatTutor NG v5</div>
 </header>
-
-<!-- SIDEBAR -->
-<div class="sidebar" id="sidebar">
-<h3>Menu</h3>
-<div onclick="setQuick('PHY 101')">PHY 101</div>
-<div onclick="setQuick('CHM 102')">CHM 102</div>
-<div onclick="setQuick('MTH 101')">MTH 101</div>
-<div onclick="setQuick('GST 101')">GST 101</div>
-<hr style="margin:10px 0;border-color:#334155">
-<div onclick="scrollToCGPA()">📊 CGPA Calculator</div>
-</div>
 
 <div class="container">
 
 <div class="card">
 
-<h2 style="text-align:center;">AI Study Assistant</h2>
+<h3>AI Study Assistant</h3>
 
 <textarea id="topic" placeholder="Enter topic..."></textarea>
 
+<div class="quick">
+<div onclick="fill('PHY 101')">PHY 101</div>
+<div onclick="fill('CHM 102')">CHM 102</div>
+<div onclick="fill('MTH 101')">MTH 101</div>
+<div onclick="fill('GST 101')">GST 101</div>
+<div onclick="fill('BIO 101')">BIO 101</div>
+<div onclick="fill('COS 101')">COS 101</div>
+</div>
+
 <div class="options">
-
-<div class="option selected" onclick="setMode('tutorial',this)">📚 Tutorial</div>
-<div class="option" onclick="setMode('summary',this)">📝 Summary</div>
-<div class="option" onclick="setMode('mcq',this)">🎯 MCQ</div>
-<div class="option" onclick="setMode('revision',this)">⚡ Revision</div>
-<div class="option" onclick="setMode('exam',this)">🔥 Exam</div>
-
+<div class="option selected" onclick="setMode('tutorial',this)">Tutorial</div>
+<div class="option" onclick="setMode('summary',this)">Summary</div>
+<div class="option" onclick="setMode('mcq',this)">MCQ</div>
+<div class="option" onclick="setMode('revision',this)">Revision</div>
 </div>
 
 <button onclick="teach()">🚀 Teach Me</button>
 <button onclick="copyPrompt()">📋 Copy Prompt</button>
 
-<!-- CGPA -->
-<hr style="margin:20px 0;border:1px solid #334155">
+<hr style="margin:15px 0;border:1px solid #334155">
 
-<h2>📊 CGPA Calculator (5.0 Scale)</h2>
+<h3>📊 CGPA Calculator (5.0)</h3>
 
 <div id="cgpaBox">
 
 <div class="row">
-<input type="number" placeholder="Unit" id="unit1">
+<input type="number" id="unit1" placeholder="Unit">
 <select id="grade1">
 <option value="5">A</option>
 <option value="4">B</option>
@@ -213,7 +195,7 @@ font-size:1.2rem;
 </div>
 
 <button onclick="addCourse()">➕ Add Course</button>
-<button onclick="calculateCGPA()">📊 Calculate CGPA</button>
+<button onclick="calcCGPA()">📊 Calculate CGPA</button>
 
 <div id="result"></div>
 
@@ -222,23 +204,17 @@ font-size:1.2rem;
 
 <script>
 
-let mode="tutorial";
-let courseCount=1;
+let mode = "tutorial";
+let courseCount = 1;
 
-/* MENU */
-function toggleMenu(){
-document.getElementById("sidebar").classList.toggle("active");
-}
-
-/* QUICK COURSE */
-function setQuick(text){
-document.getElementById("topic").value=text;
-toggleMenu();
+/* QUICK FILL */
+function fill(text){
+document.getElementById("topic").value = text;
 }
 
 /* MODE */
 function setMode(m,el){
-mode=m;
+mode = m;
 document.querySelectorAll(".option").forEach(o=>o.classList.remove("selected"));
 el.classList.add("selected");
 }
@@ -246,41 +222,24 @@ el.classList.add("selected");
 /* TEACH */
 function teach(){
 
-let topic=document.getElementById("topic").value;
-if(!topic.trim()) return alert("Enter topic");
+let topic = document.getElementById("topic").value.trim();
+if(!topic) return alert("Enter topic");
 
-let instruction="";
+let map = {
+tutorial:"Explain in detail with Nigerian analogies and memory tricks.",
+summary:"Give short exam-ready notes.",
+mcq:"Generate tough MCQs with answers.",
+revision:"Give crash revision guide."
+};
 
-if(mode==="tutorial"){
-instruction="Explain deeply with Nigerian examples and memory tricks.";
-}
-if(mode==="summary"){
-instruction="Give exam-ready short notes.";
-}
-if(mode==="mcq"){
-instruction="Generate tough MCQs with answers.";
-}
-if(mode==="revision"){
-instruction="Give crash revision points.";
-}
-if(mode==="exam"){
-instruction="Focus only on likely exam questions.";
-}
-
-let prompt=
-`Act as GoatTutor AI.
-
-${instruction}
-
-Topic:
-${topic}`;
+let prompt = `Act as GoatTutor AI.\nMode: ${mode}\nInstruction: ${map[mode]}\nTopic: ${topic}`;
 
 window.open("https://chatgpt.com/?q="+encodeURIComponent(prompt),"_blank");
 }
 
 /* COPY */
 function copyPrompt(){
-let t=document.getElementById("topic").value;
+let t = document.getElementById("topic").value;
 if(!t) return alert("Enter topic");
 navigator.clipboard.writeText(t);
 alert("Copied");
@@ -288,11 +247,13 @@ alert("Copied");
 
 /* CGPA */
 function addCourse(){
-courseCount++;
-let row=document.createElement("div");
-row.className="row";
 
-row.innerHTML=`
+courseCount++;
+
+let div = document.createElement("div");
+div.className="row";
+
+div.innerHTML = `
 <input type="number" id="unit${courseCount}" placeholder="Unit">
 <select id="grade${courseCount}">
 <option value="5">A</option>
@@ -304,867 +265,33 @@ row.innerHTML=`
 </select>
 `;
 
-document.getElementById("cgpaBox").appendChild(row);
+document.getElementById("cgpaBox").appendChild(div);
 }
 
-function calculateCGPA(){
+function calcCGPA(){
 
-let totalPoints=0;
-let totalUnits=0;
+let total=0,units=0;
 
 for(let i=1;i<=courseCount;i++){
-let u=parseFloat(document.getElementById("unit"+i).value);
-let g=parseFloat(document.getElementById("grade"+i).value);
+
+let u = parseFloat(document.getElementById("unit"+i).value);
+let g = parseFloat(document.getElementById("grade"+i).value);
 
 if(!isNaN(u)){
-totalPoints+=u*g;
-totalUnits+=u;
+total += u*g;
+units += u;
 }
 }
 
-if(totalUnits===0){
-alert("Enter valid data");
-return;
-}
+if(units===0) return alert("Enter valid data");
 
-let cgpa=(totalPoints/totalUnits).toFixed(2);
+let cgpa = (total/units).toFixed(2);
 
-let grade="";
-
-if(cgpa>=4.5) grade="First Class";
-else if(cgpa>=3.5) grade="2:1";
-else if(cgpa>=2.4) grade="2:2";
-else if(cgpa>=1.5) grade="Third Class";
-else grade="Pass";
-
-document.getElementById("result").innerHTML=
-`🎓 CGPA: ${cgpa} / 5.0<br>${grade}`;
-}
-
-function scrollToCGPA(){
-document.getElementById("cgpaBox").scrollIntoView({behavior:"smooth"});
-toggleMenu();
+document.getElementById("result").innerHTML =
+"🎓 CGPA: " + cgpa + " / 5.0";
 }
 
 </script>
 
 </body>
-</html>.option{
-background:#334155;
-padding:12px;
-border-radius:10px;
-cursor:pointer;
-text-align:center;
-}
-
-.selected{
-background:#2563eb;
-}
-
-/* BUTTONS */
-button{
-width:100%;
-margin-top:12px;
-padding:15px;
-border:none;
-border-radius:12px;
-font-size:1rem;
-font-weight:bold;
-cursor:pointer;
-background:#3b82f6;
-color:white;
-}
-
-button:hover{
-background:#2563eb;
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Inter,Segoe UI,sans-serif;
-}
-
-body{
-background:#0f172a;
-color:white;
-min-height:100dvh;
-display:flex;
-justify-content:center;
-align-items:center;
-padding:15px;
-}
-
-.container{
-width:100%;
-max-width:700px;
-margin:auto;
-}
-
-.card{
-background:#1e293b;
-border-radius:24px;
-padding:20px;
-width:100%;
-box-shadow:0 20px 60px rgba(0,0,0,.35);
-}
-
-.logo{
-font-size:3rem;
-text-align:center;
-margin-bottom:10px;
-}
-
-h1{
-text-align:center;
-font-size:2.3rem;
-margin-bottom:10px;
-}
-
-.tagline{
-text-align:center;
-color:#cbd5e1;
-margin-bottom:20px;
-line-height:1.6;
-}
-
-.mode-indicator{
-text-align:center;
-margin-bottom:12px;
-color:#60a5fa;
-font-weight:bold;
-font-size:1rem;
-}
-
-textarea{
-width:100%;
-height:220px;
-border:none;
-outline:none;
-resize:none;
-border-radius:18px;
-padding:18px;
-font-size:1rem;
-background:#0f172a;
-color:white;
-}
-
-textarea::placeholder{
-color:#94a3b8;
-}
-
-.quick{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:10px;
-margin-bottom:15px;
-}
-
-.quick div{
-background:#0f172a;
-padding:12px;
-border-radius:10px;
-text-align:center;
-cursor:pointer;
-border:1px solid #334155;
-font-size:.95rem;
-transition:.2s;
-}
-
-.quick div:hover{
-background:#111827;
-}
-
-.options{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:10px;
-margin-top:15px;
-}
-
-.option{
-background:#334155;
-padding:14px;
-border-radius:10px;
-cursor:pointer;
-text-align:center;
-transition:.2s;
-}
-
-.option:hover{
-background:#475569;
-}
-
-.selected{
-background:#2563eb;
-}
-
-button{
-width:100%;
-margin-top:12px;
-padding:15px;
-border:none;
-border-radius:12px;
-font-size:1rem;
-font-weight:bold;
-cursor:pointer;
-background:#3b82f6;
-color:white;
-transition:.2s;
-}
-
-button:hover{
-background:#2563eb;
-}
-
-.footer{
-margin-top:20px;
-text-align:center;
-font-size:.9rem;
-color:#94a3b8;
-}
-
-/* MOBILE */
-
-@media (max-width:768px){
-
-body{
-padding:10px;
-align-items:flex-start;
-}
-
-.container{
-max-width:100%;
-}
-
-.card{
-padding:15px;
-border-radius:18px;
-}
-
-.logo{
-font-size:2.3rem;
-}
-
-h1{
-font-size:1.9rem;
-}
-
-.tagline{
-font-size:.9rem;
-}
-
-.mode-indicator{
-font-size:.9rem;
-}
-
-textarea{
-height:180px;
-font-size:16px;
-padding:15px;
-}
-
-.quick{
-grid-template-columns:repeat(2,1fr);
-}
-
-.options{
-grid-template-columns:1fr;
-}
-
-.option{
-padding:14px;
-font-size:.95rem;
-}
-
-button{
-padding:14px;
-font-size:16px;
-}
-
-.footer{
-font-size:.8rem;
-}
-
-}
-
-/* SMALL PHONES */
-
-@media (max-width:480px){
-
-.quick{
-grid-template-columns:1fr 1fr;
-}
-
-.logo{
-font-size:2rem;
-}
-
-h1{
-font-size:1.7rem;
-}
-
-textarea{
-height:160px;
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="container">
-<div class="card">
-
-<div class="logo">🐐</div>
-
-<h1>GoatTutor NG</h1>
-
-<p class="tagline">
-Explain am like I'm a goat — simple, funny, exam-focused.
-</p>
-
-<div class="mode-indicator" id="modeText">
-Mode: Tutorial
-</div>
-
-<!-- COURSE QUICK BUTTONS -->
-<div class="quick">
-<div onclick="fill('PHY 101')">PHY 101</div>
-<div onclick="fill('PHY 102')">PHY 102</div>
-<div onclick="fill('CHM 101')">CHM 101</div>
-<div onclick="fill('CHM 102')">CHM 102</div>
-<div onclick="fill('MTH 101')">MTH 101</div>
-<div onclick="fill('GST 101')">GST 101</div>
-</div>
-
-<textarea id="topic" placeholder="Enter topic here..."></textarea>
-
-<!-- MODES -->
-<div class="options">
-
-<div class="option selected" onclick="setMode('tutorial',this)">
-📚 Tutorial
-</div>
-
-<div class="option" onclick="setMode('summary',this)">
-📝 Summary
-</div>
-
-<div class="option" onclick="setMode('mcq',this)">
-🎯 MCQ
-</div>
-
-<div class="option" onclick="setMode('revision',this)">
-⚡ Revision
-</div>
-
-<div class="option" onclick="setMode('exam',this)">
-🔥 Exam Mode
-</div>
-
-</div>
-
-<button onclick="teach()">🚀 Teach Me</button>
-
-<button onclick="copyPrompt()">📋 Copy Prompt</button>
-
-  <hr style="margin:30px 0;border:1px solid #334155;">
-
-<h2 style="text-align:center;margin-bottom:15px;">
-📊 CGPA Calculator
-</h2>
-
-<div id="cgpaBox">
-
-<div style="display:flex;gap:10px;margin-bottom:10px;">
-<input type="number" id="unit1" placeholder="Course Unit"
-style="flex:1;padding:12px;border-radius:10px;border:none;">
-
-<select id="grade1"
-style="flex:1;padding:12px;border-radius:10px;border:none;">
-
-<option value="5">A</option>
-<option value="4">B</option>
-<option value="3">C</option>
-<option value="2">D</option>
-<option value="1">E</option>
-<option value="0">F</option>
-
-</select>
-
-</div>
-
-</div>
-
-<button onclick="addCourse()">
-➕ Add Course
-</button>
-
-<button onclick="calculateCGPA()">
-📊 Calculate GPA
-</button>
-
-<div id="result"
-style="text-align:center;margin-top:15px;font-size:1.2rem;font-weight:bold;">
-</div>
-<div class="footer">
-Made for Nigerian Students 🇳🇬
-</div>
-
-</div>
-</div>
-
-<script>
-
-let mode = "tutorial";
-let strictStyle = "";
-
-function fill(text){
-document.getElementById("topic").value = text;
-}
-
-function setMode(m,el){
-
-mode = m;
-
-document.querySelectorAll(".option")
-.forEach(x=>x.classList.remove("selected"));
-
-el.classList.add("selected");
-
-let map = {
-tutorial:"Explain step-by-step with Nigerian analogies and memory tricks.",
-summary:"Give short exam-ready notes only.",
-mcq:"Generate tough MCQs only.",
-revision:"Give crash revision points only.",
-exam:"Focus only on likely exam questions and shortcuts."
-};
-
-strictStyle = map[m];
-
-document.getElementById("modeText").innerText =
-"Mode: " + m.toUpperCase();
-}
-
-function copyPrompt(){
-
-let t = document.getElementById("topic").value;
-if(!t) return alert("Enter topic first");
-
-navigator.clipboard.writeText(t);
-alert("Copied!");
-}
-
-function teach(){
-
-let topic = document.getElementById("topic").value;
-if(!topic) return alert("Enter topic");
-
-let prompt = `
-Act as GoatTutor AI.
-
-STRICT MODE:
-${strictStyle}
-
-Do NOT ignore instructions.
-
-Topic:
-${topic}
-`;
-
-let url =
-"https://chatgpt.com/?q=" +
-encodeURIComponent(prompt);
-
-window.open(url,"_blank");
-
-}
-
-</script>
-
-</body>
-</html>}
-
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<div class="card">
-
-<div class="logo">🐐</div>
-
-<h1>GoatTutor NG</h1>
-
-<p class="tagline">
-Explain am like I'm a goat.<br>
-Simple explanations, exam-focused tutorials,
-memory tricks and likely CBT questions.
-</p>
-
-<div class="features">
-
-<div class="feature" onclick="fillTopic('BIO 102')">
-BIO 102
-</div>
-
-<div class="feature" onclick="fillTopic('PHY 102')">
-PHY 102
-</div>
-
-<div class="feature" onclick="fillTopic('CHM 102')">
-CHM 102
-</div>
-
-<div class="feature" onclick="fillTopic('GST 112')">
-GST 112
-</div>
-
-<div class="feature" onclick="fillTopic('COS 102')">
-COS 102
-</div>
-
-<div class="feature" onclick="fillTopic('LIS 112')">
-GST 112
-</div>
-
-</div>
-
-<textarea id="topic"
-placeholder="Paste your lecture note, topic, or course title here...
-
-Example:
-Ampere-Maxwell Law
-CHM 102 Organic Chemistry
-Electromagnetism
-Atomic Structure">
-</textarea>
-
-<div class="options">
-
-<div class="option selected"
-onclick="selectMode(this,'tutorial')">
-📚 Full Tutorial
-</div>
-
-<div class="option"
-onclick="selectMode(this,'summary')">
-📝 Summary Notes
-</div>
-
-<div class="option"
-onclick="selectMode(this,'mcq')">
-🎯 Exam MCQs
-</div>
-
-<div class="option"
-onclick="selectMode(this,'revision')">
-⚡ Crash Revision
-</div>
-
-<div class="option"
-onclick="selectMode(this,'exam')">
-🔥 Exam Tomorrow
-</div>
-
-</div>
-
-<button onclick="teachMe()">
-🚀 Teach Me
-</button>
-  <button onclick="window.location.href='tools.html'">
-📊 Student Tools
-  </button>
-
-<button onclick="copyPrompt()">
-📋 Copy Prompt
-</button>
-
-<div class="features" style="margin-top:20px;">
-
-<div class="feature">
-🎓 University Level
-</div>
-
-<div class="feature">
-😂 Funny Analogies
-</div>
-
-<div class="feature">
-🧠 Memory Tricks
-</div>
-
-<div class="feature">
-📖 Exam Focus
-</div>
-
-</div>
-
-<div class="quote" id="quote">
-📚 Read today so exam won't read you tomorrow.
-</div>
-
-<div class="quote">
-🚀 Coming Soon: CGPA Calculator • Past Questions • Flashcards • Study Planner
-</div>
-
-<div class="footer">
-Made by Students, for Students 🇳🇬
-</div>
-
-</div>
-
-</div>
-
-<script>
-
-let mode = "tutorial";
-
-const quotes = [
-
-"📚 Read today so exam won't read you tomorrow.",
-
-"🐐 Small reading every day beats overnight reading.",
-
-"🎓 Your CGPA is watching your decisions.",
-
-"🔥 Consistency beats motivation.",
-
-"🧠 If you can explain it simply, you understand it."
-
-];
-
-document.getElementById("quote").innerHTML =
-quotes[Math.floor(Math.random()*quotes.length)];
-
-function fillTopic(topic){
-
-document.getElementById("topic").value = topic;
-
-}
-
-function selectMode(element,value){
-
-mode = value;
-
-document.querySelectorAll('.option')
-.forEach(item=>{
-item.classList.remove('selected');
-});
-
-element.classList.add('selected');
-
-}
-
-function copyPrompt(){
-
-let topic =
-document.getElementById('topic').value;
-
-if(topic.trim()===""){
-alert("Enter a topic first.");
-return;
-}
-
-navigator.clipboard.writeText(topic);
-
-alert("Copied successfully!");
-
-}
-
-function teachMe(){
-
-let topic =
-document.getElementById('topic').value;
-
-if(topic.trim()===""){
-alert("Please enter a topic first.");
-return;
-}
-
-let instruction="";
-
-if(mode==="tutorial"){
-
-instruction=`
-Act as GoatTutor AI.
-
-Teach this topic like a professional university tutor.
-
-Requirements:
-
-- Explain from beginner to advanced.
-- Use simple language.
-- Use funny analogies.
-- Use Nigerian student examples.
-- Include memory tricks.
-- Highlight likely exam questions.
-- End with 10 MCQs and answers.
-
-Topic:
-`;
-
-}
-
-if(mode==="summary"){
-
-instruction=`
-Summarize this topic into exam-ready notes.
-
-Requirements:
-
-- Short and comprehensive.
-- Important formulas.
-- Key definitions.
-- Most likely exam points.
-
-Topic:
-`;
-
-}
-
-if(mode==="mcq"){
-
-instruction=`
-Generate 20 university-level MCQs.
-
-Requirements:
-
-- Tough exam standard.
-- Include calculations where needed.
-- Provide answers after each question.
-
-Topic:
-`;
-
-}
-
-if(mode==="revision"){
-
-instruction=`
-Create a crash revision guide.
-
-Requirements:
-
-- Everything needed for an exam tomorrow.
-- Key points only.
-- Memory tricks.
-- Likely questions.
-
-Topic:
-`;
-
-}
-
-if(mode==="exam"){
-
-instruction=`
-Create an emergency exam guide.
-
-Requirements:
-
-- Most important concepts only.
-- Memory tricks.
-- Common exam questions.
-- Key formulas.
-- Topics likely to appear.
-
-Topic:
-`;
-
-}
-
-let prompt =
-instruction + topic;
-
-let url =
-"https://chatgpt.com/?q=" +
-encodeURIComponent(prompt);
-
-window.open(url,"_blank");
-
-}
-
-  let courseCount = 1;
-
-function addCourse(){
-
-courseCount++;
-
-let row = document.createElement("div");
-
-row.style.display="flex";
-row.style.gap="10px";
-row.style.marginBottom="10px";
-
-row.innerHTML=`
-
-<input type="number"
-id="unit${courseCount}"
-placeholder="Course Unit"
-style="flex:1;padding:12px;border-radius:10px;border:none;">
-
-<select
-id="grade${courseCount}"
-style="flex:1;padding:12px;border-radius:10px;border:none;">
-
-<option value="5">A</option>
-<option value="4">B</option>
-<option value="3">C</option>
-<option value="2">D</option>
-<option value="1">E</option>
-<option value="0">F</option>
-
-</select>
-
-`;
-
-document.getElementById("cgpaBox")
-.appendChild(row);
-
-}
-
-function calculateCGPA(){
-
-let totalPoints = 0;
-let totalUnits = 0;
-
-for(let i=1;i<=courseCount;i++){
-
-let unit =
-parseFloat(document.getElementById(`unit${i}`).value);
-
-let grade =
-parseFloat(document.getElementById(`grade${i}`).value);
-
-if(!isNaN(unit)){
-
-totalPoints += unit * grade;
-totalUnits += unit;
-
-}
-
-}
-
-if(totalUnits===0){
-
-alert("Enter course units first.");
-return;
-
-}
-
-let gpa =
-(totalPoints/totalUnits)
-.toFixed(2);
-
-document.getElementById("result")
-.innerHTML =
-`🎓 GPA = ${gpa} / 5.00`;
-
-}
-</script>
-
-</body>
-</html>
+  </html>
