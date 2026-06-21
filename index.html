@@ -3,113 +3,353 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>GoatTutor NG 🐐</title>
+<title>GoatTutor NG v4 🐐</title>
 
 <style>
-
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Inter,Segoe UI,sans-serif;
+font-family:Segoe UI,sans-serif;
 }
 
 body{
 background:#0f172a;
 color:white;
 min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-padding:20px;
 }
 
+/* HEADER */
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 20px;
+background:#111827;
+position:sticky;
+top:0;
+z-index:10;
+}
+
+.logo{
+font-size:1.4rem;
+font-weight:bold;
+}
+
+.menu-btn{
+font-size:1.8rem;
+cursor:pointer;
+}
+
+/* SIDEBAR MENU */
+.sidebar{
+position:fixed;
+top:0;
+left:-250px;
+width:250px;
+height:100%;
+background:#1e293b;
+padding:20px;
+transition:.3s;
+z-index:20;
+}
+
+.sidebar.active{
+left:0;
+}
+
+.sidebar h3{
+margin-bottom:15px;
+}
+
+.sidebar div{
+padding:10px;
+margin:8px 0;
+background:#334155;
+border-radius:8px;
+cursor:pointer;
+}
+
+/* MAIN */
 .container{
-width:100%;
 max-width:900px;
+margin:auto;
+padding:20px;
 }
 
 .card{
 background:#1e293b;
-border-radius:24px;
-padding:30px;
-box-shadow:0 20px 60px rgba(0,0,0,.35);
-}
-
-.logo{
-font-size:3rem;
-text-align:center;
-margin-bottom:10px;
-}
-
-h1{
-text-align:center;
-font-size:2.5rem;
-margin-bottom:10px;
-}
-
-.tagline{
-text-align:center;
-color:#cbd5e1;
-margin-bottom:20px;
-line-height:1.6;
-}
-
-.mode-indicator{
-text-align:center;
-margin-bottom:10px;
-color:#60a5fa;
-font-weight:bold;
-}
-
-textarea{
-width:100%;
-height:250px;
-border:none;
-outline:none;
-resize:none;
-border-radius:18px;
 padding:20px;
-font-size:1rem;
+border-radius:20px;
+}
+
+textarea, input, select{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+margin-top:10px;
 background:#0f172a;
 color:white;
 }
 
-textarea::placeholder{
-color:#94a3b8;
-}
+textarea{height:160px;}
 
-/* COURSE BUTTONS */
-.quick{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-gap:10px;
-margin-bottom:15px;
-}
-
-.quick div{
-background:#0f172a;
-padding:10px;
+button{
+width:100%;
+padding:14px;
+margin-top:10px;
+border:none;
 border-radius:10px;
-text-align:center;
+background:#3b82f6;
+color:white;
+font-weight:bold;
 cursor:pointer;
-border:1px solid #334155;
 }
 
-.quick div:hover{
-background:#111827;
+button:hover{
+background:#2563eb;
 }
 
 /* MODES */
 .options{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+grid-template-columns:repeat(2,1fr);
 gap:10px;
-margin-top:15px;
+margin-top:10px;
 }
 
 .option{
+background:#334155;
+padding:10px;
+text-align:center;
+border-radius:10px;
+cursor:pointer;
+}
+
+.selected{
+background:#2563eb;
+}
+
+/* CGPA */
+.row{
+display:flex;
+gap:10px;
+margin-top:10px;
+}
+
+#result{
+text-align:center;
+margin-top:10px;
+font-size:1.2rem;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+.options{grid-template-columns:1fr;}
+.row{flex-direction:column;}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">🐐 GoatTutor NG v4</div>
+<div class="menu-btn" onclick="toggleMenu()">☰</div>
+</header>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+<h3>Menu</h3>
+<div onclick="setQuick('PHY 101')">PHY 101</div>
+<div onclick="setQuick('CHM 102')">CHM 102</div>
+<div onclick="setQuick('MTH 101')">MTH 101</div>
+<div onclick="setQuick('GST 101')">GST 101</div>
+<hr style="margin:10px 0;border-color:#334155">
+<div onclick="scrollToCGPA()">📊 CGPA Calculator</div>
+</div>
+
+<div class="container">
+
+<div class="card">
+
+<h2 style="text-align:center;">AI Study Assistant</h2>
+
+<textarea id="topic" placeholder="Enter topic..."></textarea>
+
+<div class="options">
+
+<div class="option selected" onclick="setMode('tutorial',this)">📚 Tutorial</div>
+<div class="option" onclick="setMode('summary',this)">📝 Summary</div>
+<div class="option" onclick="setMode('mcq',this)">🎯 MCQ</div>
+<div class="option" onclick="setMode('revision',this)">⚡ Revision</div>
+<div class="option" onclick="setMode('exam',this)">🔥 Exam</div>
+
+</div>
+
+<button onclick="teach()">🚀 Teach Me</button>
+<button onclick="copyPrompt()">📋 Copy Prompt</button>
+
+<!-- CGPA -->
+<hr style="margin:20px 0;border:1px solid #334155">
+
+<h2>📊 CGPA Calculator (5.0 Scale)</h2>
+
+<div id="cgpaBox">
+
+<div class="row">
+<input type="number" placeholder="Unit" id="unit1">
+<select id="grade1">
+<option value="5">A</option>
+<option value="4">B</option>
+<option value="3">C</option>
+<option value="2">D</option>
+<option value="1">E</option>
+<option value="0">F</option>
+</select>
+</div>
+
+</div>
+
+<button onclick="addCourse()">➕ Add Course</button>
+<button onclick="calculateCGPA()">📊 Calculate CGPA</button>
+
+<div id="result"></div>
+
+</div>
+</div>
+
+<script>
+
+let mode="tutorial";
+let courseCount=1;
+
+/* MENU */
+function toggleMenu(){
+document.getElementById("sidebar").classList.toggle("active");
+}
+
+/* QUICK COURSE */
+function setQuick(text){
+document.getElementById("topic").value=text;
+toggleMenu();
+}
+
+/* MODE */
+function setMode(m,el){
+mode=m;
+document.querySelectorAll(".option").forEach(o=>o.classList.remove("selected"));
+el.classList.add("selected");
+}
+
+/* TEACH */
+function teach(){
+
+let topic=document.getElementById("topic").value;
+if(!topic.trim()) return alert("Enter topic");
+
+let instruction="";
+
+if(mode==="tutorial"){
+instruction="Explain deeply with Nigerian examples and memory tricks.";
+}
+if(mode==="summary"){
+instruction="Give exam-ready short notes.";
+}
+if(mode==="mcq"){
+instruction="Generate tough MCQs with answers.";
+}
+if(mode==="revision"){
+instruction="Give crash revision points.";
+}
+if(mode==="exam"){
+instruction="Focus only on likely exam questions.";
+}
+
+let prompt=
+`Act as GoatTutor AI.
+
+${instruction}
+
+Topic:
+${topic}`;
+
+window.open("https://chatgpt.com/?q="+encodeURIComponent(prompt),"_blank");
+}
+
+/* COPY */
+function copyPrompt(){
+let t=document.getElementById("topic").value;
+if(!t) return alert("Enter topic");
+navigator.clipboard.writeText(t);
+alert("Copied");
+}
+
+/* CGPA */
+function addCourse(){
+courseCount++;
+let row=document.createElement("div");
+row.className="row";
+
+row.innerHTML=`
+<input type="number" id="unit${courseCount}" placeholder="Unit">
+<select id="grade${courseCount}">
+<option value="5">A</option>
+<option value="4">B</option>
+<option value="3">C</option>
+<option value="2">D</option>
+<option value="1">E</option>
+<option value="0">F</option>
+</select>
+`;
+
+document.getElementById("cgpaBox").appendChild(row);
+}
+
+function calculateCGPA(){
+
+let totalPoints=0;
+let totalUnits=0;
+
+for(let i=1;i<=courseCount;i++){
+let u=parseFloat(document.getElementById("unit"+i).value);
+let g=parseFloat(document.getElementById("grade"+i).value);
+
+if(!isNaN(u)){
+totalPoints+=u*g;
+totalUnits+=u;
+}
+}
+
+if(totalUnits===0){
+alert("Enter valid data");
+return;
+}
+
+let cgpa=(totalPoints/totalUnits).toFixed(2);
+
+let grade="";
+
+if(cgpa>=4.5) grade="First Class";
+else if(cgpa>=3.5) grade="2:1";
+else if(cgpa>=2.4) grade="2:2";
+else if(cgpa>=1.5) grade="Third Class";
+else grade="Pass";
+
+document.getElementById("result").innerHTML=
+`🎓 CGPA: ${cgpa} / 5.0<br>${grade}`;
+}
+
+function scrollToCGPA(){
+document.getElementById("cgpaBox").scrollIntoView({behavior:"smooth"});
+toggleMenu();
+}
+
+</script>
+
+</body>
+</html>.option{
 background:#334155;
 padding:12px;
 border-radius:10px;
