@@ -1,17 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "xb50ly2ja2");
-  </script>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GoatTutor NG v4 🐐</title>
+<title>GoatTutor NG v5 🐐</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif;}
@@ -19,153 +11,73 @@
 body{
 background:#0f172a;
 color:white;
-min-height:100vh;
-padding:12px;
+padding:10px;
 }
 
-#login{
-position:fixed;
-inset:0;
-background:#0f172a;
+/* TOP NAV */
+.nav{
 display:flex;
-justify-content:center;
-align-items:center;
-z-index:999;
-}
-
-.loginBox{
+gap:6px;
+overflow-x:auto;
 background:#1e293b;
-padding:20px;
-border-radius:14px;
-width:90%;
-max-width:320px;
-text-align:center;
+padding:10px;
+border-radius:12px;
+position:sticky;
+top:0;
 }
 
-.loginBox input{
-width:100%;
-margin-top:10px;
-padding:12px;
-border-radius:10px;
+.nav button{
+flex:1;
+min-width:120px;
+padding:10px;
 border:none;
-background:#0f172a;
+border-radius:8px;
+background:#334155;
 color:white;
-}
-
-.loginBox button{
-width:100%;
-margin-top:10px;
-padding:12px;
-border:none;
-border-radius:10px;
-background:#3b82f6;
-color:white;
-font-weight:bold;
 cursor:pointer;
 }
 
+.nav button.active{
+background:#2563eb;
+}
+
+/* PAGES */
+.page{
+display:none;
+margin-top:12px;
+}
+
+.page.active{
+display:block;
+}
+
+/* CARDS */
 .card{
 background:#1e293b;
-padding:15px;
-border-radius:15px;
-max-width:900px;
-margin:auto;
+padding:12px;
+border-radius:12px;
+margin-top:10px;
 }
 
-h2,h3{text-align:center;}
-
-textarea{
+input,textarea,select{
 width:100%;
-height:120px;
-margin-top:10px;
-padding:12px;
-border-radius:10px;
+padding:10px;
+margin-top:6px;
+border-radius:8px;
 border:none;
 background:#0f172a;
 color:white;
 }
-
-.quick{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:8px;
-margin-top:10px;
-}
-
-.quick div{
-background:#334155;
-padding:10px;
-border-radius:8px;
-text-align:center;
-cursor:pointer;
-}
-
-.options{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:8px;
-margin-top:10px;
-}
-
-.option{
-background:#334155;
-padding:10px;
-border-radius:8px;
-text-align:center;
-cursor:pointer;
-}
-
-.selected{background:#2563eb;}
 
 button{
 width:100%;
-margin-top:10px;
-padding:12px;
+padding:10px;
+margin-top:8px;
 border:none;
-border-radius:10px;
+border-radius:8px;
 background:#3b82f6;
 color:white;
-font-weight:bold;
 cursor:pointer;
-}
-
-.row{
-display:flex;
-gap:8px;
-margin-top:8px;
-}
-
-input,select{
-flex:1;
-padding:10px;
-border-radius:8px;
-border:none;
-background:#0f172a;
-color:white;
-}
-
-footer{
-text-align:center;
-font-size:12px;
-color:#94a3b8;
-margin-top:15px;
-}
-
-.logoutBtn{background:#ef4444;margin-top:10px;}
-
-/* TIMER */
-.timerBox{
-background:#0f172a;
-padding:15px;
-border-radius:12px;
-margin-top:10px;
-text-align:center;
-}
-
-.timer{
-font-size:40px;
-font-weight:bold;
-margin:10px 0;
 }
 
 .small{
@@ -173,75 +85,48 @@ font-size:12px;
 color:#94a3b8;
 }
 
-@media(max-width:600px){
-.quick{grid-template-columns:repeat(2,1fr);}
-.options{grid-template-columns:1fr;}
-.row{flex-direction:column;}
+/* TIMER */
+.timer{
+font-size:40px;
+text-align:center;
+margin:10px 0;
 }
+
+.row{display:flex;gap:6px;margin-top:6px;}
+.row input,.row select{flex:1;}
+
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
-<div id="login">
-<div class="loginBox">
-<h3>🐐 GoatTutor Login</h3>
-<input id="user" placeholder="Enter username">
-<input id="pass" type="password" placeholder="Enter password">
-<button onclick="login()">Login</button>
-</div>
+<!-- NAV -->
+<div class="nav">
+<button onclick="openPage('dashboard',this)" class="active">Dashboard</button>
+<button onclick="openPage('gpa',this)">GPA</button>
+<button onclick="openPage('cgpa',this)">CGPA</button>
+<button onclick="openPage('timer',this)">Timer</button>
+<button onclick="openPage('planner',this)">Planner</button>
+<button onclick="openPage('analyzer',this)">Analyzer</button>
 </div>
 
+<!-- DASHBOARD -->
+<div id="dashboard" class="page active">
 <div class="card">
-
-<h2>🐐 GoatTutor NG v4</h2>
-
-<textarea id="topic" placeholder="Enter topic..."></textarea>
-
-<div class="quick">
-<div onclick="fill('PHY 101')">PHY 101</div>
-<div onclick="fill('CHM 102')">CHM 102</div>
-<div onclick="fill('MTH 101')">MTH 101</div>
-<div onclick="fill('GST 101')">GST 101</div>
-<div onclick="fill('BIO 101')">BIO 101</div>
-<div onclick="fill('COS 101')">COS 101</div>
+<h3>📊 Academic Dashboard</h3>
+<div id="dashData">No data yet</div>
+</div>
 </div>
 
-<div class="options">
-<div class="option selected" onclick="setMode('tutorial',this)">Tutorial</div>
-<div class="option" onclick="setMode('summary',this)">Summary</div>
-<div class="option" onclick="setMode('mcq',this)">MCQ</div>
-<div class="option" onclick="setMode('revision',this)">Revision</div>
-</div>
+<!-- GPA -->
+<div id="gpa" class="page">
+<div class="card">
+<h3>📚 GPA Calculator</h3>
 
-<button onclick="teach()">🚀 Teach Me</button>
-
-<hr>
-
-<h3>⏱ Study Timer (Pomodoro)</h3>
-
-<div class="timerBox">
-<div class="small" id="status">Ready to focus</div>
-<div class="timer" id="display">25:00</div>
-
-<button onclick="startTimer()">▶ Start</button>
-<button onclick="pauseTimer()">⏸ Pause</button>
-<button onclick="resetTimer()">🔄 Reset</button>
-
-<p class="small">Every 25min = 1 focus session</p>
-<p class="small">Break = 5min automatically</p>
-</div>
-
-<hr>
-
-<h3>📊 GPA Calculator</h3>
-
-<div id="gpaBox">
 <div class="row">
-<input type="number" placeholder="Course Unit (e.g. 3)" id="unit1">
+<input id="unit1" type="number" placeholder="Course Unit">
 <select id="grade1">
-<option disabled selected>Grade (A-F)</option>
+<option disabled selected>Grade</option>
 <option value="5">A</option>
 <option value="4">B</option>
 <option value="3">C</option>
@@ -250,199 +135,176 @@ color:#94a3b8;
 <option value="0">F</option>
 </select>
 </div>
+
+<button onclick="calcGPA()">Calculate GPA</button>
+<div id="gpaResult"></div>
+</div>
 </div>
 
-<button onclick="addGPA()">➕ Add Course</button>
-<button onclick="calcGPA()">📊 Calculate GPA</button>
-
-<div id="gpaResult"></div>
-
-<hr>
-
+<!-- CGPA -->
+<div id="cgpa" class="page">
+<div class="card">
 <h3>📈 CGPA Calculator</h3>
 
-<div id="cgpaBox">
 <div class="row">
-<input type="number" placeholder="Units" id="cunit1">
-<input type="number" placeholder="GPA" id="cgpa1">
-</div>
+<input id="cunit1" placeholder="Units">
+<input id="cgpa1" placeholder="GPA">
 </div>
 
-<button onclick="addCGPA()">➕ Add Semester</button>
-<button onclick="calcCGPA()">📊 Calculate CGPA</button>
-
+<button onclick="calcCGPA()">Calculate CGPA</button>
 <div id="cgpaResult"></div>
+</div>
+</div>
 
-<footer>
-<button class="logoutBtn" onclick="logout()">Logout</button>
-<p>Made for Nigerian Students 🇳🇬</p>
-</footer>
+<!-- TIMER -->
+<div id="timer" class="page">
+<div class="card">
+<h3>⏱ Focus Timer</h3>
 
+<div class="timer" id="time">25:00</div>
+<div class="small" id="status">Ready</div>
+
+<button onclick="startTimer()">Start</button>
+<button onclick="pauseTimer()">Pause</button>
+<button onclick="resetTimer()">Reset</button>
+</div>
+</div>
+
+<!-- PLANNER -->
+<div id="planner" class="page">
+<div class="card">
+<h3>📅 Weekly Planner</h3>
+
+<textarea id="plan" placeholder="Write your weekly study plan..."></textarea>
+<button onclick="savePlan()">Save Plan</button>
+
+<div class="small" id="planOut"></div>
+</div>
+</div>
+
+<!-- ANALYZER -->
+<div id="analyzer" class="page">
+<div class="card">
+<h3>📊 Smart GPA Analyzer</h3>
+
+<div id="analysis"></div>
+<button onclick="analyze()">Analyze Performance</button>
+</div>
 </div>
 
 <script>
 
-function login(){
-let u=document.getElementById("user").value;
-let p=document.getElementById("pass").value;
-if(!u||!p) return alert("Fill login");
-localStorage.setItem("gt_user",u);
-document.getElementById("login").style.display="none";
-}
+/* NAV SYSTEM */
+function openPage(id,btn){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
 
-function logout(){
-localStorage.removeItem("gt_user");
-location.reload();
-}
-
-window.onload=function(){
-if(localStorage.getItem("gt_user")){
-document.getElementById("login").style.display="none";
-}
-}
-
-let mode="tutorial";
-function fill(t){document.getElementById("topic").value=t;}
-
-function setMode(m,el){
-mode=m;
-document.querySelectorAll(".option").forEach(o=>o.classList.remove("selected"));
-el.classList.add("selected");
-}
-
-function teach(){
-let t=document.getElementById("topic").value.trim();
-if(!t) return alert("Enter topic");
-let prompt=`Act as GoatTutor AI. Mode:${mode}. Topic:${t}`;
-window.open("https://chatgpt.com/?q="+encodeURIComponent(prompt),"_blank");
+document.getElementById(id).classList.add('active');
+btn.classList.add('active');
 }
 
 /* GPA */
-let gpaCount=1;
-
-function addGPA(){
-gpaCount++;
-let d=document.createElement("div");
-d.className="row";
-d.innerHTML=`
-<input type="number" placeholder="Unit" id="unit${gpaCount}">
-<select id="grade${gpaCount}">
-<option disabled selected>Grade (A-F)</option>
-<option value="5">A</option>
-<option value="4">B</option>
-<option value="3">C</option>
-<option value="2">D</option>
-<option value="1">E</option>
-<option value="0">F</option>
-</select>`;
-document.getElementById("gpaBox").appendChild(d);
-}
-
 function calcGPA(){
-let total=0,units=0;
-for(let i=1;i<=gpaCount;i++){
-let u=parseFloat(document.getElementById("unit"+i).value);
-let g=parseFloat(document.getElementById("grade"+i).value);
-if(!isNaN(u)){total+=u*g;units+=u;}
-}
-if(units===0) return alert("Enter data");
-let gpa=(total/units).toFixed(2);
-document.getElementById("gpaResult").innerHTML="🎓 GPA: "+gpa+"/5.0";
+let u=parseFloat(document.getElementById("unit1").value);
+let g=parseFloat(document.getElementById("grade1").value);
+
+if(!u||isNaN(g)) return alert("Fill data");
+
+let gpa=(u*g/u).toFixed(2); // simple demo single course
+
+document.getElementById("gpaResult").innerHTML="GPA: "+gpa;
+localStorage.setItem("last_gpa",gpa);
+updateDash();
 }
 
 /* CGPA */
-let semCount=1;
-
-function addCGPA(){
-semCount++;
-let d=document.createElement("div");
-d.className="row";
-d.innerHTML=`
-<input type="number" placeholder="Units" id="cunit${semCount}">
-<input type="number" placeholder="GPA" id="cgpa${semCount}">
-`;
-document.getElementById("cgpaBox").appendChild(d);
-}
-
 function calcCGPA(){
-let total=0,units=0;
-for(let i=1;i<=semCount;i++){
-let u=parseFloat(document.getElementById("cunit"+i).value);
-let g=parseFloat(document.getElementById("cgpa"+i).value);
-if(!isNaN(u)&&!isNaN(g)){
-total+=u*g;
-units+=u;
+let u=parseFloat(document.getElementById("cunit1").value);
+let g=parseFloat(document.getElementById("cgpa1").value);
+
+if(!u||!g) return alert("Fill data");
+
+let cgpa=g.toFixed(2);
+document.getElementById("cgpaResult").innerHTML="CGPA: "+cgpa;
+localStorage.setItem("last_cgpa",cgpa);
+updateDash();
 }
+
+/* DASHBOARD */
+function updateDash(){
+let gpa=localStorage.getItem("last_gpa")||"0";
+let cgpa=localStorage.getItem("last_cgpa")||"0";
+
+document.getElementById("dashData").innerHTML=`
+Current GPA: ${gpa}<br>
+Current CGPA: ${cgpa}<br>
+Status: ${cgpa>=3.5?"Good 👍":"Needs Improvement ⚠️"}
+`;
 }
-if(units===0) return alert("Enter data");
 
-let cgpa=(total/units).toFixed(2);
+/* PLANNER */
+function savePlan(){
+let p=document.getElementById("plan").value;
+localStorage.setItem("plan",p);
+document.getElementById("planOut").innerText="Saved ✔";
+}
+window.onload=function(){
+document.getElementById("plan").value=localStorage.getItem("plan")||"";
+updateDash();
+}
 
-let cls="";
-if(cgpa>=4.50) cls="First Class";
-else if(cgpa>=3.50) cls="2:1";
-else if(cgpa>=2.40) cls="2:2";
-else if(cgpa>=1.50) cls="Third Class";
-else cls="Fail";
+/* ANALYZER */
+function analyze(){
+let g=parseFloat(localStorage.getItem("last_gpa")||0);
+let msg="";
 
-document.getElementById("cgpaResult").innerHTML=
-`📈 CGPA: ${cgpa}/5.0<br>${cls}`;
+if(g>=4.5) msg="Excellent performance 🔥";
+else if(g>=3.5) msg="Good, keep improving 👍";
+else if(g>=2.4) msg="Average, increase effort ⚠️";
+else msg="Low performance, need serious study 📌";
+
+document.getElementById("analysis").innerHTML=msg;
 }
 
 /* TIMER */
-let time=1500;
-let running=false;
-let interval;
-let session=0;
-let breakMode=false;
+let t=1500;
+let run;
 
-function updateDisplay(){
-let m=Math.floor(time/60);
-let s=time%60;
-document.getElementById("display").innerText=
-`${m.toString().padStart(2,"0")}:${s.toString().padStart(2,"0")}`;
+function updateTime(){
+let m=Math.floor(t/60);
+let s=t%60;
+document.getElementById("time").innerText=
+`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 }
 
 function startTimer(){
-if(running) return;
-running=true;
-
-interval=setInterval(()=>{
-time--;
-updateDisplay();
-
-if(time<=0){
-if(!breakMode){
-session++;
-document.getElementById("status").innerText="Break time ☕";
-time=300;
-breakMode=true;
-}else{
-document.getElementById("status").innerText="Focus session "+session;
-time=1500;
-breakMode=false;
-}
+if(run) return;
+run=setInterval(()=>{
+t--;
+updateTime();
+if(t<=0){
+clearInterval(run);
+document.getElementById("status").innerText="Session done ✔";
 }
 },1000);
 }
 
 function pauseTimer(){
-clearInterval(interval);
-running=false;
+clearInterval(run);
+run=null;
 }
 
 function resetTimer(){
-clearInterval(interval);
-running=false;
-time=1500;
-breakMode=false;
-document.getElementById("status").innerText="Ready to focus";
-updateDisplay();
+clearInterval(run);
+run=null;
+t=1500;
+updateTime();
+document.getElementById("status").innerText="Ready";
 }
 
-updateDisplay();
+updateTime();
 
 </script>
 
 </body>
-</html>
+                                                 </html>
