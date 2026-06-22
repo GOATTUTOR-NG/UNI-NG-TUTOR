@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GoatTutor NG v5 🐐</title>
+<title>GoatTutor NG v5.1 🐐</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif;}
@@ -14,7 +14,7 @@ color:white;
 padding:10px;
 }
 
-/* TOP NAV */
+/* NAV */
 .nav{
 display:flex;
 gap:6px;
@@ -27,7 +27,6 @@ top:0;
 }
 
 .nav button{
-flex:1;
 min-width:120px;
 padding:10px;
 border:none;
@@ -37,21 +36,12 @@ color:white;
 cursor:pointer;
 }
 
-.nav button.active{
-background:#2563eb;
-}
+.nav button.active{background:#2563eb;}
 
-/* PAGES */
-.page{
-display:none;
-margin-top:12px;
-}
+/* PAGE */
+.page{display:none;margin-top:12px;}
+.page.active{display:block;}
 
-.page.active{
-display:block;
-}
-
-/* CARDS */
 .card{
 background:#1e293b;
 padding:12px;
@@ -80,20 +70,18 @@ color:white;
 cursor:pointer;
 }
 
-.small{
-font-size:12px;
-color:#94a3b8;
-}
-
-/* TIMER */
-.timer{
-font-size:40px;
-text-align:center;
-margin:10px 0;
-}
+.small{font-size:12px;color:#94a3b8;}
 
 .row{display:flex;gap:6px;margin-top:6px;}
 .row input,.row select{flex:1;}
+
+/* AI BOX */
+.aiBox{
+background:#0f172a;
+padding:10px;
+border-radius:10px;
+margin-top:10px;
+}
 
 </style>
 </head>
@@ -102,29 +90,30 @@ margin:10px 0;
 
 <!-- NAV -->
 <div class="nav">
-<button onclick="openPage('dashboard',this)" class="active">Dashboard</button>
+<button class="active" onclick="openPage('dashboard',this)">Dashboard</button>
 <button onclick="openPage('gpa',this)">GPA</button>
 <button onclick="openPage('cgpa',this)">CGPA</button>
 <button onclick="openPage('timer',this)">Timer</button>
 <button onclick="openPage('planner',this)">Planner</button>
 <button onclick="openPage('analyzer',this)">Analyzer</button>
+<button onclick="openPage('ai',this)">AI Study</button>
 </div>
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="page active">
 <div class="card">
-<h3>📊 Academic Dashboard</h3>
-<div id="dashData">No data yet</div>
+<h3>📊 Dashboard</h3>
+<div id="dash">No data yet</div>
 </div>
 </div>
 
 <!-- GPA -->
 <div id="gpa" class="page">
 <div class="card">
-<h3>📚 GPA Calculator</h3>
+<h3>📚 GPA</h3>
 
 <div class="row">
-<input id="unit1" type="number" placeholder="Course Unit">
+<input id="unit1" type="number" placeholder="Unit">
 <select id="grade1">
 <option disabled selected>Grade</option>
 <option value="5">A</option>
@@ -137,14 +126,14 @@ margin:10px 0;
 </div>
 
 <button onclick="calcGPA()">Calculate GPA</button>
-<div id="gpaResult"></div>
+<div id="gpaOut"></div>
 </div>
 </div>
 
 <!-- CGPA -->
 <div id="cgpa" class="page">
 <div class="card">
-<h3>📈 CGPA Calculator</h3>
+<h3>📈 CGPA</h3>
 
 <div class="row">
 <input id="cunit1" placeholder="Units">
@@ -152,49 +141,67 @@ margin:10px 0;
 </div>
 
 <button onclick="calcCGPA()">Calculate CGPA</button>
-<div id="cgpaResult"></div>
+<div id="cgpaOut"></div>
 </div>
 </div>
 
 <!-- TIMER -->
 <div id="timer" class="page">
 <div class="card">
-<h3>⏱ Focus Timer</h3>
+<h3>⏱ Timer</h3>
+<div id="time" style="font-size:40px;text-align:center;">25:00</div>
 
-<div class="timer" id="time">25:00</div>
-<div class="small" id="status">Ready</div>
-
-<button onclick="startTimer()">Start</button>
-<button onclick="pauseTimer()">Pause</button>
-<button onclick="resetTimer()">Reset</button>
+<button onclick="start()">Start</button>
+<button onclick="pause()">Pause</button>
+<button onclick="reset()">Reset</button>
 </div>
 </div>
 
 <!-- PLANNER -->
 <div id="planner" class="page">
 <div class="card">
-<h3>📅 Weekly Planner</h3>
-
-<textarea id="plan" placeholder="Write your weekly study plan..."></textarea>
-<button onclick="savePlan()">Save Plan</button>
-
-<div class="small" id="planOut"></div>
+<h3>📅 Planner</h3>
+<textarea id="plan"></textarea>
+<button onclick="savePlan()">Save</button>
+<div class="small" id="planMsg"></div>
 </div>
 </div>
 
 <!-- ANALYZER -->
 <div id="analyzer" class="page">
 <div class="card">
-<h3>📊 Smart GPA Analyzer</h3>
-
+<h3>📊 Analyzer</h3>
 <div id="analysis"></div>
-<button onclick="analyze()">Analyze Performance</button>
+<button onclick="analyze()">Run Analysis</button>
+</div>
+</div>
+
+<!-- AI STUDY (RESTORED 🔥) -->
+<div id="ai" class="page">
+<div class="card">
+<h3>🧠 AI Study Interface</h3>
+
+<input id="topic" placeholder="Enter topic e.g. Newton Laws">
+
+<div class="aiBox">
+<div class="small">Mode</div>
+<select id="mode">
+<option value="tutorial">Tutorial</option>
+<option value="summary">Summary</option>
+<option value="mcq">MCQ</option>
+<option value="revision">Revision</option>
+</select>
+
+<button onclick="askAI()">Ask AI</button>
+</div>
+
+<div class="small">Opens ChatGPT with structured prompt</div>
 </div>
 </div>
 
 <script>
 
-/* NAV SYSTEM */
+/* NAV */
 function openPage(id,btn){
 document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
 document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
@@ -207,13 +214,11 @@ btn.classList.add('active');
 function calcGPA(){
 let u=parseFloat(document.getElementById("unit1").value);
 let g=parseFloat(document.getElementById("grade1").value);
-
 if(!u||isNaN(g)) return alert("Fill data");
 
-let gpa=(u*g/u).toFixed(2); // simple demo single course
-
-document.getElementById("gpaResult").innerHTML="GPA: "+gpa;
-localStorage.setItem("last_gpa",gpa);
+let gpa=(u*g/u).toFixed(2);
+document.getElementById("gpaOut").innerText="GPA: "+gpa;
+localStorage.setItem("gpa",gpa);
 updateDash();
 }
 
@@ -221,90 +226,75 @@ updateDash();
 function calcCGPA(){
 let u=parseFloat(document.getElementById("cunit1").value);
 let g=parseFloat(document.getElementById("cgpa1").value);
-
 if(!u||!g) return alert("Fill data");
 
 let cgpa=g.toFixed(2);
-document.getElementById("cgpaResult").innerHTML="CGPA: "+cgpa;
-localStorage.setItem("last_cgpa",cgpa);
+document.getElementById("cgpaOut").innerText="CGPA: "+cgpa;
+localStorage.setItem("cgpa",cgpa);
 updateDash();
 }
 
-/* DASHBOARD */
+/* DASH */
 function updateDash(){
-let gpa=localStorage.getItem("last_gpa")||"0";
-let cgpa=localStorage.getItem("last_cgpa")||"0";
+let gpa=localStorage.getItem("gpa")||"0";
+let cgpa=localStorage.getItem("cgpa")||"0";
 
-document.getElementById("dashData").innerHTML=`
-Current GPA: ${gpa}<br>
-Current CGPA: ${cgpa}<br>
-Status: ${cgpa>=3.5?"Good 👍":"Needs Improvement ⚠️"}
-`;
+document.getElementById("dash").innerHTML=
+`GPA: ${gpa}<br>CGPA: ${cgpa}<br>Status: ${cgpa>=3.5?"Good 👍":"Needs Improvement ⚠️"}`;
 }
 
 /* PLANNER */
 function savePlan(){
-let p=document.getElementById("plan").value;
-localStorage.setItem("plan",p);
-document.getElementById("planOut").innerText="Saved ✔";
-}
-window.onload=function(){
-document.getElementById("plan").value=localStorage.getItem("plan")||"";
-updateDash();
+localStorage.setItem("plan",document.getElementById("plan").value);
+document.getElementById("planMsg").innerText="Saved ✔";
 }
 
 /* ANALYZER */
 function analyze(){
-let g=parseFloat(localStorage.getItem("last_gpa")||0);
+let g=parseFloat(localStorage.getItem("gpa")||0);
+
 let msg="";
+if(g>=4.5) msg="Excellent 🔥";
+else if(g>=3.5) msg="Good 👍";
+else if(g>=2.4) msg="Average ⚠️";
+else msg="Low performance 📌";
 
-if(g>=4.5) msg="Excellent performance 🔥";
-else if(g>=3.5) msg="Good, keep improving 👍";
-else if(g>=2.4) msg="Average, increase effort ⚠️";
-else msg="Low performance, need serious study 📌";
-
-document.getElementById("analysis").innerHTML=msg;
+document.getElementById("analysis").innerText=msg;
 }
 
 /* TIMER */
-let t=1500;
-let run;
+let t=1500,run;
 
-function updateTime(){
+function update(){
 let m=Math.floor(t/60);
 let s=t%60;
 document.getElementById("time").innerText=
 `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 }
 
-function startTimer(){
+function start(){
 if(run) return;
-run=setInterval(()=>{
-t--;
-updateTime();
-if(t<=0){
-clearInterval(run);
-document.getElementById("status").innerText="Session done ✔";
+run=setInterval(()=>{t--;update();if(t<=0)clearInterval(run);},1000);
 }
-},1000);
+function pause(){clearInterval(run);run=null;}
+function reset(){clearInterval(run);run=null;t=1500;update();}
+
+/* AI RESTORED */
+function askAI(){
+let topic=document.getElementById("topic").value;
+let mode=document.getElementById("mode").value;
+
+if(!topic) return alert("Enter topic");
+
+let prompt=`Act as GoatTutor AI. Mode:${mode}. Topic:${topic}`;
+
+window.open("https://chatgpt.com/?q="+encodeURIComponent(prompt));
 }
 
-function pauseTimer(){
-clearInterval(run);
-run=null;
-}
-
-function resetTimer(){
-clearInterval(run);
-run=null;
-t=1500;
-updateTime();
-document.getElementById("status").innerText="Ready";
-}
-
-updateTime();
+update();
+updateDash();
 
 </script>
 
 </body>
-                                                 </html>
+</html>
