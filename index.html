@@ -8,6 +8,7 @@
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "xb50ly2ja2");
   </script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GoatTutor NG v4 🐐</title>
@@ -27,7 +28,6 @@ min-height:100vh;
 padding:12px;
 }
 
-/* LOGIN */
 #login{
 position:fixed;
 inset:0;
@@ -69,7 +69,6 @@ font-weight:bold;
 cursor:pointer;
 }
 
-/* MAIN */
 .card{
 background:#1e293b;
 padding:15px;
@@ -91,7 +90,6 @@ background:#0f172a;
 color:white;
 }
 
-/* QUICK */
 .quick{
 display:grid;
 grid-template-columns:repeat(3,1fr);
@@ -107,7 +105,6 @@ text-align:center;
 cursor:pointer;
 }
 
-/* MODES */
 .options{
 display:grid;
 grid-template-columns:repeat(2,1fr);
@@ -123,11 +120,8 @@ text-align:center;
 cursor:pointer;
 }
 
-.selected{
-background:#2563eb;
-}
+.selected{background:#2563eb;}
 
-/* BUTTONS */
 button{
 width:100%;
 margin-top:10px;
@@ -140,7 +134,6 @@ font-weight:bold;
 cursor:pointer;
 }
 
-/* GPA TABLE */
 .row{
 display:flex;
 gap:8px;
@@ -156,7 +149,6 @@ background:#0f172a;
 color:white;
 }
 
-/* FOOTER */
 footer{
 margin-top:15px;
 text-align:center;
@@ -164,12 +156,8 @@ font-size:12px;
 color:#94a3b8;
 }
 
-.logoutBtn{
-margin-top:10px;
-background:#ef4444;
-}
+.logoutBtn{background:#ef4444;margin-top:10px;}
 
-/* MOBILE */
 @media(max-width:600px){
 .quick{grid-template-columns:repeat(2,1fr);}
 .options{grid-template-columns:1fr;}
@@ -180,7 +168,6 @@ background:#ef4444;
 
 <body>
 
-<!-- LOGIN SCREEN -->
 <div id="login">
 <div class="loginBox">
 <h3>🐐 GoatTutor Login</h3>
@@ -216,7 +203,7 @@ background:#ef4444;
 
 <hr style="margin:15px 0;border:1px solid #334155">
 
-<h3>📊 GPA Calculator (Per Semester)</h3>
+<h3>📊 GPA Calculator</h3>
 
 <div id="gpaBox">
 <div class="row">
@@ -239,7 +226,7 @@ background:#ef4444;
 
 <hr style="margin:15px 0;border:1px solid #334155">
 
-<h3>📈 CGPA Calculator (Cumulative)</h3>
+<h3>📈 CGPA Calculator</h3>
 
 <div id="cgpaBox">
 <div class="row">
@@ -262,13 +249,10 @@ background:#ef4444;
 
 <script>
 
-/* LOGIN */
 function login(){
 let u=document.getElementById("user").value;
 let p=document.getElementById("pass").value;
-
 if(!u||!p) return alert("Fill login");
-
 localStorage.setItem("gt_user",u);
 document.getElementById("login").style.display="none";
 }
@@ -284,12 +268,9 @@ document.getElementById("login").style.display="none";
 }
 }
 
-/* AI */
 let mode="tutorial";
 
-function fill(t){
-document.getElementById("topic").value=t;
-}
+function fill(t){document.getElementById("topic").value=t;}
 
 function setMode(m,el){
 mode=m;
@@ -300,9 +281,7 @@ el.classList.add("selected");
 function teach(){
 let t=document.getElementById("topic").value.trim();
 if(!t) return alert("Enter topic");
-
 let prompt=`Act as GoatTutor AI. Mode:${mode}. Topic:${t}`;
-
 window.open("https://chatgpt.com/?q="+encodeURIComponent(prompt),"_blank");
 }
 
@@ -314,7 +293,7 @@ gpaCount++;
 let d=document.createElement("div");
 d.className="row";
 d.innerHTML=`
-<input type="number" id="unit${gpaCount}" placeholder="Unit">
+<input type="number" id="unit${gpaCount}">
 <select id="grade${gpaCount}">
 <option value="5">A</option>
 <option value="4">B</option>
@@ -328,20 +307,17 @@ document.getElementById("gpaBox").appendChild(d);
 
 function calcGPA(){
 let total=0,units=0;
-
 for(let i=1;i<=gpaCount;i++){
 let u=parseFloat(document.getElementById("unit"+i).value);
 let g=parseFloat(document.getElementById("grade"+i).value);
 if(!isNaN(u)){total+=u*g;units+=u;}
 }
-
 if(units===0) return alert("Enter data");
-
 let gpa=(total/units).toFixed(2);
 document.getElementById("gpaResult").innerHTML="🎓 GPA: "+gpa+"/5.0";
 }
 
-/* CGPA */
+/* CGPA WITH CLASSIFICATION */
 let semCount=1;
 
 function addCGPA(){
@@ -349,29 +325,37 @@ semCount++;
 let d=document.createElement("div");
 d.className="row";
 d.innerHTML=`
-<input type="number" id="cunit${semCount}" placeholder="Semester Units">
-<input type="number" id="cgpa${semCount}" placeholder="Semester GPA">
+<input type="number" id="cunit${semCount}">
+<input type="number" id="cgpa${semCount}">
 `;
 document.getElementById("cgpaBox").appendChild(d);
 }
 
 function calcCGPA(){
-let totalPoints=0,totalUnits=0;
-
+let total=0,units=0;
 for(let i=1;i<=semCount;i++){
 let u=parseFloat(document.getElementById("cunit"+i).value);
 let g=parseFloat(document.getElementById("cgpa"+i).value);
-
 if(!isNaN(u)&&!isNaN(g)){
-totalPoints+=u*g;
-totalUnits+=u;
+total+=u*g;
+units+=u;
 }
 }
+if(units===0) return alert("Enter data");
 
-if(totalUnits===0) return alert("Enter data");
+let cgpa=(total/units).toFixed(2);
 
-let cgpa=(totalPoints/totalUnits).toFixed(2);
-document.getElementById("cgpaResult").innerHTML="📈 CGPA: "+cgpa+"/5.0";
+let classs="";
+
+if(cgpa>=4.50) classs="🥇 First Class";
+else if(cgpa>=3.50) classs="🥈 Second Class Upper (2:1)";
+else if(cgpa>=2.40) classs="🥉 Second Class Lower (2:2)";
+else if(cgpa>=1.50) classs="📘 Third Class";
+else if(cgpa>=1.00) classs="📗 Pass";
+else classs="❌ Fail";
+
+document.getElementById("cgpaResult").innerHTML=
+`📈 CGPA: ${cgpa}/5.0<br>${classs}`;
 }
 
 </script>
