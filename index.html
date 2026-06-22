@@ -76,7 +76,7 @@ h2,h3{text-align:center;}
 
 textarea{
 width:100%;
-height:150px;
+height:120px;
 margin-top:10px;
 padding:12px;
 border-radius:10px;
@@ -153,32 +153,24 @@ margin-top:15px;
 
 .logoutBtn{background:#ef4444;margin-top:10px;}
 
-.historyBox{
+/* TIMER */
+.timerBox{
 background:#0f172a;
-padding:10px;
+padding:15px;
+border-radius:12px;
 margin-top:10px;
-border-radius:10px;
-font-size:13px;
-color:#cbd5e1;
-max-height:120px;
-overflow:auto;
+text-align:center;
 }
 
-.dashboardBox{
-background:#0f172a;
-padding:10px;
-margin-top:10px;
-border-radius:10px;
-font-size:13px;
-color:#cbd5e1;
+.timer{
+font-size:40px;
+font-weight:bold;
+margin:10px 0;
 }
 
-canvas{
-width:100%;
-max-height:180px;
-background:#0f172a;
-border-radius:10px;
-margin-top:10px;
+.small{
+font-size:12px;
+color:#94a3b8;
 }
 
 @media(max-width:600px){
@@ -195,8 +187,8 @@ margin-top:10px;
 <div id="login">
 <div class="loginBox">
 <h3>🐐 GoatTutor Login</h3>
-<input id="user" placeholder="Username">
-<input id="pass" type="password" placeholder="Password">
+<input id="user" placeholder="Enter username">
+<input id="pass" type="password" placeholder="Enter password">
 <button onclick="login()">Login</button>
 </div>
 </div>
@@ -227,12 +219,29 @@ margin-top:10px;
 
 <hr>
 
+<h3>⏱ Study Timer (Pomodoro)</h3>
+
+<div class="timerBox">
+<div class="small" id="status">Ready to focus</div>
+<div class="timer" id="display">25:00</div>
+
+<button onclick="startTimer()">▶ Start</button>
+<button onclick="pauseTimer()">⏸ Pause</button>
+<button onclick="resetTimer()">🔄 Reset</button>
+
+<p class="small">Every 25min = 1 focus session</p>
+<p class="small">Break = 5min automatically</p>
+</div>
+
+<hr>
+
 <h3>📊 GPA Calculator</h3>
 
 <div id="gpaBox">
 <div class="row">
-<input type="number" id="unit1">
+<input type="number" placeholder="Course Unit (e.g. 3)" id="unit1">
 <select id="grade1">
+<option disabled selected>Grade (A-F)</option>
 <option value="5">A</option>
 <option value="4">B</option>
 <option value="3">C</option>
@@ -254,8 +263,8 @@ margin-top:10px;
 
 <div id="cgpaBox">
 <div class="row">
-<input type="number" id="cunit1">
-<input type="number" id="cgpa1">
+<input type="number" placeholder="Units" id="cunit1">
+<input type="number" placeholder="GPA" id="cgpa1">
 </div>
 </div>
 
@@ -263,24 +272,6 @@ margin-top:10px;
 <button onclick="calcCGPA()">📊 Calculate CGPA</button>
 
 <div id="cgpaResult"></div>
-
-<hr>
-
-<h3>📊 Academic Dashboard</h3>
-
-<div class="dashboardBox" id="dashboardBox">
-📉 No data yet. Start calculating GPA.
-</div>
-
-<canvas id="chart"></canvas>
-
-<hr>
-
-<h3>📚 History</h3>
-
-<div class="historyBox" id="history"></div>
-
-<button onclick="clearHistory()" style="background:#f97316;">🗑 Clear History</button>
 
 <footer>
 <button class="logoutBtn" onclick="logout()">Logout</button>
@@ -308,12 +299,8 @@ window.onload=function(){
 if(localStorage.getItem("gt_user")){
 document.getElementById("login").style.display="none";
 }
-loadHistory();
-updateDashboard();
-drawChart();
 }
 
-/* AI */
 let mode="tutorial";
 function fill(t){document.getElementById("topic").value=t;}
 
@@ -332,15 +319,15 @@ window.open("https://chatgpt.com/?q="+encodeURIComponent(prompt),"_blank");
 
 /* GPA */
 let gpaCount=1;
-let gpaRecords=JSON.parse(localStorage.getItem("gpa_records")||"[]");
 
 function addGPA(){
 gpaCount++;
 let d=document.createElement("div");
 d.className="row";
 d.innerHTML=`
-<input type="number" id="unit${gpaCount}">
+<input type="number" placeholder="Unit" id="unit${gpaCount}">
 <select id="grade${gpaCount}">
+<option disabled selected>Grade (A-F)</option>
 <option value="5">A</option>
 <option value="4">B</option>
 <option value="3">C</option>
@@ -353,20 +340,14 @@ document.getElementById("gpaBox").appendChild(d);
 
 function calcGPA(){
 let total=0,units=0;
-
 for(let i=1;i<=gpaCount;i++){
 let u=parseFloat(document.getElementById("unit"+i).value);
 let g=parseFloat(document.getElementById("grade"+i).value);
 if(!isNaN(u)){total+=u*g;units+=u;}
 }
-
 if(units===0) return alert("Enter data");
-
 let gpa=(total/units).toFixed(2);
-
 document.getElementById("gpaResult").innerHTML="🎓 GPA: "+gpa+"/5.0";
-
-saveData("GPA",gpa);
 }
 
 /* CGPA */
@@ -377,15 +358,14 @@ semCount++;
 let d=document.createElement("div");
 d.className="row";
 d.innerHTML=`
-<input type="number" id="cunit${semCount}">
-<input type="number" id="cgpa${semCount}">
+<input type="number" placeholder="Units" id="cunit${semCount}">
+<input type="number" placeholder="GPA" id="cgpa${semCount}">
 `;
 document.getElementById("cgpaBox").appendChild(d);
 }
 
 function calcCGPA(){
 let total=0,units=0;
-
 for(let i=1;i<=semCount;i++){
 let u=parseFloat(document.getElementById("cunit"+i).value);
 let g=parseFloat(document.getElementById("cgpa"+i).value);
@@ -394,7 +374,6 @@ total+=u*g;
 units+=u;
 }
 }
-
 if(units===0) return alert("Enter data");
 
 let cgpa=(total/units).toFixed(2);
@@ -410,84 +389,58 @@ document.getElementById("cgpaResult").innerHTML=
 `📈 CGPA: ${cgpa}/5.0<br>${cls}`;
 }
 
-/* HISTORY + DASHBOARD */
-function saveData(type,val){
+/* TIMER */
+let time=1500;
+let running=false;
+let interval;
+let session=0;
+let breakMode=false;
 
-let history=JSON.parse(localStorage.getItem("gt_history")||"[]");
-history.unshift({type,val,date:new Date().toLocaleString()});
-localStorage.setItem("gt_history",JSON.stringify(history));
-
-if(type==="GPA"){
-gpaRecords.unshift(parseFloat(val));
-localStorage.setItem("gpa_records",JSON.stringify(gpaRecords));
+function updateDisplay(){
+let m=Math.floor(time/60);
+let s=time%60;
+document.getElementById("display").innerText=
+`${m.toString().padStart(2,"0")}:${s.toString().padStart(2,"0")}`;
 }
 
-loadHistory();
-updateDashboard();
-drawChart();
+function startTimer(){
+if(running) return;
+running=true;
+
+interval=setInterval(()=>{
+time--;
+updateDisplay();
+
+if(time<=0){
+if(!breakMode){
+session++;
+document.getElementById("status").innerText="Break time ☕";
+time=300;
+breakMode=true;
+}else{
+document.getElementById("status").innerText="Focus session "+session;
+time=1500;
+breakMode=false;
+}
+}
+},1000);
 }
 
-function loadHistory(){
-let history=JSON.parse(localStorage.getItem("gt_history")||"[]");
-document.getElementById("history").innerHTML=
-history.map(h=>`[${h.date}] ${h.type}: ${h.val}`).join("<br>");
+function pauseTimer(){
+clearInterval(interval);
+running=false;
 }
 
-function clearHistory(){
-localStorage.removeItem("gt_history");
-localStorage.removeItem("gpa_records");
-gpaRecords=[];
-loadHistory();
-updateDashboard();
-drawChart();
+function resetTimer(){
+clearInterval(interval);
+running=false;
+time=1500;
+breakMode=false;
+document.getElementById("status").innerText="Ready to focus";
+updateDisplay();
 }
 
-function updateDashboard(){
-
-if(gpaRecords.length===0){
-document.getElementById("dashboardBox").innerHTML="📉 No data yet.";
-return;
-}
-
-let avg=(gpaRecords.reduce((a,b)=>a+b,0)/gpaRecords.length).toFixed(2);
-let best=Math.max(...gpaRecords);
-let worst=Math.min(...gpaRecords);
-
-document.getElementById("dashboardBox").innerHTML=`
-📊 Avg GPA: ${avg}<br>
-🏆 Best GPA: ${best}<br>
-⚠️ Lowest GPA: ${worst}<br>
-📚 Records: ${gpaRecords.length}
-`;
-}
-
-function drawChart(){
-
-let canvas=document.getElementById("chart");
-let ctx=canvas.getContext("2d");
-
-canvas.width=canvas.offsetWidth;
-canvas.height=180;
-
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-if(gpaRecords.length<2) return;
-
-let step=canvas.width/(gpaRecords.length-1);
-
-ctx.beginPath();
-ctx.strokeStyle="#3b82f6";
-ctx.lineWidth=2;
-
-gpaRecords.forEach((g,i)=>{
-let x=i*step;
-let y=canvas.height-(g/5*canvas.height);
-if(i===0) ctx.moveTo(x,y);
-else ctx.lineTo(x,y);
-});
-
-ctx.stroke();
-}
+updateDisplay();
 
 </script>
 
