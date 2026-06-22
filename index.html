@@ -14,149 +14,55 @@
 <title>GoatTutor NG v4 🐐</title>
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Segoe UI,sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif;}
+body{background:#0f172a;color:white;min-height:100vh;padding:12px;}
 
-body{
-background:#0f172a;
-color:white;
-min-height:100vh;
-padding:12px;
-}
+#login{position:fixed;inset:0;background:#0f172a;display:flex;justify-content:center;align-items:center;z-index:999;}
 
-#login{
-position:fixed;
-inset:0;
-background:#0f172a;
-display:flex;
-justify-content:center;
-align-items:center;
-z-index:999;
-}
+.loginBox{background:#1e293b;padding:20px;border-radius:14px;width:90%;max-width:320px;text-align:center;}
 
-.loginBox{
-background:#1e293b;
-padding:20px;
-border-radius:14px;
-width:90%;
-max-width:320px;
-text-align:center;
-}
+.loginBox input{width:100%;margin-top:10px;padding:12px;border-radius:10px;border:none;background:#0f172a;color:white;}
 
-.loginBox input{
-width:100%;
-margin-top:10px;
-padding:12px;
-border-radius:10px;
-border:none;
-background:#0f172a;
-color:white;
-}
+.loginBox button{width:100%;margin-top:10px;padding:12px;border:none;border-radius:10px;background:#3b82f6;color:white;font-weight:bold;cursor:pointer;}
 
-.loginBox button{
-width:100%;
-margin-top:10px;
-padding:12px;
-border:none;
-border-radius:10px;
-background:#3b82f6;
-color:white;
-font-weight:bold;
-cursor:pointer;
-}
-
-.card{
-background:#1e293b;
-padding:15px;
-border-radius:15px;
-max-width:900px;
-margin:auto;
-}
+.card{background:#1e293b;padding:15px;border-radius:15px;max-width:900px;margin:auto;}
 
 h2,h3{text-align:center;}
 
-textarea{
-width:100%;
-height:150px;
-margin-top:10px;
-padding:12px;
-border-radius:10px;
-border:none;
-background:#0f172a;
-color:white;
-}
+textarea{width:100%;height:150px;margin-top:10px;padding:12px;border-radius:10px;border:none;background:#0f172a;color:white;}
 
-.quick{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:8px;
-margin-top:10px;
-}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
 
-.quick div{
-background:#334155;
-padding:10px;
-border-radius:8px;
-text-align:center;
-cursor:pointer;
-}
+.quick div{background:#334155;padding:10px;border-radius:8px;text-align:center;cursor:pointer;}
 
-.options{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:8px;
-margin-top:10px;
-}
+.options{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px;}
 
-.option{
-background:#334155;
-padding:10px;
-border-radius:8px;
-text-align:center;
-cursor:pointer;
-}
+.option{background:#334155;padding:10px;border-radius:8px;text-align:center;cursor:pointer;}
 
 .selected{background:#2563eb;}
 
-button{
-width:100%;
-margin-top:10px;
-padding:12px;
-border:none;
-border-radius:10px;
-background:#3b82f6;
-color:white;
-font-weight:bold;
-cursor:pointer;
-}
+button{width:100%;margin-top:10px;padding:12px;border:none;border-radius:10px;background:#3b82f6;color:white;font-weight:bold;cursor:pointer;}
 
-.row{
-display:flex;
-gap:8px;
-margin-top:8px;
-}
+.row{display:flex;gap:8px;margin-top:8px;}
 
-input,select{
-flex:1;
-padding:10px;
-border-radius:8px;
-border:none;
-background:#0f172a;
-color:white;
-}
+input,select{flex:1;padding:10px;border-radius:8px;border:none;background:#0f172a;color:white;}
 
-footer{
-margin-top:15px;
-text-align:center;
-font-size:12px;
-color:#94a3b8;
-}
+footer{text-align:center;font-size:12px;color:#94a3b8;margin-top:15px;}
 
 .logoutBtn{background:#ef4444;margin-top:10px;}
+
+.historyBox{
+background:#0f172a;
+padding:10px;
+margin-top:10px;
+border-radius:10px;
+font-size:13px;
+color:#cbd5e1;
+max-height:150px;
+overflow:auto;
+}
+
+.clearBtn{background:#f97316;}
 
 @media(max-width:600px){
 .quick{grid-template-columns:repeat(2,1fr);}
@@ -168,11 +74,12 @@ color:#94a3b8;
 
 <body>
 
+<!-- LOGIN -->
 <div id="login">
 <div class="loginBox">
 <h3>🐐 GoatTutor Login</h3>
-<input id="user" placeholder="Username">
-<input id="pass" type="password" placeholder="Password">
+<input id="user">
+<input id="pass" type="password">
 <button onclick="login()">Login</button>
 </div>
 </div>
@@ -181,7 +88,7 @@ color:#94a3b8;
 
 <h2>🐐 GoatTutor NG v4</h2>
 
-<textarea id="topic" placeholder="Enter topic..."></textarea>
+<textarea id="topic"></textarea>
 
 <div class="quick">
 <div onclick="fill('PHY 101')">PHY 101</div>
@@ -201,13 +108,13 @@ color:#94a3b8;
 
 <button onclick="teach()">🚀 Teach Me</button>
 
-<hr style="margin:15px 0;border:1px solid #334155">
+<hr>
 
 <h3>📊 GPA Calculator</h3>
 
 <div id="gpaBox">
 <div class="row">
-<input type="number" id="unit1" placeholder="Unit">
+<input type="number" id="unit1">
 <select id="grade1">
 <option value="5">A</option>
 <option value="4">B</option>
@@ -224,14 +131,14 @@ color:#94a3b8;
 
 <div id="gpaResult"></div>
 
-<hr style="margin:15px 0;border:1px solid #334155">
+<hr>
 
 <h3>📈 CGPA Calculator</h3>
 
 <div id="cgpaBox">
 <div class="row">
-<input type="number" id="cunit1" placeholder="Semester Units">
-<input type="number" id="cgpa1" placeholder="Semester GPA">
+<input type="number" id="cunit1">
+<input type="number" id="cgpa1">
 </div>
 </div>
 
@@ -239,6 +146,12 @@ color:#94a3b8;
 <button onclick="calcCGPA()">📊 Calculate CGPA</button>
 
 <div id="cgpaResult"></div>
+
+<hr>
+
+<h3>📚 History</h3>
+<div class="historyBox" id="history"></div>
+<button class="clearBtn" onclick="clearHistory()">🗑 Clear History</button>
 
 <footer>
 <button class="logoutBtn" onclick="logout()">Logout</button>
@@ -266,6 +179,7 @@ window.onload=function(){
 if(localStorage.getItem("gt_user")){
 document.getElementById("login").style.display="none";
 }
+loadHistory();
 }
 
 let mode="tutorial";
@@ -315,9 +229,10 @@ if(!isNaN(u)){total+=u*g;units+=u;}
 if(units===0) return alert("Enter data");
 let gpa=(total/units).toFixed(2);
 document.getElementById("gpaResult").innerHTML="🎓 GPA: "+gpa+"/5.0";
+saveHistory("GPA",gpa);
 }
 
-/* CGPA WITH CLASSIFICATION */
+/* CGPA */
 let semCount=1;
 
 function addCGPA(){
@@ -346,16 +261,36 @@ if(units===0) return alert("Enter data");
 let cgpa=(total/units).toFixed(2);
 
 let classs="";
+if(cgpa>=4.50) classs="First Class";
+else if(cgpa>=3.50) classs="2:1";
+else if(cgpa>=2.40) classs="2:2";
+else if(cgpa>=1.50) classs="Third Class";
+else classs="Fail";
 
-if(cgpa>=4.50) classs="🥇 First Class";
-else if(cgpa>=3.50) classs="🥈 Second Class Upper (2:1)";
-else if(cgpa>=2.40) classs="🥉 Second Class Lower (2:2)";
-else if(cgpa>=1.50) classs="📘 Third Class";
-else if(cgpa>=1.00) classs="📗 Pass";
-else classs="❌ Fail";
+document.getElementById("cgpaResult").innerHTML=`📈 CGPA: ${cgpa}/5.0<br>${classs}`;
 
-document.getElementById("cgpaResult").innerHTML=
-`📈 CGPA: ${cgpa}/5.0<br>${classs}`;
+saveHistory("CGPA",cgpa+" ("+classs+")");
+}
+
+/* HISTORY SYSTEM */
+function saveHistory(type,value){
+let history=JSON.parse(localStorage.getItem("gt_history")||"[]");
+history.unshift({type,value,date:new Date().toLocaleString()});
+localStorage.setItem("gt_history",JSON.stringify(history));
+loadHistory();
+}
+
+function loadHistory(){
+let history=JSON.parse(localStorage.getItem("gt_history")||"[]");
+let box=document.getElementById("history");
+box.innerHTML=history.map(h=>
+`[${h.date}] ${h.type}: ${h.value}`
+).join("<br>");
+}
+
+function clearHistory(){
+localStorage.removeItem("gt_history");
+loadHistory();
 }
 
 </script>
