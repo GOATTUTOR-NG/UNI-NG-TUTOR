@@ -183,10 +183,14 @@ background:#ef4444;
 <!-- LOGIN SCREEN -->
 <div id="login">
 <div class="loginBox">
-<h3>🐐 GoatTutor Login</h3>
-<input id="user" placeholder="Username">
-<input id="pass" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
+<h3>🐐 GoatTutor NG</h3>
+
+<input id="user" placeholder="Enter Username">
+
+<button onclick="login()">
+Continue
+</button>
+
 </div>
 </div>
 
@@ -264,24 +268,48 @@ background:#ef4444;
 
 /* LOGIN */
 function login(){
-let u=document.getElementById("user").value;
-let p=document.getElementById("pass").value;
 
-if(!u||!p) return alert("Fill login");
+let user =
+document.getElementById("user").value.trim();
 
-localStorage.setItem("gt_user",u);
-document.getElementById("login").style.display="none";
+if(user===""){
+alert("Enter Username");
+return;
 }
 
-function logout(){
-localStorage.removeItem("gt_user");
-location.reload();
-}
-
+localStorage.setItem("gt_user",user);
 window.onload=function(){
+
 if(localStorage.getItem("gt_user")){
+
 document.getElementById("login").style.display="none";
+
+showWelcome();
+
 }
+
+}
+document.getElementById("login").style.display="none";
+
+showWelcome();
+
+}
+  function showWelcome(){
+
+let user =
+localStorage.getItem("gt_user");
+
+if(!user) return;
+
+let title =
+document.querySelector("h2");
+
+title.innerHTML =
+"🐐 GoatTutor NG<br><small>Welcome back, "
++ user +
+" 👋</small>";
+
+  }
 }
 
 /* AI */
