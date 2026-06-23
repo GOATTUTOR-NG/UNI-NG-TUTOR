@@ -47,6 +47,7 @@ padding:15px;
 transition:0.3s;
 border-right:1px solid #334155;
 z-index:100;
+overflow-y:auto;
 }
 
 .sidebar.open{left:0;}
@@ -66,6 +67,8 @@ cursor:pointer;
 /* MAIN */
 .container{
 padding:12px;
+max-width:700px;
+margin:auto;
 }
 
 .card{
@@ -94,7 +97,10 @@ border-radius:8px;
 background:#3b82f6;
 color:white;
 cursor:pointer;
+font-weight:600;
 }
+
+button:active{opacity:0.8;}
 
 .small{
 font-size:12px;
@@ -105,10 +111,12 @@ color:#94a3b8;
 display:flex;
 gap:6px;
 margin-top:8px;
+flex-wrap:wrap;
 }
 
 .row input,.row select{
 flex:1;
+min-width:80px;
 }
 
 /* TIMER */
@@ -116,18 +124,40 @@ flex:1;
 font-size:40px;
 text-align:center;
 margin:10px 0;
+font-weight:bold;
 }
 
-/* RESPONSIVE FIX */
+/* PAGE SWITCH (Planner, Analyzer) */
 .page{
+display:none;
+}
+
+.page.active{
 display:block;
 }
 
-/* MOBILE IMPROVEMENT */
-@media(max-width:600px){
-.timer{font-size:32px;}
+/* HISTORY LIST */
+.history-item{
+background:#0f172a;
+border-radius:6px;
+padding:6px 10px;
+margin:5px 0;
+font-size:14px;
 }
 
+/* NOTIFICATION BAR */
+.notif-toggle{
+display:flex;
+align-items:center;
+gap:10px;
+margin-top:10px;
+}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+.timer{font-size:32px;}
+.row input,.row select{min-width:60px;}
+}
 </style>
 </head>
 
@@ -182,6 +212,11 @@ Loading...
 ⏱ Study Hours:
 <span id="hoursDisplay">0</span> hrs
 </div>
+
+<div class="small" style="margin-top:8px;">
+📋 Recent Sessions:
+<span id="sessionCount">0</span>
+</div>
 </div>
 
 <!-- GPA -->
@@ -190,7 +225,7 @@ Loading...
 
 <div id="gpaBox">
 <div class="row">
-<input type="number" id="unit1" placeholder="Unit">
+<input type="number" id="unit1" placeholder="Unit" value="3">
 <select id="grade1">
 <option value="5">A</option>
 <option value="4">B</option>
@@ -206,6 +241,12 @@ Loading...
 <button onclick="calcGPA()">Calculate GPA</button>
 
 <div id="gpaOut"></div>
+
+<!-- GPA History -->
+<div style="margin-top:12px;">
+<strong>📜 GPA History</strong>
+<div id="gpaHistory" style="max-height:120px;overflow-y:auto;"></div>
+</div>
 </div>
 
 <!-- CGPA -->
@@ -214,8 +255,8 @@ Loading...
 
 <div id="cgpaBox">
 <div class="row">
-<input type="number" id="cunit1" placeholder="Semester Units">
-<input type="number" id="cgpa1" placeholder="Semester GPA">
+<input type="number" id="cunit1" placeholder="Semester Units" value="15">
+<input type="number" id="cgpa1" placeholder="Semester GPA" value="4.0">
 </div>
 </div>
 
@@ -231,12 +272,44 @@ Loading...
 
 <div class="timer" id="time">25:00</div>
 
+<div class="row">
 <button onclick="startTimer()">Start</button>
 <button onclick="pauseTimer()">Pause</button>
 <button onclick="resetTimer()">Reset</button>
 </div>
 
-<!-- PLANNER (FIXED RESPONSIVE) -->
+<div class="small" style="margin-top:8px;" id="timerStatus">Ready</div>
+</div>
+
+<!-- COUNTDOWN TO EXAM -->
+<div class="card">
+<h3>⏳ Exam Countdown</h3>
+
+<div class="row">
+<input type="date" id="examDate">
+<button onclick="setCountdown()">Set Date</button>
+</div>
+
+<div class="timer" id="countdownDisplay" style="font-size:24px;margin-top:8px;">-- days</div>
+</div>
+
+<!-- NOTIFICATIONS / REMINDERS -->
+<div class="card">
+<h3>🔔 Study Reminder</h3>
+
+<div id="notifStatus" class="small">Notifications: not requested</div>
+
+<button onclick="requestNotification()">Enable Notifications</button>
+
+<div class="row" style="margin-top:8px;">
+<input type="time" id="reminderTime" placeholder="HH:MM">
+<input type="text" id="reminderMsg" placeholder="Message">
+</div>
+<button onclick="setReminder()">Set Reminder</button>
+<div class="small" id="reminderStatus"></div>
+</div>
+
+<!-- PLANNER (HIDDEN BY DEFAULT, SHOWN VIA SIDEBAR) -->
 <div class="card page" id="planner">
 <h3>📅 Weekly Planner</h3>
 
@@ -247,7 +320,7 @@ Loading...
 <div class="small" id="planStatus"></div>
 </div>
 
-<!-- ANALYZER (FIXED RESPONSIVE) -->
+<!-- ANALYZER (HIDDEN BY DEFAULT, SHOWN VIA SIDEBAR) -->
 <div class="card page" id="analyzer">
 <h3>📊 Smart Analyzer</h3>
 
@@ -261,21 +334,22 @@ No analysis yet
 </div>
 
 <script>
-
-/* MENU */
+/* ==================== MENU & SIDEBAR ==================== */
 function toggleMenu(){
 document.getElementById("sidebar").classList.toggle("open");
 }
 
 function openSide(id){
+// Hide all page cards, show selected
 document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
 document.getElementById(id).classList.add("active");
+// Close sidebar on mobile
 toggleMenu();
 }
 
-/* AI */
+/* ==================== AI INTERFACE ==================== */
 function askAI(){
-let t=document.getElementById("topic").value;
+let t=document.getElementById("topic").value.trim();
 let m=document.getElementById("mode").value;
 if(!t) return alert("Enter topic");
 
@@ -284,30 +358,25 @@ window.open("https://chatgpt.com/?q="+encodeURIComponent(
 ));
 }
 
-  /* DEGREE CLASSIFICATION */
+/* ==================== DEGREE CLASSIFICATION ==================== */
 function getDegreeClass(cgpa){
-
 cgpa=parseFloat(cgpa);
-
+if(isNaN(cgpa)) return "N/A";
 if(cgpa>=4.50) return "🥇 First Class";
 if(cgpa>=3.50) return "🥈 Second Class Upper";
 if(cgpa>=2.40) return "🥉 Second Class Lower";
 if(cgpa>=1.50) return "📘 Third Class";
 if(cgpa>=1.00) return "📗 Pass";
-
 return "Not Available";
 }
 
-/* STUDY STREAK */
+/* ==================== STREAK & STUDY HOURS ==================== */
 function updateStreak(){
-
 let today=new Date().toDateString();
-
 let lastVisit=localStorage.getItem("lastVisit");
 let streak=parseInt(localStorage.getItem("streak"))||0;
 
 if(lastVisit!==today){
-
 let yesterday=new Date();
 yesterday.setDate(yesterday.getDate()-1);
 
@@ -325,32 +394,36 @@ document.getElementById("streakDisplay").innerText=
 localStorage.getItem("streak")||1;
 }
 
-/* STUDY HOURS */
 function updateStudyHours(){
-
-let minutes=parseInt(
-localStorage.getItem("studyMinutes")
-)||0;
-
+let totalMinutes=0;
+let sessions=JSON.parse(localStorage.getItem("studySessions")||"[]");
+sessions.forEach(s=>{ totalMinutes+=s.duration||0; });
 document.getElementById("hoursDisplay").innerText=
-(minutes/60).toFixed(1);
+(totalMinutes/60).toFixed(1);
+document.getElementById("sessionCount").innerText=sessions.length;
 }
-  
-function updateDash(){
 
+function recordStudySession(durationMinutes){
+let sessions=JSON.parse(localStorage.getItem("studySessions")||"[]");
+sessions.push({
+date: new Date().toISOString(),
+duration: durationMinutes
+});
+localStorage.setItem("studySessions",JSON.stringify(sessions));
+updateStudyHours();
+}
+
+/* ==================== DASHBOARD UPDATE ==================== */
+function updateDash(){
 let gpa=localStorage.getItem("gpa")||"0";
 let cgpa=localStorage.getItem("cgpa")||"0";
-
 let degree=getDegreeClass(cgpa);
 
 document.getElementById("dash").innerHTML=
 `
 🎓 GPA: ${gpa}<br><br>
-
 📈 CGPA: ${cgpa}<br><br>
-
 🏆 Degree Class: ${degree}<br><br>
-
 ${cgpa>=3.5
 ?"✅ Academic Standing: Good"
 :"⚠️ Academic Standing: Needs Improvement"}
@@ -360,7 +433,7 @@ updateStreak();
 updateStudyHours();
 }
 
-/* GPA */
+/* ==================== GPA CALCULATOR ==================== */
 let gpaCount=1;
 
 function addGPA(){
@@ -368,7 +441,7 @@ gpaCount++;
 let d=document.createElement("div");
 d.className="row";
 d.innerHTML=`
-<input type="number" id="unit${gpaCount}" placeholder="Unit">
+<input type="number" id="unit${gpaCount}" placeholder="Unit" value="3">
 <select id="grade${gpaCount}">
 <option value="5">A</option>
 <option value="4">B</option>
@@ -384,25 +457,48 @@ function calcGPA(){
 let total=0,units=0;
 
 for(let i=1;i<=gpaCount;i++){
-let u=parseFloat(document.getElementById("unit"+i).value);
-let g=parseFloat(document.getElementById("grade"+i).value);
-
+let u=parseFloat(document.getElementById("unit"+i)?.value);
+let g=parseFloat(document.getElementById("grade"+i)?.value);
 if(!isNaN(u)&&!isNaN(g)){
 total+=u*g;
 units+=u;
 }
 }
 
-if(units===0) return alert("Enter data");
+if(units===0) return alert("Enter at least one course");
 
 let gpa=(total/units).toFixed(2);
 localStorage.setItem("gpa",gpa);
 document.getElementById("gpaOut").innerText="GPA: "+gpa;
 
+// Save to history
+let history=JSON.parse(localStorage.getItem("gpaHistory")||"[]");
+history.push({
+gpa: gpa,
+units: units,
+date: new Date().toLocaleDateString()
+});
+// Keep last 10
+if(history.length>10) history=history.slice(-10);
+localStorage.setItem("gpaHistory",JSON.stringify(history));
+displayGPAHistory();
+
 updateDash();
 }
 
-/* CGPA */
+function displayGPAHistory(){
+let history=JSON.parse(localStorage.getItem("gpaHistory")||"[]");
+let container=document.getElementById("gpaHistory");
+if(history.length===0){
+container.innerHTML="<div class='history-item'>No history yet</div>";
+return;
+}
+container.innerHTML=history.map(h=>
+`<div class="history-item">📅 ${h.date} – GPA: ${h.gpa} (${h.units} units)</div>`
+).reverse().join("");
+}
+
+/* ==================== CGPA CALCULATOR ==================== */
 let semCount=1;
 
 function addCGPA(){
@@ -410,8 +506,8 @@ semCount++;
 let d=document.createElement("div");
 d.className="row";
 d.innerHTML=`
-<input type="number" id="cunit${semCount}" placeholder="Units">
-<input type="number" id="cgpa${semCount}" placeholder="GPA">
+<input type="number" id="cunit${semCount}" placeholder="Units" value="15">
+<input type="number" id="cgpa${semCount}" placeholder="GPA" value="4.0">
 `;
 document.getElementById("cgpaBox").appendChild(d);
 }
@@ -420,16 +516,15 @@ function calcCGPA(){
 let total=0,units=0;
 
 for(let i=1;i<=semCount;i++){
-let u=parseFloat(document.getElementById("cunit"+i).value);
-let g=parseFloat(document.getElementById("cgpa"+i).value);
-
+let u=parseFloat(document.getElementById("cunit"+i)?.value);
+let g=parseFloat(document.getElementById("cgpa"+i)?.value);
 if(!isNaN(u)&&!isNaN(g)){
 total+=u*g;
 units+=u;
 }
 }
 
-if(units===0) return alert("Enter data");
+if(units===0) return alert("Enter at least one semester");
 
 let cgpa=(total/units).toFixed(2);
 localStorage.setItem("cgpa",cgpa);
@@ -438,29 +533,42 @@ document.getElementById("cgpaOut").innerText="CGPA: "+cgpa;
 updateDash();
 }
 
-/* PLANNER */
+/* ==================== PLANNER ==================== */
 function savePlan(){
-localStorage.setItem("plan",document.getElementById("plan").value);
+let planText=document.getElementById("plan").value;
+localStorage.setItem("plan",planText);
 document.getElementById("planStatus").innerText="Saved ✔";
+// Load saved plan
+if(planText) document.getElementById("plan").value=planText;
 }
 
-/* ANALYZER */
+/* ==================== ANALYZER ==================== */
 function analyze(){
 let g=parseFloat(localStorage.getItem("gpa")||0);
+let c=parseFloat(localStorage.getItem("cgpa")||0);
+let sessions=JSON.parse(localStorage.getItem("studySessions")||"[]");
+let totalMin=sessions.reduce((s,se)=>s+(se.duration||0),0);
+let hours=(totalMin/60).toFixed(1);
 
 let msg="";
-if(g>=4.5) msg="🔥 Excellent Performance";
-else if(g>=3.5) msg="👍 Good Performance";
-else if(g>=2.4) msg="⚠️ Average Performance";
-else msg="📌 Low Performance";
+if(g>=4.5) msg="🔥 Excellent GPA performance. ";
+else if(g>=3.5) msg="👍 Good GPA. ";
+else if(g>=2.4) msg="⚠️ Average GPA. Consider improvement. ";
+else msg="📌 Low GPA. Immediate action needed. ";
+
+msg+=`CGPA: ${c.toFixed(2)}. Study hours: ${hours}h.`;
+
+if(c>=3.5) msg+=" You're on track for a good degree class.";
+else if(c>=2.4) msg+=" Work harder to raise your CGPA.";
 
 document.getElementById("analysisBox").innerText=msg;
 }
 
-/* TIMER */
-let t=1500,run;
+/* ==================== TIMER WITH SESSION TRACKING ==================== */
+let t=1500, run=null;
+const DEFAULT_DURATION=25; // minutes
 
-function updateTime(){
+function updateTimerDisplay(){
 let m=Math.floor(t/60);
 let s=t%60;
 document.getElementById("time").innerText=
@@ -469,18 +577,148 @@ document.getElementById("time").innerText=
 
 function startTimer(){
 if(run) return;
-run=setInterval(()=>{t--;updateTime();if(t<=0)clearInterval(run);},1000);
+if(t<=0){
+// If timer ended, reset before starting again
+resetTimer();
+}
+run=setInterval(()=>{
+t--;
+updateTimerDisplay();
+if(t<=0){
+clearInterval(run);
+run=null;
+document.getElementById("timerStatus").innerText="✅ Session complete!";
+recordStudySession(DEFAULT_DURATION);
+// Trigger notification if enabled
+if(Notification.permission==="granted"){
+new Notification("GoatTutor NG",{body:"Study session completed! 🎉 Take a break."});
+}
+}
+},1000);
+document.getElementById("timerStatus").innerText="⏳ Studying...";
 }
 
-function pauseTimer(){clearInterval(run);run=null;}
-function resetTimer(){clearInterval(run);run=null;t=1500;updateTime();}
+function pauseTimer(){
+clearInterval(run);
+run=null;
+document.getElementById("timerStatus").innerText="⏸ Paused";
+}
 
-updateTime();
-updateStreak();
-updateStudyHours();
+function resetTimer(){
+clearInterval(run);
+run=null;
+t=DEFAULT_DURATION*60;
+updateTimerDisplay();
+document.getElementById("timerStatus").innerText="Ready";
+}
+
+/* ==================== EXAM COUNTDOWN ==================== */
+function setCountdown(){
+let dateInput=document.getElementById("examDate").value;
+if(!dateInput) return alert("Pick a date");
+let target=new Date(dateInput).getTime();
+if(isNaN(target)) return alert("Invalid date");
+localStorage.setItem("examTarget",target);
+updateCountdown();
+}
+
+function updateCountdown(){
+let target=localStorage.getItem("examTarget");
+let display=document.getElementById("countdownDisplay");
+if(!target){
+display.innerText="-- days";
+return;
+}
+target=parseInt(target);
+let now=Date.now();
+let diff=target-now;
+if(diff<=0){
+display.innerText="🎉 Exam day!";
+return;
+}
+let days=Math.floor(diff/(1000*60*60*24));
+display.innerText=`${days} day${days!==1?'s':''} left`;
+}
+
+// Update countdown every minute
+setInterval(updateCountdown,60000);
+
+/* ==================== NOTIFICATIONS ==================== */
+function requestNotification(){
+if(!("Notification" in window)){
+alert("Browser does not support notifications");
+return;
+}
+Notification.requestPermission().then(perm=>{
+document.getElementById("notifStatus").innerText=
+`Notifications: ${perm}`;
+if(perm==="granted"){
+new Notification("GoatTutor NG",{body:"Notifications enabled! ✅"});
+}
+});
+}
+
+function setReminder(){
+let timeStr=document.getElementById("reminderTime").value;
+let msg=document.getElementById("reminderMsg").value||"Time to study!";
+if(!timeStr) return alert("Set a time");
+
+let now=new Date();
+let [h,m]=timeStr.split(":").map(Number);
+let reminderDate=new Date(now);
+reminderDate.setHours(h,m,0,0);
+if(reminderDate<=now) reminderDate.setDate(reminderDate.getDate()+1);
+
+let delay=reminderDate-now;
+setTimeout(()=>{
+if(Notification.permission==="granted"){
+new Notification("⏰ Reminder",{body:msg});
+}else{
+alert("Reminder: "+msg);
+}
+document.getElementById("reminderStatus").innerText="Reminder sent!";
+},delay);
+
+document.getElementById("reminderStatus").innerText=
+`Reminder set for ${reminderDate.toLocaleTimeString()}`;
+}
+
+/* ==================== INITIALIZATION ==================== */
+// Load saved data
+(function init(){
+// Planner
+let savedPlan=localStorage.getItem("plan");
+if(savedPlan) document.getElementById("plan").value=savedPlan;
+
+// GPA history display
+displayGPAHistory();
+
+// Countdown display
+updateCountdown();
+
+// Update dashboard
 updateDash();
+
+// Update timer
+updateTimerDisplay();
+
+// Notification permission status
+if(Notification.permission==="granted"){
+document.getElementById("notifStatus").innerText="Notifications: granted";
+}else if(Notification.permission==="denied"){
+document.getElementById("notifStatus").innerText="Notifications: denied";
+}else{
+document.getElementById("notifStatus").innerText="Notifications: not requested";
+}
+
+// Load target exam date from storage if exists
+if(localStorage.getItem("examTarget")){
+document.getElementById("examDate").valueAsDate=
+new Date(parseInt(localStorage.getItem("examTarget")));
+}
+})();
 
 </script>
 
 </body>
-  </html>
+</html>
