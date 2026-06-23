@@ -419,7 +419,7 @@
         <button onclick="navigateTo('planner')" id="navPlanner">📅 Weekly Planner</button>
         <button onclick="navigateTo('analyzer')" id="navAnalyzer">📊 Smart Analyzer</button>
         <button onclick="navigateTo('gpaHistory')" id="navGPAHistory">📜 GPA History</button>
-        <button onclick="navigateTo('countdownSection')" id="navCountdown">⏳ Exam Countdown</button>
+        <button onclick="navigateTo('countdown')" id="navCountdown">⏳ Exam Countdown</button>
         <button onclick="navigateTo('sessionLog')" id="navSessionLog">📝 Session Log</button>
         <button class="close-btn" onclick="closeMenu()">✕ Close Menu</button>
     </div>
@@ -598,4 +598,624 @@
             <div class="card">
                 <h3>📝 Study Session Log</h3>
                 <div class="history-list" id="sessionLogList">
-                    <span class="small">No sessio
+                    <span class="small">No sessions recorded yet. Use the Study Tracker to log sessions.</span>
+                </div>
+                <button onclick="clearSessionLog()" class="danger" style="margin-top:8px;">🗑 Clear Log</button>
+                <button onclick="exportSessionLog()" class="secondary" style="margin-top:4px;">📋 Copy Log</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /* ============ GLOBAL STATE ============ */
+        let gpaCount = 1;
+        let semCount = 1;
+        let timerSeconds = 1500; // 25 minutes default
+        let timerInterval = null;
+        let pomodoroCompleted = parseInt(localStorage.getItem('pomodoroCount')) || 0;
+        let currentSection = 'main';
+        let sessionActive = false;
+
+        /* ============ MENU & NAVIGATION ============ */
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const isOpen = sidebar.classList.contains('open');
+            if (isOpen) {
+                closeMenu();
+            } else {
+                sidebar.classList.add('open');
+                overlay.classList.add('show');
+            }
+        }
+
+        function closeMenu() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('show');
+        }
+
+        // Fixed navigation with exact ID mapping
+        const sectionMap = {
+            'main': 'sectionMain',
+            'planner': 'sectionPlanner',
+            'analyzer': 'sectionAnalyzer',
+            'gpaHistory': 'sectionGPAHistory',
+            'countdown': 'sectionCountdown',
+            'sessionLog': 'sectionSessionLog'
+        };
+
+        const navMap = {
+            'main': 'navMain',
+            'planner': 'navPlanner',
+            'analyzer': 'navAnalyzer',
+            'gpaHistory': 'navGPAHistory',
+            'countdown': 'navCountdown',
+            'sessionLog': 'navSessionLog'
+        };
+
+        function navigateTo(section) {
+            closeMenu();
+            currentSection = section;
+
+            // Hide all sections
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+
+            // Show target section
+            const targetId = sectionMap[section];
+            if (targetId) {
+                const target = document.getElementById(targetId);
+                if (target) target.classList.add('active');
+            }
+
+            // Update active nav button
+            document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active-nav'));
+            const navBtnId = navMap[section];
+            if (navBtnId) {
+                const navBtn = document.getElementById(navBtnId);
+                if (navBtn) navBtn.classList.add('active-nav');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Load content for specific sections
+            if (section === 'planner') loadPlan(true);
+            if (section === 'gpaHistory') renderGPAHistory();
+            if (section === 'sessionLog') renderSessionLog();
+            if (section === 'countdown') updateCountdownDisplay();
+        }
+
+        /* ============ NOTIFICATIONS ============ */
+        function showNotification(message, duration = 3500) {
+            const toast = document.getElementById('notificationToast');
+            const text = document.getElementById('notificationText');
+            text.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        function hideNotification() {
+            document.getElementById('notificationToast').classList.remove('show');
+        }
+
+        /* ============ AI ============ */
+        function askAI() {
+            const t = document.getElementById('topic').value.trim();
+            const m = document.getElementById('mode').value;
+            if (!t) {
+                showNotification('⚠️ Please enter a topic first!');
+                return;
+            }
+            const prompt = `Act as GoatTutor AI, an expert academic tutor. Mode: ${m}. Topic: ${t}. Provide a clear, detailed, and helpful response suitable for a student. Format the response nicely.`;
+            window.open('https://chatgpt.com/?q=' + encodeURIComponent(prompt), '_blank');
+            showNotification('🚀 Opening AI with your topic...');
+            logQuickAction('AI Query: ' + t + ' (' + m + ')');
+        }
+
+        /* ============ DEGREE CLASSIFICATION ============ */
+        function getDegreeClass(cgpa) {
+            cgpa = parseFloat(cgpa);
+            if (isNaN(cgpa)) return 'N/A';
+            if (cgpa >= 4.50) return '🥇 First Class';
+            if (cgpa >= 3.50) return '🥈 2nd Class Upper';
+            if (cgpa >= 2.40) return '🥉 2nd Class Lower';
+            if (cgpa >= 1.50) return '📘 Third Class';
+            if (cgpa >= 1.00) return '📗 Pass';
+            return '⚠️ Below Pass';
+        }
+
+        function getStanding(cgpa) {
+            cgpa = parseFloat(cgpa);
+            if (isNaN(cgpa)) return 'N/A';
+            if (cgpa >= 3.50) return '✅ Good Standing';
+            if (cgpa >= 2.40) return '⚠️ Average';
+            return '🔴 Needs Improvement';
+        }
+
+        /* ============ STUDY STREAK ============ */
+        function updateStreak() {
+            const today = new Date().toDateString();
+            const lastVisit = localStorage.getItem('lastVisit');
+            let streak = parseInt(localStorage.getItem('streak')) || 0;
+
+            if (lastVisit !== today) {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                if (lastVisit === yesterday.toDateString()) {
+                    streak++;
+                } else {
+                    streak = 1;
+                }
+                localStorage.setItem('streak', streak);
+                localStorage.setItem('lastVisit', today);
+                if (streak > 1) {
+                    showNotification('🔥 Study Streak: ' + streak + ' days! Keep going!');
+                }
+            }
+            document.getElementById('streakDisplay').innerText = localStorage.getItem('streak') || 1;
+        }
+
+        /* ============ STUDY HOURS ============ */
+        function updateStudyHours() {
+            const minutes = parseInt(localStorage.getItem('studyMinutes')) || 0;
+            document.getElementById('hoursDisplay').innerText = (minutes / 60).toFixed(1);
+        }
+
+        function addStudyMinutes(minutes) {
+            const current = parseInt(localStorage.getItem('studyMinutes')) || 0;
+            localStorage.setItem('studyMinutes', current + minutes);
+            updateStudyHours();
+        }
+
+        /* ============ SESSION COUNT ============ */
+        function getSessionCount() {
+            const log = JSON.parse(localStorage.getItem('sessionLog')) || [];
+            return log.length;
+        }
+
+        function updateSessionCountDisplay() {
+            document.getElementById('sessionCountDisplay').innerText = getSessionCount();
+        }
+
+        /* ============ DASHBOARD UPDATE ============ */
+        function updateDash() {
+            const gpa = localStorage.getItem('gpa') || '--';
+            const cgpa = localStorage.getItem('cgpa') || '--';
+            const degree = getDegreeClass(cgpa);
+            const standing = getStanding(cgpa);
+
+            document.getElementById('dashGPA').innerText = gpa === '--' ? '--' : parseFloat(gpa).toFixed(2);
+            document.getElementById('dashCGPA').innerText = cgpa === '--' ? '--' : parseFloat(cgpa).toFixed(2);
+            document.getElementById('dashDegree').innerText = degree;
+            document.getElementById('dashStanding').innerText = standing;
+
+            updateStreak();
+            updateStudyHours();
+            updateSessionCountDisplay();
+        }
+
+        /* ============ GPA CALCULATOR ============ */
+        function addGPA() {
+            gpaCount++;
+            const d = document.createElement('div');
+            d.className = 'row';
+            d.id = 'gpaRow' + gpaCount;
+            d.innerHTML = `
+            <input type="number" id="unit${gpaCount}" placeholder="Course Units" min="0" step="0.5">
+            <select id="grade${gpaCount}">
+              <option value="5">A (5.0)</option>
+              <option value="4">B (4.0)</option>
+              <option value="3">C (3.0)</option>
+              <option value="2">D (2.0)</option>
+              <option value="1">E (1.0)</option>
+              <option value="0">F (0.0)</option>
+            </select>
+            <button onclick="removeGPARow(${gpaCount})" class="danger small-btn" style="width:auto;flex:0;">✕</button>
+          `;
+            document.getElementById('gpaBox').appendChild(d);
+        }
+
+        function removeGPARow(id) {
+            const row = document.getElementById('gpaRow' + id);
+            if (row) row.remove();
+        }
+
+        function calcGPA() {
+            let total = 0,
+                units = 0;
+            for (let i = 1; i <= gpaCount; i++) {
+                const uEl = document.getElementById('unit' + i);
+                const gEl = document.getElementById('grade' + i);
+                if (!uEl || !gEl) continue; // skip removed rows safely
+                const u = parseFloat(uEl.value);
+                const g = parseFloat(gEl.value);
+                if (!isNaN(u) && !isNaN(g) && u > 0) {
+                    total += u * g;
+                    units += u;
+                }
+            }
+            if (units === 0) {
+                showNotification('⚠️ Please enter at least one course with units.');
+                return;
+            }
+            const gpa = (total / units).toFixed(2);
+            localStorage.setItem('gpa', gpa);
+            document.getElementById('gpaOut').innerText = '✅ GPA: ' + gpa + ' / 5.0';
+            saveGPAHistory(gpa, units);
+            updateDash();
+            showNotification('📊 GPA Calculated: ' + gpa);
+        }
+
+        /* ============ GPA HISTORY ============ */
+        function saveGPAHistory(gpa, totalUnits) {
+            const history = JSON.parse(localStorage.getItem('gpaHistory')) || [];
+            history.push({
+                gpa: parseFloat(gpa).toFixed(2),
+                units: totalUnits,
+                date: new Date().toLocaleString(),
+                courses: gpaCount
+            });
+            if (history.length > 50) history.shift();
+            localStorage.setItem('gpaHistory', JSON.stringify(history));
+        }
+
+        function renderGPAHistory() {
+            const history = JSON.parse(localStorage.getItem('gpaHistory')) || [];
+            const container = document.getElementById('gpaHistoryList');
+            if (history.length === 0) {
+                container.innerHTML = '<span class="small">No GPA history yet. Calculate a GPA to record it.</span>';
+                return;
+            }
+            container.innerHTML = history.reverse().map((h, i) => `
+            <div class="history-item">
+              <span>📅 ${h.date}</span>
+              <span><strong>GPA: ${h.gpa}</strong> | Units: ${h.units} | Courses: ${h.courses}</span>
+            </div>
+          `).join('');
+            history.reverse();
+        }
+
+        function clearGPAHistory() {
+            if (confirm('Clear all GPA history? This cannot be undone.')) {
+                localStorage.removeItem('gpaHistory');
+                renderGPAHistory();
+                showNotification('🗑 GPA history cleared.');
+            }
+        }
+
+        /* ============ CGPA CALCULATOR ============ */
+        function addCGPA() {
+            semCount++;
+            const d = document.createElement('div');
+            d.className = 'row';
+            d.id = 'cgpaRow' + semCount;
+            d.innerHTML = `
+            <input type="number" id="cunit${semCount}" placeholder="Semester Units" min="0" step="0.5">
+            <input type="number" id="cgpa${semCount}" placeholder="Semester GPA" min="0" max="5" step="0.01">
+            <button onclick="removeCGPARow(${semCount})" class="danger small-btn" style="width:auto;flex:0;">✕</button>
+          `;
+            document.getElementById('cgpaBox').appendChild(d);
+        }
+
+        function removeCGPARow(id) {
+            const row = document.getElementById('cgpaRow' + id);
+            if (row) row.remove();
+        }
+
+        function calcCGPA() {
+            let total = 0,
+                units = 0;
+            for (let i = 1; i <= semCount; i++) {
+                const uEl = document.getElementById('cunit' + i);
+                const gEl = document.getElementById('cgpa' + i);
+                if (!uEl || !gEl) continue; // skip removed rows
+                const u = parseFloat(uEl.value);
+                const g = parseFloat(gEl.value);
+                if (!isNaN(u) && !isNaN(g) && u > 0) {
+                    total += u * g;
+                    units += u;
+                }
+            }
+            if (units === 0) {
+                showNotification('⚠️ Please enter at least one semester with units.');
+                return;
+            }
+            const cgpa = (total / units).toFixed(2);
+            localStorage.setItem('cgpa', cgpa);
+            document.getElementById('cgpaOut').innerText = '✅ CGPA: ' + cgpa + ' / 5.0 | Class: ' + getDegreeClass(cgpa);
+            updateDash();
+            showNotification('📈 CGPA Calculated: ' + cgpa + ' - ' + getDegreeClass(cgpa));
+        }
+
+        /* ============ PLANNER ============ */
+        function savePlan() {
+            const planText = document.getElementById('plan').value;
+            localStorage.setItem('plan', planText);
+            document.getElementById('planStatus').innerText = '✅ Plan saved successfully! ' + new Date().toLocaleString();
+            showNotification('💾 Study plan saved!');
+        }
+
+        function loadPlan(silent = false) {
+            const saved = localStorage.getItem('plan') || '';
+            document.getElementById('plan').value = saved;
+            if (!silent) {
+                document.getElementById('planStatus').innerText = saved ? '📂 Plan loaded.' : '📂 No saved plan found.';
+            }
+        }
+
+        function clearPlan() {
+            if (confirm('Clear your study plan? Make sure you have saved it first.')) {
+                document.getElementById('plan').value = '';
+                document.getElementById('planStatus').innerText = '🗑 Plan editor cleared. (Saved version untouched)';
+                showNotification('🗑 Plan editor cleared.');
+            }
+        }
+
+        /* ============ ANALYZER ============ */
+        function analyze() {
+            const gpa = parseFloat(localStorage.getItem('gpa')) || 0;
+            const cgpa = parseFloat(localStorage.getItem('cgpa')) || 0;
+            const streak = parseInt(localStorage.getItem('streak')) || 0;
+            const minutes = parseInt(localStorage.getItem('studyMinutes')) || 0;
+            const sessions = getSessionCount();
+            const gpaHistory = JSON.parse(localStorage.getItem('gpaHistory')) || [];
+
+            let msg = '<strong>📊 Analysis Results:</strong><br><br>';
+            msg += '🎓 <strong>Current GPA:</strong> ' + (gpa > 0 ? gpa.toFixed(2) : 'N/A') + '<br>';
+            msg += '📈 <strong>CGPA:</strong> ' + (cgpa > 0 ? cgpa.toFixed(2) : 'N/A') + '<br>';
+            msg += '🏆 <strong>Degree Class:</strong> ' + getDegreeClass(cgpa) + '<br>';
+            msg += '🔥 <strong>Study Streak:</strong> ' + streak + ' days<br>';
+            msg += '⏱ <strong>Total Study:</strong> ' + (minutes / 60).toFixed(1) + ' hours<br>';
+            msg += '📝 <strong>Total Sessions:</strong> ' + sessions + '<br>';
+            msg += '📜 <strong>GPA Records:</strong> ' + gpaHistory.length + ' entries<br><br>';
+
+            if (gpa >= 4.5) msg += '🌟 <strong>Verdict:</strong> Excellent! Keep dominating!';
+            else if (gpa >= 3.5) msg += '👍 <strong>Verdict:</strong> Good performance. Push for First Class!';
+            else if (gpa >= 2.4) msg += '⚠️ <strong>Verdict:</strong> Average. Increase study hours.';
+            else if (gpa > 0) msg += '🔴 <strong>Verdict:</strong> Needs serious improvement. Seek help.';
+            else msg += '📌 <strong>Verdict:</strong> No GPA data yet. Start calculating!';
+
+            if (streak >= 7) msg += '<br>🏅 Great consistency! 7+ day streak!';
+            if (minutes < 300 && sessions > 0) msg += '<br>💡 Tip: Aim for at least 5 hours of study per week.';
+
+            document.getElementById('analysisBox').innerHTML = msg;
+            showNotification('🔍 Analysis complete!');
+        }
+
+        function resetAnalysis() {
+            document.getElementById('analysisBox').innerHTML = '<span class="small">No analysis yet. Click "Run Full Analysis" to begin.</span>';
+            showNotification('🔄 Analysis reset.');
+        }
+
+        /* ============ COUNTDOWN ============ */
+        function setCountdown() {
+            const dateVal = document.getElementById('examDate').value;
+            const label = document.getElementById('examLabel').value.trim() || 'Exam';
+            if (!dateVal) {
+                showNotification('⚠️ Please select an exam date.');
+                return;
+            }
+            const examDate = new Date(dateVal + 'T00:00:00');
+            const now = new Date();
+            if (examDate <= now) {
+                showNotification('⚠️ Please select a future date.');
+                return;
+            }
+            localStorage.setItem('examDate', examDate.toISOString());
+            localStorage.setItem('examLabel', label);
+            updateCountdownDisplay();
+            showNotification('🎯 Countdown set for: ' + label);
+        }
+
+        function updateCountdownDisplay() {
+            const examDateStr = localStorage.getItem('examDate');
+            const label = localStorage.getItem('examLabel') || 'Exam';
+            const display = document.getElementById('countdownDisplay');
+            const labelEl = document.getElementById('countdownLabel');
+
+            if (!examDateStr) {
+                display.innerText = '--:--:--:--';
+                labelEl.innerText = 'No exam set';
+                return;
+            }
+            const examDate = new Date(examDateStr);
+            const now = new Date();
+            const diff = examDate - now;
+
+            if (diff <= 0) {
+                display.innerText = '🎉 TIME!';
+                labelEl.innerText = label + ' is here!';
+                return;
+            }
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+            display.innerText = `${days.toString().padStart(2,'0')}:${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+            labelEl.innerText = label + ' — ' + days + ' days remaining';
+        }
+
+        function clearCountdown() {
+            localStorage.removeItem('examDate');
+            localStorage.removeItem('examLabel');
+            document.getElementById('examDate').value = '';
+            document.getElementById('examLabel').value = '';
+            updateCountdownDisplay();
+            showNotification('🔄 Countdown cleared.');
+        }
+
+        // Live countdown tick when section active
+        setInterval(() => {
+            if (currentSection === 'countdown' || document.getElementById('sectionCountdown').classList.contains('active')) {
+                updateCountdownDisplay();
+            }
+        }, 1000);
+
+        /* ============ STUDY TIMER ============ */
+        function updateTimerDisplay() {
+            const m = Math.floor(timerSeconds / 60);
+            const s = timerSeconds % 60;
+            document.getElementById('time').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (timerInterval) return;
+            if (!sessionActive) {
+                sessionActive = true;
+                document.getElementById('sessionTimerStatus').innerText = '🔴 Active';
+                showNotification('⏱ Study session started! Focus up!');
+            }
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                updateTimerDisplay();
+                if (timerSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    pomodoroCompleted++;
+                    localStorage.setItem('pomodoroCount', pomodoroCompleted);
+                    document.getElementById('pomodoroCount').innerText = pomodoroCompleted;
+                    addStudyMinutes(25);
+                    logSession(25);
+                    showNotification('🍅 Pomodoro complete! Take a 5-min break. Great job!');
+                    document.getElementById('sessionTimerStatus').innerText = '✅ Completed';
+                    sessionActive = false;
+                    updateSessionCountDisplay();
+                    updateDash();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            if (sessionActive) {
+                document.getElementById('sessionTimerStatus').innerText = '⏸ Paused';
+                const elapsedSec = 1500 - timerSeconds;
+                const elapsedMin = Math.floor(elapsedSec / 60);
+                if (elapsedMin > 0) {
+                    addStudyMinutes(elapsedMin);
+                    logSession(elapsedMin);
+                    updateSessionCountDisplay();
+                    updateDash();
+                }
+                sessionActive = false;
+                showNotification('⏸ Timer paused. Session logged.');
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            if (sessionActive) {
+                const elapsedSec = 1500 - timerSeconds;
+                const elapsedMin = Math.floor(elapsedSec / 60);
+                if (elapsedMin > 0) {
+                    addStudyMinutes(elapsedMin);
+                    logSession(elapsedMin);
+                    updateSessionCountDisplay();
+                    updateDash();
+                }
+            }
+            timerSeconds = 1500;
+            sessionActive = false;
+            document.getElementById('sessionTimerStatus').innerText = 'Idle';
+            updateTimerDisplay();
+            showNotification('↺ Timer reset.');
+        }
+
+        /* ============ SESSION LOGGING ============ */
+        function logSession(minutes) {
+            if (minutes <= 0) return;
+            const log = JSON.parse(localStorage.getItem('sessionLog')) || [];
+            log.push({
+                duration: minutes,
+                date: new Date().toLocaleString(),
+                type: 'Study Session'
+            });
+            if (log.length > 100) log.shift();
+            localStorage.setItem('sessionLog', JSON.stringify(log));
+        }
+
+        function logQuickAction(action) {
+            const log = JSON.parse(localStorage.getItem('sessionLog')) || [];
+            log.push({
+                duration: 0,
+                date: new Date().toLocaleString(),
+                type: action
+            });
+            if (log.length > 100) log.shift();
+            localStorage.setItem('sessionLog', JSON.stringify(log));
+            updateSessionCountDisplay();
+        }
+
+        function renderSessionLog() {
+            const log = JSON.parse(localStorage.getItem('sessionLog')) || [];
+            const container = document.getElementById('sessionLogList');
+            if (log.length === 0) {
+                container.innerHTML = '<span class="small">No sessions recorded yet. Use the Study Tracker to log sessions.</span>';
+                return;
+            }
+            container.innerHTML = log.reverse().map((s, i) => `
+            <div class="history-item">
+              <span>📅 ${s.date}</span>
+              <span><strong>${s.type}</strong> ${s.duration > 0 ? '| ' + s.duration + ' min' : ''}</span>
+            </div>
+          `).join('');
+            log.reverse();
+        }
+
+        function clearSessionLog() {
+            if (confirm('Clear all session logs? This cannot be undone.')) {
+                localStorage.removeItem('sessionLog');
+                renderSessionLog();
+                updateSessionCountDisplay();
+                showNotification('🗑 Session log cleared.');
+            }
+        }
+
+        function exportSessionLog() {
+            const log = JSON.parse(localStorage.getItem('sessionLog')) || [];
+            if (log.length === 0) {
+                showNotification('⚠️ No sessions to export.');
+                return;
+            }
+            const text = log.map(s => `[${s.date}] ${s.type} - ${s.duration} min`).join('\n');
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('📋 Session log copied to clipboard!');
+            }).catch(() => {
+                showNotification('⚠️ Failed to copy. Please try again.');
+            });
+        }
+
+        /* ============ INITIALIZATION ============ */
+        function init() {
+            updateTimerDisplay();
+            updateStreak();
+            updateStudyHours();
+            updateDash();
+            updateCountdownDisplay();
+            updateSessionCountDisplay();
+            document.getElementById('pomodoroCount').innerText = pomodoroCompleted;
+            loadPlan(true);
+            renderGPAHistory();
+            renderSessionLog();
+        }
+
+        // Close sidebar on overlay click
+        document.getElementById('sidebarOverlay').addEventListener('click', closeMenu);
+
+        // Close sidebar with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeMenu();
+        });
+
+        // Initialize everything
+        init();
+
+        console.log('🐐 GoatTutor NG v6 – All buttons responsive & navigation fixed.');
+    </script>
+</body>
+</html>
