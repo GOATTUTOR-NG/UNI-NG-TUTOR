@@ -1,898 +1,601 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GoatTutor NG v6 🐐</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoatTutor NG v6 🐐</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
 
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Segoe UI,sans-serif;
-}
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-body{
-background:#0f172a;
-color:white;
-}
+        /* TOP BAR */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: #1e293b;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            border-bottom: 1px solid #334155;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        .topbar .logo {
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: -0.3px;
+        }
+        .topbar .menuBtn {
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #e2e8f0;
+            padding: 6px 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+            width: auto;
+        }
+        .topbar .menuBtn:hover {
+            background: #334155;
+        }
 
-/* TOP BAR */
-.topbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:12px;
-background:#1e293b;
-position:sticky;
-top:0;
-z-index:10;
-}
+        /* SIDEBAR OVERLAY */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 90;
+            display: none;
+            transition: opacity 0.3s;
+        }
+        .sidebar-overlay.show {
+            display: block;
+        }
 
-.menuBtn{
-font-size:24px;
-cursor:pointer;
-}
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 270px;
+            height: 100%;
+            background: #0f172a;
+            padding: 20px 14px;
+            transition: left 0.3s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            border-right: 1px solid #334155;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            overflow-y: auto;
+        }
+        .sidebar.open {
+            left: 0;
+        }
+        .sidebar h3 {
+            font-size: 1rem;
+            color: #94a3b8;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+        }
+        .sidebar button {
+            width: 100%;
+            padding: 12px 14px;
+            border: none;
+            border-radius: 10px;
+            background: #1e293b;
+            color: #e2e8f0;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sidebar button:hover {
+            background: #334155;
+            transform: translateX(3px);
+        }
+        .sidebar button.active-nav {
+            background: #3b82f6;
+            color: #fff;
+            font-weight: 600;
+        }
+        .sidebar .close-btn {
+            background: #dc2626;
+            color: #fff;
+            justify-content: center;
+            font-weight: 600;
+            margin-top: auto;
+        }
+        .sidebar .close-btn:hover {
+            background: #b91c1c;
+            transform: none;
+        }
 
-/* SIDEBAR */
-.sidebar{
-position:fixed;
-top:0;
-left:-270px;
-width:260px;
-height:100%;
-background:#0f172a;
-padding:15px;
-transition:0.3s;
-border-right:1px solid #334155;
-z-index:100;
-overflow-y:auto;
-}
+        /* MAIN CONTAINER */
+        .container {
+            padding: 14px;
+            max-width: 700px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-bottom: 40px;
+        }
 
-.sidebar.open{left:0;}
+        /* CARDS */
+        .card {
+            background: #1e293b;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid #334155;
+            transition: box-shadow 0.3s;
+        }
+        .card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+        }
+        .card h3 {
+            margin-bottom: 8px;
+            font-size: 1rem;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-.sidebar button{
-width:100%;
-margin-top:10px;
-padding:10px;
-border:none;
-border-radius:8px;
-background:#334155;
-color:white;
-text-align:left;
-cursor:pointer;
-}
+        /* INPUTS */
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 6px;
+            border-radius: 10px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            transition: border 0.2s;
+            outline: none;
+            resize: vertical;
+        }
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+        textarea {
+            min-height: 70px;
+        }
 
-/* MAIN */
-.container{
-padding:12px;
-max-width:700px;
-margin:auto;
-}
+        /* BUTTONS */
+        button {
+            width: 100%;
+            padding: 11px;
+            margin-top: 8px;
+            border: none;
+            border-radius: 10px;
+            background: #3b82f6;
+            color: #fff;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            letter-spacing: 0.2px;
+        }
+        button:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+        }
+        button:active {
+            transform: scale(0.97);
+        }
+        button.secondary {
+            background: #475569;
+        }
+        button.secondary:hover {
+            background: #64748b;
+        }
+        button.danger {
+            background: #dc2626;
+        }
+        button.danger:hover {
+            background: #b91c1c;
+        }
+        button.small-btn {
+            width: auto;
+            padding: 8px 14px;
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
 
-.card{
-background:#1e293b;
-padding:12px;
-border-radius:12px;
-margin-top:10px;
-}
+        /* ROW */
+        .row {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+        .row input,
+        .row select {
+            flex: 1;
+            min-width: 80px;
+        }
 
-input,textarea,select{
-width:100%;
-padding:10px;
-margin-top:6px;
-border-radius:8px;
-border:none;
-background:#0f172a;
-color:white;
-}
+        /* TIMER */
+        .timer {
+            font-size: 44px;
+            text-align: center;
+            margin: 10px 0;
+            font-weight: 700;
+            letter-spacing: 2px;
+            font-variant-numeric: tabular-nums;
+            font-family: 'Courier New', monospace;
+            color: #fbbf24;
+        }
+        .timer-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .timer-row button {
+            flex: 1;
+            min-width: 70px;
+        }
 
-button{
-width:100%;
-padding:10px;
-margin-top:8px;
-border:none;
-border-radius:8px;
-background:#3b82f6;
-color:white;
-cursor:pointer;
-font-weight:600;
-}
+        /* PAGE SECTIONS */
+        .page-section {
+            display: none;
+        }
+        .page-section.active {
+            display: block;
+        }
+        .page-section.visible {
+            display: block;
+        }
 
-button:active{opacity:0.8;}
+        /* DASHBOARD CARDS GRID */
+        .dash-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        @media (max-width: 400px) {
+            .dash-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .dash-card {
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #334155;
+        }
+        .dash-card .value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #fbbf24;
+        }
+        .dash-card .label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
 
-.small{
-font-size:12px;
-color:#94a3b8;
-}
+        /* NOTIFICATIONS */
+        .notification-toast {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            background: #1e293b;
+            border: 1px solid #3b82f6;
+            color: #e2e8f0;
+            padding: 14px 18px;
+            border-radius: 12px;
+            z-index: 200;
+            opacity: 0;
+            transform: translateX(120%);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            pointer-events: none;
+            max-width: 320px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+        .notification-toast.show {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+        .notification-toast .close-toast {
+            position: absolute;
+            top: 4px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #94a3b8;
+            background: none;
+            border: none;
+            width: auto;
+            padding: 0;
+            margin: 0;
+        }
 
-.row{
-display:flex;
-gap:6px;
-margin-top:8px;
-flex-wrap:wrap;
-}
+        /* COUNTDOWN */
+        .countdown-display {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-align: center;
+            color: #f87171;
+            letter-spacing: 1px;
+            font-family: 'Courier New', monospace;
+        }
+        .countdown-label {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
 
-.row input,.row select{
-flex:1;
-min-width:80px;
-}
+        /* HISTORY LIST */
+        .history-list {
+            max-height: 180px;
+            overflow-y: auto;
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: #cbd5e1;
+        }
+        .history-list .history-item {
+            background: #0f172a;
+            padding: 8px 10px;
+            border-radius: 8px;
+            margin-top: 4px;
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid #334155;
+        }
 
-/* TIMER */
-.timer{
-font-size:40px;
-text-align:center;
-margin:10px 0;
-font-weight:bold;
-}
+        /* SMALL TEXT */
+        .small {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
 
-/* PAGE SWITCH (Planner, Analyzer) */
-.page{
-display:none;
-}
-
-.page.active{
-display:block;
-}
-
-/* HISTORY LIST */
-.history-item{
-background:#0f172a;
-border-radius:6px;
-padding:6px 10px;
-margin:5px 0;
-font-size:14px;
-}
-
-/* NOTIFICATION BAR */
-.notif-toggle{
-display:flex;
-align-items:center;
-gap:10px;
-margin-top:10px;
-}
-
-/* RESPONSIVE */
-@media(max-width:600px){
-.timer{font-size:32px;}
-.row input,.row select{min-width:60px;}
-}
-</style>
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .timer {
+                font-size: 32px;
+            }
+            .dash-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+            .dash-card .value {
+                font-size: 1.3rem;
+            }
+            .container {
+                padding: 8px;
+                gap: 8px;
+            }
+            .card {
+                padding: 10px 12px;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-<!-- TOP BAR -->
-<div class="topbar">
-<div>🐐 GoatTutor NG</div>
-<div class="menuBtn" onclick="toggleMenu()">☰</div>
-</div>
-
-<!-- SIDEBAR -->
-<div class="sidebar" id="sidebar">
-<h3>Menu</h3>
-<button onclick="openSide('planner')">📅 Planner</button>
-<button onclick="openSide('analyzer')">📊 Analyzer</button>
-<button onclick="toggleMenu()">Close</button>
-</div>
-
-<div class="container">
-
-<!-- AI (CORE) -->
-<div class="card">
-<h3>🧠 AI Study Interface</h3>
-
-<textarea id="topic" placeholder="Enter topic..."></textarea>
-
-<select id="mode">
-<option value="tutorial">Tutorial</option>
-<option value="summary">Summary</option>
-<option value="mcq">MCQ</option>
-<option value="revision">Revision</option>
-</select>
-
-<button onclick="askAI()">Ask AI</button>
-</div>
-
-<!-- DASHBOARD 2.0 -->
-<div class="card">
-<h3>📊 Academic Dashboard</h3>
-
-<div id="dash">
-Loading...
-</div>
-
-<div class="small" style="margin-top:10px;">
-🔥 Study Streak:
-<span id="streakDisplay">0</span> Days
-</div>
-
-<div class="small">
-⏱ Study Hours:
-<span id="hoursDisplay">0</span> hrs
-</div>
-
-<div class="small" style="margin-top:8px;">
-📋 Recent Sessions:
-<span id="sessionCount">0</span>
-</div>
-</div>
-
-<!-- GPA -->
-<div class="card">
-<h3>📚 GPA Calculator</h3>
-
-<div id="gpaBox">
-<div class="row">
-<input type="number" id="unit1" placeholder="Unit" value="3">
-<select id="grade1">
-<option value="5">A</option>
-<option value="4">B</option>
-<option value="3">C</option>
-<option value="2">D</option>
-<option value="1">E</option>
-<option value="0">F</option>
-</select>
-</div>
-</div>
-
-<button onclick="addGPA()">➕ Add Course</button>
-<button onclick="calcGPA()">Calculate GPA</button>
-
-<div id="gpaOut"></div>
-
-<!-- GPA History -->
-<div style="margin-top:12px;">
-<strong>📜 GPA History</strong>
-<div id="gpaHistory" style="max-height:120px;overflow-y:auto;"></div>
-</div>
-</div>
-
-<!-- CGPA -->
-<div class="card">
-<h3>📈 CGPA Calculator</h3>
-
-<div id="cgpaBox">
-<div class="row">
-<input type="number" id="cunit1" placeholder="Semester Units" value="15">
-<input type="number" id="cgpa1" placeholder="Semester GPA" value="4.0">
-</div>
-</div>
-
-<button onclick="addCGPA()">➕ Add Semester</button>
-<button onclick="calcCGPA()">Calculate CGPA</button>
-
-<div id="cgpaOut"></div>
-</div>
-
-<!-- TIMER -->
-<div class="card">
-<h3>⏱ Study Tracker</h3>
-
-<div class="timer" id="time">25:00</div>
-
-<div class="row">
-<button onclick="startTimer()">Start</button>
-<button onclick="pauseTimer()">Pause</button>
-<button onclick="resetTimer()">Reset</button>
-</div>
-
-<div class="small" style="margin-top:8px;" id="timerStatus">Ready</div>
-</div>
-
-<!-- COUNTDOWN TO EXAM -->
-<div class="card">
-<h3>⏳ Exam Countdown</h3>
-
-<div class="row">
-<input type="date" id="examDate">
-<button onclick="setCountdown()">Set Date</button>
-</div>
-
-<div class="timer" id="countdownDisplay" style="font-size:24px;margin-top:8px;">-- days</div>
-</div>
-
-<!-- NOTIFICATIONS / REMINDERS -->
-<div class="card">
-<h3>🔔 Study Reminder</h3>
-
-<div id="notifStatus" class="small">Notifications: not requested</div>
-
-<button onclick="requestNotification()">Enable Notifications</button>
-
-<div class="row" style="margin-top:8px;">
-<input type="time" id="reminderTime" placeholder="HH:MM">
-<input type="text" id="reminderMsg" placeholder="Message">
-</div>
-<button onclick="setReminder()">Set Reminder</button>
-<div class="small" id="reminderStatus"></div>
-</div>
-
-<!-- PLANNER (HIDDEN BY DEFAULT, SHOWN VIA SIDEBAR) -->
-<div class="card page" id="planner">
-<h3>📅 Weekly Planner</h3>
-
-<textarea id="plan" placeholder="Write your weekly study plan..."></textarea>
-
-<button onclick="savePlan()">Save Plan</button>
-
-<div class="small" id="planStatus"></div>
-</div>
-
-<!-- ANALYZER (HIDDEN BY DEFAULT, SHOWN VIA SIDEBAR) -->
-<div class="card page" id="analyzer">
-<h3>📊 Smart Analyzer</h3>
-
-<button onclick="analyze()">Run Analysis</button>
-
-<div class="card" style="margin-top:10px;" id="analysisBox">
-No analysis yet
-</div>
-</div>
-
-</div>
-
-.getItem("gpaHistory")||"[]");
-let container=document.getElementById("gpaHistory");
-if(history.length===0){
-container.innerHTML="<div class='history-item'>No history yet</div>";
-return;
-}
-container.innerHTML=history.map(h=>
-`<div class="history-item">📅 ${h.date} – GPA: ${h.gpa} (${h.units} units)</div>`
-).reverse().join("");
-}
-
-/* ==================== CGPA CALCULATOR ==================== */
-let semCount=1;
-
-function addCGPA(){
-semCount++;
-let d=document.createElement("div");
-d.className="row";
-d.innerHTML=`
-<input type="number" id="cunit${semCount}" placeholder="Units" value="15">
-<input type="number" id="cgpa${semCount}" placeholder="GPA" value="4.0">
-`;
-document.getElementById("cgpaBox").appendChild(d);
-}
-
-function calcCGPA(){
-let total=0,units=0;
-
-for(let i=1;i<=semCount;i++){
-let u=parseFloat(document.getElementById("cunit"+i)?.value);
-let g=parseFloat(document.getElementById("cgpa"+i)?.value);
-if(!isNaN(u)&&!isNaN(g)){
-total+=u*g;
-units+=u;
-}
-}
-
-if(units===0) return alert("Enter at least one semester");
-
-let cgpa=(total/units).toFixed(2);
-localStorage.setItem("cgpa",cgpa);
-document.getElementById("cgpaOut").innerText="CGPA: "+cgpa;
-
-updateDash();
-}
-
-/* ==================== PLANNER ==================== */
-function savePlan(){
-let planText=document.getElementById("plan").value;
-localStorage.setItem("plan",planText);
-document.getElementById("planStatus").innerText="Saved ✔";
-// Load saved plan
-if(planText) document.getElementById("plan").value=planText;
-}
-
-/* ==================== ANALYZER ==================== */
-function analyze(){
-let g=parseFloat(localStorage.getItem("gpa")||0);
-let c=parseFloat(localStorage.getItem("cgpa")||0);
-let sessions=JSON.parse(localStorage.getItem("studySessions")||"[]");
-let totalMin=sessions.reduce((s,se)=>s+(se.duration||0),0);
-let hours=(totalMin/60).toFixed(1);
-
-let msg="";
-if(g>=4.5) msg="🔥 Excellent GPA performance. ";
-else if(g>=3.5) msg="👍 Good GPA. ";
-else if(g>=2.4) msg="⚠️ Average GPA. Consider improvement. ";
-else msg="📌 Low GPA. Immediate action needed. ";
-
-msg+=`CGPA: ${c.toFixed(2)}. Study hours: ${hours}h.`;
-
-if(c>=3.5) msg+=" You're on track for a good degree class.";
-else if(c>=2.4) msg+=" Work harder to raise your CGPA.";
-
-document.getElementById("analysisBox").innerText=msg;
-}
-
-/* ==================== TIMER WITH SESSION TRACKING ==================== */
-let t=1500, run=null;
-const DEFAULT_DURATION=25; // minutes
-
-function updateTimerDisplay(){
-let m=Math.floor(t/60);
-let s=t%60;
-document.getElementById("time").innerText=
-`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-}
-
-function startTimer(){
-if(run) return;
-if(t<=0){
-// If timer ended, reset before starting again
-resetTimer();
-}
-run=setInterval(()=>{
-t--;
-updateTimerDisplay();
-if(t<=0){
-clearInterval(run);
-run=null;
-document.getElementById("timerStatus").innerText="✅ Session complete!";
-recordStudySession(DEFAULT_DURATION);
-// Trigger notification if enabled
-if(Notification.permission==="granted"){
-new Notification("GoatTutor NG",{body:"Study session completed! 🎉 Take a break."});
-}
-}
-},1000);
-document.getElementById("timerStatus").innerText="⏳ Studying...";
-}
-
-function pauseTimer(){
-clearInterval(run);
-run=null;
-document.getElementById("timerStatus").innerText="⏸ Paused";
-}
-
-function resetTimer(){
-clearInterval(run);
-run=null;
-t=DEFAULT_DURATION*60;
-updateTimerDisplay();
-document.getElementById("timerStatus").innerText="Ready";
-}
-
-<script>
-/* ==================== MENU & SIDEBAR ==================== */
-function toggleMenu(){
-document.getElementById("sidebar").classList.toggle("open");
-}
-
-function openSide(id){
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-toggleMenu();
-}
-
-/* ==================== AI INTERFACE ==================== */
-function askAI(){
-let t=document.getElementById("topic").value.trim();
-let m=document.getElementById("mode").value;
-if(!t) return alert("Enter topic");
-
-window.open("https://chatgpt.com/?q="+encodeURIComponent(
-`Act as GoatTutor AI. Mode:${m}. Topic:${t}`
-));
-}
-
-/* ==================== DEGREE CLASSIFICATION ==================== */
-function getDegreeClass(cgpa){
-cgpa=parseFloat(cgpa);
-if(isNaN(cgpa)) return "N/A";
-if(cgpa>=4.50) return "🥇 First Class";
-if(cgpa>=3.50) return "🥈 Second Class Upper";
-if(cgpa>=2.40) return "🥉 Second Class Lower";
-if(cgpa>=1.50) return "📘 Third Class";
-if(cgpa>=1.00) return "📗 Pass";
-return "Not Available";
-}
-
-/* ==================== STREAK & STUDY HOURS ==================== */
-function updateStreak(){
-let today=new Date().toDateString();
-let lastVisit=localStorage.getItem("lastVisit");
-let streak=parseInt(localStorage.getItem("streak"))||0;
-
-if(lastVisit!==today){
-let yesterday=new Date();
-yesterday.setDate(yesterday.getDate()-1);
-
-if(lastVisit===yesterday.toDateString()){
-streak++;
-}else{
-streak=1;
-}
-
-localStorage.setItem("streak",streak);
-localStorage.setItem("lastVisit",today);
-}
-
-document.getElementById("streakDisplay").innerText=
-localStorage.getItem("streak")||1;
-}
-
-function updateStudyHours(){
-let totalMinutes=0;
-let sessions=JSON.parse(localStorage.getItem("studySessions")||"[]");
-sessions.forEach(s=>{ totalMinutes+=s.duration||0; });
-document.getElementById("hoursDisplay").innerText=
-(totalMinutes/60).toFixed(1);
-document.getElementById("sessionCount").innerText=sessions.length;
-}
-
-function recordStudySession(durationMinutes){
-let sessions=JSON.parse(localStorage.getItem("studySessions")||"[]");
-sessions.push({
-date: new Date().toISOString(),
-duration: durationMinutes
-});
-localStorage.setItem("studySessions",JSON.stringify(sessions));
-updateStudyHours();
-}
-
-/* ==================== DASHBOARD UPDATE ==================== */
-function updateDash(){
-let gpa=localStorage.getItem("gpa")||"0";
-let cgpa=localStorage.getItem("cgpa")||"0";
-let degree=getDegreeClass(cgpa);
-
-document.getElementById("dash").innerHTML=
-`
-🎓 GPA: ${gpa}<br><br>
-📈 CGPA: ${cgpa}<br><br>
-🏆 Degree Class: ${degree}<br><br>
-${cgpa>=3.5
-?"✅ Academic Standing: Good"
-:"⚠️ Academic Standing: Needs Improvement"}
-`;
-
-updateStreak();
-updateStudyHours();
-}
-
-/* ==================== GPA CALCULATOR ==================== */
-let gpaCount=1;
-
-function addGPA(){
-gpaCount++;
-let d=document.createElement("div");
-d.className="row";
-d.innerHTML=`
-<input type="number" id="unit${gpaCount}" placeholder="Unit" value="3">
-<select id="grade${gpaCount}">
-<option value="5">A</option>
-<option value="4">B</option>
-<option value="3">C</option>
-<option value="2">D</option>
-<option value="1">E</option>
-<option value="0">F</option>
-</select>`;
-document.getElementById("gpaBox").appendChild(d);
-}
-
-function calcGPA(){
-let total=0,units=0;
-
-for(let i=1;i<=gpaCount;i++){
-let u=parseFloat(document.getElementById("unit"+i)?.value);
-let g=parseFloat(document.getElementById("grade"+i)?.value);
-if(!isNaN(u)&&!isNaN(g)){
-total+=u*g;
-units+=u;
-}
-}
-
-if(units===0) return alert("Enter at least one course");
-
-let gpa=(total/units).toFixed(2);
-localStorage.setItem("gpa",gpa);
-document.getElementById("gpaOut").innerText="GPA: "+gpa;
-
-let history=JSON.parse(localStorage.getItem("gpaHistory")||"[]");
-history.push({
-gpa: gpa,
-units: units,
-date: new Date().toLocaleDateString()
-});
-if(history.length>10) history=history.slice(-10);
-localStorage.setItem("gpaHistory",JSON.stringify(history));
-displayGPAHistory();
-
-updateDash();
-}
-
-function displayGPAHistory(){
-let history=JSON.parse(localStorage.getItem("gpaHistory")||"[]");
-let container=document.getElementById("gpaHistory");
-if(history.length===0){
-container.innerHTML="<div class='history-item'>No history yet</div>";
-return;
-}
-container.innerHTML=history.map(h=>
-`<div class="history-item">📅 ${h.date} – GPA: ${h.gpa} (${h.units} units)</div>`
-).reverse().join("");
-}
-
-/* ==================== CGPA CALCULATOR ==================== */
-let semCount=1;
-
-function addCGPA(){
-semCount++;
-let d=document.createElement("div");
-d.className="row";
-d.innerHTML=`
-<input type="number" id="cunit${semCount}" placeholder="Units" value="15">
-<input type="number" id="cgpa${semCount}" placeholder="GPA" value="4.0">
-`;
-document.getElementById("cgpaBox").appendChild(d);
-}
-
-function calcCGPA(){
-let total=0,units=0;
-
-for(let i=1;i<=semCount;i++){
-let u=parseFloat(document.getElementById("cunit"+i)?.value);
-let g=parseFloat(document.getElementById("cgpa"+i)?.value);
-if(!isNaN(u)&&!isNaN(g)){
-total+=u*g;
-units+=u;
-}
-}
-
-if(units===0) return alert("Enter at least one semester");
-
-let cgpa=(total/units).toFixed(2);
-localStorage.setItem("cgpa",cgpa);
-document.getElementById("cgpaOut").innerText="CGPA: "+cgpa;
-
-updateDash();
-}
-
-/* ==================== PLANNER ==================== */
-function savePlan(){
-let planText=document.getElementById("plan").value;
-localStorage.setItem("plan",planText);
-document.getElementById("planStatus").innerText="Saved ✔";
-}
-
-/* ==================== ANALYZER ==================== */
-function analyze(){
-let g=parseFloat(localStorage.getItem("gpa")||0);
-let c=parseFloat(localStorage.getItem("cgpa")||0);
-let sessions=JSON.parse(localStorage.getItem("studySessions")||"[]");
-let totalMin=sessions.reduce((s,se)=>s+(se.duration||0),0);
-let hours=(totalMin/60).toFixed(1);
-
-let msg="";
-if(g>=4.5) msg="🔥 Excellent GPA performance. ";
-else if(g>=3.5) msg="👍 Good GPA. ";
-else if(g>=2.4) msg="⚠️ Average GPA. Consider improvement. ";
-else msg="📌 Low GPA. Immediate action needed. ";
-
-msg+=`CGPA: ${c.toFixed(2)}. Study hours: ${hours}h.`;
-
-if(c>=3.5) msg+=" You're on track for a good degree class.";
-else if(c>=2.4) msg+=" Work harder to raise your CGPA.";
-
-document.getElementById("analysisBox").innerText=msg;
-}
-
-/* ==================== TIMER WITH SESSION TRACKING ==================== */
-let t=1500, run=null;
-const DEFAULT_DURATION=25;
-
-function updateTimerDisplay(){
-let m=Math.floor(t/60);
-let s=t%60;
-document.getElementById("time").innerText=
-`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-}
-
-function startTimer(){
-if(run) return;
-if(t<=0) resetTimer();
-run=setInterval(()=>{
-t--;
-updateTimerDisplay();
-if(t<=0){
-clearInterval(run);
-run=null;
-document.getElementById("timerStatus").innerText="✅ Session complete!";
-recordStudySession(DEFAULT_DURATION);
-showNotification("Study session completed! 🎉 Take a break.");
-}
-},1000);
-document.getElementById("timerStatus").innerText="⏳ Studying...";
-}
-
-function pauseTimer(){
-clearInterval(run);
-run=null;
-document.getElementById("timerStatus").innerText="⏸ Paused";
-}
-
-function resetTimer(){
-clearInterval(run);
-run=null;
-t=DEFAULT_DURATION*60;
-updateTimerDisplay();
-document.getElementById("timerStatus").innerText="Ready";
-}
-
-/* ==================== EXAM COUNTDOWN ==================== */
-function setCountdown(){
-let dateInput=document.getElementById("examDate").value;
-if(!dateInput) return alert("Pick a date");
-let target=new Date(dateInput).getTime();
-if(isNaN(target)) return alert("Invalid date");
-localStorage.setItem("examTarget",target);
-updateCountdown();
-showNotification("Exam countdown set! 📅");
-}
-
-function updateCountdown(){
-let target=localStorage.getItem("examTarget");
-let display=document.getElementById("countdownDisplay");
-if(!target){
-display.innerText="-- days";
-return;
-}
-target=parseInt(target);
-let now=Date.now();
-let diff=target-now;
-if(diff<=0){
-display.innerText="🎉 Exam day!";
-return;
-}
-let days=Math.floor(diff/(1000*60*60*24));
-display.innerText=`${days} day${days!==1?'s':''} left`;
-}
-
-/* ==================== NOTIFICATIONS (FIXED) ==================== */
-function showNotification(title, body){
-// Check if browser supports notifications
-if(!("Notification" in window)){
-console.log("Notifications not supported");
-return;
-}
-
-// If permission is granted, show notification immediately
-if(Notification.permission === "granted"){
-new Notification(title, {body: body, icon: "🐐"});
-}
-// If permission is denied, show in-app alert as fallback
-else if(Notification.permission === "denied"){
-alert(title + "\n" + body);
-}
-// If permission not yet decided, request it then show
-else {
-Notification.requestPermission().then(perm => {
-if(perm === "granted"){
-new Notification(title, {body: body, icon: "🐐"});
-} else {
-alert(title + "\n" + body);
-}
-});
-}
-}
-
-function requestNotification(){
-if(!("Notification" in window)){
-alert("Browser does not support notifications");
-return;
-}
-Notification.requestPermission().then(perm=>{
-document.getElementById("notifStatus").innerText=
-`Notifications: ${perm}`;
-if(perm === "granted"){
-showNotification("GoatTutor NG", "Notifications enabled! ✅");
-} else {
-alert("Notifications " + perm + ". We'll use in-app alerts instead.");
-}
-});
-}
-
-// Store active reminders
-let activeReminders = [];
-
-function setReminder(){
-let timeStr = document.getElementById("reminderTime").value;
-let msg = document.getElementById("reminderMsg").value || "Time to study! 📚";
-if(!timeStr) return alert("Please set a time first");
-
-let now = new Date();
-let [h, m] = timeStr.split(":").map(Number);
-let reminderDate = new Date(now);
-reminderDate.setHours(h, m, 0, 0);
-
-// If time has passed today, set for tomorrow
-if(reminderDate <= now){
-reminderDate.setDate(reminderDate.getDate() + 1);
-}
-
-let delay = reminderDate - now;
-let reminderId = Date.now();
-
-// Store reminder info
-let reminder = {
-id: reminderId,
-time: reminderDate.toLocaleTimeString(),
-message: msg,
-timer: setTimeout(() => {
-showNotification("⏰ Study Reminder", msg);
-// Remove from active reminders after firing
-activeReminders = activeReminders.filter(r => r.id !== reminderId);
-updateReminderStatus();
-}, delay)
-};
-
-activeReminders.push(reminder);
-document.getElementById("reminderStatus").innerHTML = 
-`✅ Reminder set for ${reminderDate.toLocaleTimeString()} (${Math.floor(delay/60000)} min from now)<br>
-<small>Active reminders: ${activeReminders.length}</small>`;
-
-// Show immediate test notification
-setTimeout(() => {
-showNotification("⏰ Test", "Your reminder is set! You'll be notified at " + reminderDate.toLocaleTimeString());
-}, 500);
-}
-
-function updateReminderStatus(){
-if(activeReminders.length === 0){
-document.getElementById("reminderStatus").innerText = "No active reminders";
-} else {
-document.getElementById("reminderStatus").innerHTML = 
-`Active reminders: ${activeReminders.length}<br>
-${activeReminders.map(r => `• ${r.time} - ${r.message}`).join('<br>')}`;
-}
-}
-
-/* ==================== INITIALIZATION ==================== */
-(function init(){
-// Planner
-let savedPlan=localStorage.getItem("plan");
-if(savedPlan) document.getElementById("plan").value=savedPlan;
-
-// GPA history
-displayGPAHistory();
-
-// Countdown
-updateCountdown();
-
-// Dashboard
-updateDash();
-
-// Timer
-updateTimerDisplay();
-
-// Notification status
-if(Notification.permission === "granted"){
-document.getElementById("notifStatus").innerText = "Notifications: granted ✅";
-} else if(Notification.permission === "denied"){
-document.getElementById("notifStatus").innerText = "Notifications: denied ❌ (using alerts)";
-} else {
-document.getElementById("notifStatus").innerText = "Notifications: click 'Enable' to allow";
-}
-
-// Load exam date if exists
-if(localStorage.getItem("examTarget")){
-document.getElementById("examDate").valueAsDate = 
-new Date(parseInt(localStorage.getItem("examTarget")));
-}
-
-// Update countdown every minute
-setInterval(updateCountdown, 60000);
-
-// Test if notifications work
-console.log("GoatTutor NG initialized. Notifications: " + Notification.permission);
-})();
-
-</script>
-</body>
-</html>
+    <!-- SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMenu()"></div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <h3>📋 Navigation</h3>
+        <button class="active-nav" onclick="navigateTo('main')" id="navMain">🏠 Home Dashboard</button>
+        <button onclick="navigateTo('planner')" id="navPlanner">📅 Weekly Planner</button>
+        <button onclick="navigateTo('analyzer')" id="navAnalyzer">📊 Smart Analyzer</button>
+        <button onclick="navigateTo('gpaHistory')" id="navGPAHistory">📜 GPA History</button>
+        <button onclick="navigateTo('countdownSection')" id="navCountdown">⏳ Exam Countdown</button>
+        <button onclick="navigateTo('sessionLog')" id="navSessionLog">📝 Session Log</button>
+        <button class="close-btn" onclick="closeMenu()">✕ Close Menu</button>
+    </div>
+
+    <!-- NOTIFICATION TOAST -->
+    <div class="notification-toast" id="notificationToast">
+        <span class="close-toast" onclick="hideNotification()">✕</span>
+        <span id="notificationText">Notification</span>
+    </div>
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <div class="logo">🐐 GoatTutor NG v6</div>
+        <button class="menuBtn" onclick="toggleMenu()" aria-label="Open menu">☰</button>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+
+        <!-- ============ MAIN SECTION (AI + Dashboard + GPA + CGPA + Timer) ============ -->
+        <div class="page-section active" id="sectionMain">
+
+            <!-- AI CORE -->
+            <div class="card">
+                <h3>🧠 AI Study Interface</h3>
+                <textarea id="topic" placeholder="Enter topic (e.g., Calculus, Organic Chemistry, Python loops)..."></textarea>
+                <select id="mode">
+                    <option value="tutorial">📖 Tutorial</option>
+                    <option value="summary">📝 Summary</option>
+                    <option value="mcq">❓ MCQ Quiz</option>
+                    <option value="revision">🔄 Revision Notes</option>
+                    <option value="flashcards">🃏 Flashcards</option>
+                </select>
+                <button onclick="askAI()">🚀 Ask AI Now</button>
+            </div>
+
+            <!-- DASHBOARD 2.0 -->
+            <div class="card">
+                <h3>📊 Academic Dashboard</h3>
+                <div class="dash-grid">
+                    <div class="dash-card">
+                        <div class="value" id="dashGPA">--</div>
+                        <div class="label">GPA</div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="value" id="dashCGPA">--</div>
+                        <div class="label">CGPA</div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="value" id="dashDegree">--</div>
+                        <div class="label">Degree Class</div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="value" id="dashStanding">--</div>
+                        <div class="label">Standing</div>
+                    </div>
+                </div>
+                <div class="small" style="margin-top:10px;">
+                    🔥 Study Streak: <strong><span id="streakDisplay">0</span> Days</strong>
+                </div>
+                <div class="small">
+                    ⏱ Total Study: <strong><span id="hoursDisplay">0</span> hrs</strong>
+                </div>
+                <div class="small">
+                    📅 Sessions: <strong><span id="sessionCountDisplay">0</span></strong>
+                </div>
+            </div>
+
+            <!-- GPA CALCULATOR -->
+            <div class="card">
+                <h3>📚 GPA Calculator</h3>
+                <div id="gpaBox">
+                    <div class="row">
+                        <input type="number" id="unit1" placeholder="Course Units" min="0" step="0.5">
+                        <select id="grade1">
+                            <option value="5">A (5.0)</option>
+                            <option value="4">B (4.0)</option>
+                            <option value="3">C (3.0)</option>
+                            <option value="2">D (2.0)</option>
+                            <option value="1">E (1.0)</option>
+                            <option value="0">F (0.0)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <button onclick="addGPA()" class="secondary">➕ Add Course</button>
+                    <button onclick="calcGPA()">📊 Calculate GPA</button>
+                </div>
+                <div id="gpaOut" style="margin-top:8px;font-weight:600;color:#fbbf24;"></div>
+            </div>
+
+            <!-- CGPA CALCULATOR -->
+            <div class="card">
+                <h3>📈 CGPA Calculator</h3>
+                <div id="cgpaBox">
+                    <div class="row">
+                        <input type="number" id="cunit1" placeholder="Semester Total Units" min="0" step="0.5">
+                        <input type="number" id="cgpa1" placeholder="Semester GPA" min="0" max="5" step="0.01">
+                    </div>
+                </div>
+                <div class="row">
+                    <button onclick="addCGPA()" class="secondary">➕ Add Semester</button>
+                    <button onclick="calcCGPA()">📊 Calculate CGPA</button>
+                </div>
+                <div id="cgpaOut" style="margin-top:8px;font-weight:600;color:#fbbf24;"></div>
+            </div>
+
+            <!-- STUDY TIMER -->
+            <div class="card">
+                <h3>⏱ Study Tracker</h3>
+                <div class="timer" id="time">25:00</div>
+                <div class="timer-row">
+                    <button onclick="startTimer()">▶ Start</button>
+                    <button onclick="pauseTimer()" class="secondary">⏸ Pause</button>
+                    <button onclick="resetTimer()" class="danger">↺ Reset</button>
+                </div>
+                <div class="small" style="text-align:center;margin-top:6px;">
+                    Session: <span id="sessionTimerStatus">Idle</span> |
+                    Pomodoro: <span id="pomodoroCount">0</span> completed
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ PLANNER SECTION ============ -->
+        <div class="page-section" id="sectionPlanner">
+            <div class="card">
+                <h3>📅 Weekly Study Planner</h3>
+                <textarea id="plan" placeholder="Write your weekly study plan here...&#10;&#10;Example:&#10;Monday - Math 2hrs&#10;Tuesday - Physics 1.5hrs&#10;Wednesday - Review & Practice..."></textarea>
+                <button onclick="savePlan()">💾 Save Plan</button>
+                <button onclick="loadPlan()" class="secondary">📂 Load Saved Plan</button>
+                <button onclick="clearPlan()" class="danger">🗑 Clear Plan</button>
+                <div class="small" id="planStatus" style="margin-top:6px;"></div>
+            </div>
+        </div>
+
+        <!-- ============ ANALYZER SECTION ============ -->
+        <div class="page-section" id="sectionAnalyzer">
+            <div class="card">
+                <h3>📊 Smart Performance Analyzer</h3>
+                <button onclick="analyze()">🔍 Run Full Analysis</button>
+                <div class="card" style="margin-top:10px;background:#0f172a;" id="analysisBox">
+                    <span class="small">No analysis yet. Click "Run Full Analysis" to begin.</span>
+                </div>
+                <button onclick="resetAnalysis()" class="secondary" style="margin-top:6px;">🔄 Reset Analysis</button>
+            </div>
+        </div>
+
+        <!-- ============ GPA HISTORY SECTION ============ -->
+        <div class="page-section" id="sectionGPAHistory">
+            <div class="card">
+                <h3>📜 GPA Calculation History</h3>
+                <div class="history-list" id="gpaHistoryList">
+                    <span class="small">No GPA history yet. Calculate a GPA to record it.</span>
+                </div>
+                <button onclick="clearGPAHistory()" class="danger" style="margin-top:8px;">🗑 Clear History</button>
+            </div>
+        </div>
+
+        <!-- ============ COUNTDOWN SECTION ============ -->
+        <div class="page-section" id="sectionCountdown">
+            <div class="card">
+                <h3>⏳ Exam Countdown</h3>
+                <div class="row">
+                    <input type="date" id="examDate" style="flex:2;">
+                    <input type="text" id="examLabel" placeholder="Exam name (e.g., MATH 101)" style="flex:2;">
+                </div>
+                <button onclick="setCountdown()">🎯 Set Countdown</button>
+                <div class="countdown-display" id="countdownDisplay">--:--:--:--</div>
+                <div class="countdown-label" id="countdownLabel">No exam set</div>
+                <button onclick="clearCountdown()" class="secondary" style="margin-top:4px;">🔄 Clear Countdown</button>
+            </div>
+        </div>
+
+        <!-- ============ SESSION LOG SECTION ============ -->
+        <div class="page-section" id="sectionSessionLog">
+            <div class="card">
+                <h3>📝 Study Session Log</h3>
+                <div class="history-list" id="sessionLogList">
+                    <span class="small">No sessio
