@@ -333,6 +333,131 @@ No analysis yet
 
 </div>
 
+.getItem("gpaHistory")||"[]");
+let container=document.getElementById("gpaHistory");
+if(history.length===0){
+container.innerHTML="<div class='history-item'>No history yet</div>";
+return;
+}
+container.innerHTML=history.map(h=>
+`<div class="history-item">📅 ${h.date} – GPA: ${h.gpa} (${h.units} units)</div>`
+).reverse().join("");
+}
+
+/* ==================== CGPA CALCULATOR ==================== */
+let semCount=1;
+
+function addCGPA(){
+semCount++;
+let d=document.createElement("div");
+d.className="row";
+d.innerHTML=`
+<input type="number" id="cunit${semCount}" placeholder="Units" value="15">
+<input type="number" id="cgpa${semCount}" placeholder="GPA" value="4.0">
+`;
+document.getElementById("cgpaBox").appendChild(d);
+}
+
+function calcCGPA(){
+let total=0,units=0;
+
+for(let i=1;i<=semCount;i++){
+let u=parseFloat(document.getElementById("cunit"+i)?.value);
+let g=parseFloat(document.getElementById("cgpa"+i)?.value);
+if(!isNaN(u)&&!isNaN(g)){
+total+=u*g;
+units+=u;
+}
+}
+
+if(units===0) return alert("Enter at least one semester");
+
+let cgpa=(total/units).toFixed(2);
+localStorage.setItem("cgpa",cgpa);
+document.getElementById("cgpaOut").innerText="CGPA: "+cgpa;
+
+updateDash();
+}
+
+/* ==================== PLANNER ==================== */
+function savePlan(){
+let planText=document.getElementById("plan").value;
+localStorage.setItem("plan",planText);
+document.getElementById("planStatus").innerText="Saved ✔";
+// Load saved plan
+if(planText) document.getElementById("plan").value=planText;
+}
+
+/* ==================== ANALYZER ==================== */
+function analyze(){
+let g=parseFloat(localStorage.getItem("gpa")||0);
+let c=parseFloat(localStorage.getItem("cgpa")||0);
+let sessions=JSON.parse(localStorage.getItem("studySessions")||"[]");
+let totalMin=sessions.reduce((s,se)=>s+(se.duration||0),0);
+let hours=(totalMin/60).toFixed(1);
+
+let msg="";
+if(g>=4.5) msg="🔥 Excellent GPA performance. ";
+else if(g>=3.5) msg="👍 Good GPA. ";
+else if(g>=2.4) msg="⚠️ Average GPA. Consider improvement. ";
+else msg="📌 Low GPA. Immediate action needed. ";
+
+msg+=`CGPA: ${c.toFixed(2)}. Study hours: ${hours}h.`;
+
+if(c>=3.5) msg+=" You're on track for a good degree class.";
+else if(c>=2.4) msg+=" Work harder to raise your CGPA.";
+
+document.getElementById("analysisBox").innerText=msg;
+}
+
+/* ==================== TIMER WITH SESSION TRACKING ==================== */
+let t=1500, run=null;
+const DEFAULT_DURATION=25; // minutes
+
+function updateTimerDisplay(){
+let m=Math.floor(t/60);
+let s=t%60;
+document.getElementById("time").innerText=
+`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+}
+
+function startTimer(){
+if(run) return;
+if(t<=0){
+// If timer ended, reset before starting again
+resetTimer();
+}
+run=setInterval(()=>{
+t--;
+updateTimerDisplay();
+if(t<=0){
+clearInterval(run);
+run=null;
+document.getElementById("timerStatus").innerText="✅ Session complete!";
+recordStudySession(DEFAULT_DURATION);
+// Trigger notification if enabled
+if(Notification.permission==="granted"){
+new Notification("GoatTutor NG",{body:"Study session completed! 🎉 Take a break."});
+}
+}
+},1000);
+document.getElementById("timerStatus").innerText="⏳ Studying...";
+}
+
+function pauseTimer(){
+clearInterval(run);
+run=null;
+document.getElementById("timerStatus").innerText="⏸ Paused";
+}
+
+function resetTimer(){
+clearInterval(run);
+run=null;
+t=DEFAULT_DURATION*60;
+updateTimerDisplay();
+document.getElementById("timerStatus").innerText="Ready";
+}
+
 <script>
 /* ==================== MENU & SIDEBAR ==================== */
 function toggleMenu(){
@@ -340,10 +465,8 @@ document.getElementById("sidebar").classList.toggle("open");
 }
 
 function openSide(id){
-// Hide all page cards, show selected
 document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
 document.getElementById(id).classList.add("active");
-// Close sidebar on mobile
 toggleMenu();
 }
 
@@ -471,14 +594,12 @@ let gpa=(total/units).toFixed(2);
 localStorage.setItem("gpa",gpa);
 document.getElementById("gpaOut").innerText="GPA: "+gpa;
 
-// Save to history
 let history=JSON.parse(localStorage.getItem("gpaHistory")||"[]");
 history.push({
 gpa: gpa,
 units: units,
 date: new Date().toLocaleDateString()
 });
-// Keep last 10
 if(history.length>10) history=history.slice(-10);
 localStorage.setItem("gpaHistory",JSON.stringify(history));
 displayGPAHistory();
@@ -538,8 +659,6 @@ function savePlan(){
 let planText=document.getElementById("plan").value;
 localStorage.setItem("plan",planText);
 document.getElementById("planStatus").innerText="Saved ✔";
-// Load saved plan
-if(planText) document.getElementById("plan").value=planText;
 }
 
 /* ==================== ANALYZER ==================== */
@@ -566,7 +685,7 @@ document.getElementById("analysisBox").innerText=msg;
 
 /* ==================== TIMER WITH SESSION TRACKING ==================== */
 let t=1500, run=null;
-const DEFAULT_DURATION=25; // minutes
+const DEFAULT_DURATION=25;
 
 function updateTimerDisplay(){
 let m=Math.floor(t/60);
@@ -577,10 +696,7 @@ document.getElementById("time").innerText=
 
 function startTimer(){
 if(run) return;
-if(t<=0){
-// If timer ended, reset before starting again
-resetTimer();
-}
+if(t<=0) resetTimer();
 run=setInterval(()=>{
 t--;
 updateTimerDisplay();
@@ -589,10 +705,7 @@ clearInterval(run);
 run=null;
 document.getElementById("timerStatus").innerText="✅ Session complete!";
 recordStudySession(DEFAULT_DURATION);
-// Trigger notification if enabled
-if(Notification.permission==="granted"){
-new Notification("GoatTutor NG",{body:"Study session completed! 🎉 Take a break."});
-}
+showNotification("Study session completed! 🎉 Take a break.");
 }
 },1000);
 document.getElementById("timerStatus").innerText="⏳ Studying...";
@@ -620,6 +733,7 @@ let target=new Date(dateInput).getTime();
 if(isNaN(target)) return alert("Invalid date");
 localStorage.setItem("examTarget",target);
 updateCountdown();
+showNotification("Exam countdown set! 📅");
 }
 
 function updateCountdown(){
@@ -640,10 +754,34 @@ let days=Math.floor(diff/(1000*60*60*24));
 display.innerText=`${days} day${days!==1?'s':''} left`;
 }
 
-// Update countdown every minute
-setInterval(updateCountdown,60000);
+/* ==================== NOTIFICATIONS (FIXED) ==================== */
+function showNotification(title, body){
+// Check if browser supports notifications
+if(!("Notification" in window)){
+console.log("Notifications not supported");
+return;
+}
 
-/* ==================== NOTIFICATIONS ==================== */
+// If permission is granted, show notification immediately
+if(Notification.permission === "granted"){
+new Notification(title, {body: body, icon: "🐐"});
+}
+// If permission is denied, show in-app alert as fallback
+else if(Notification.permission === "denied"){
+alert(title + "\n" + body);
+}
+// If permission not yet decided, request it then show
+else {
+Notification.requestPermission().then(perm => {
+if(perm === "granted"){
+new Notification(title, {body: body, icon: "🐐"});
+} else {
+alert(title + "\n" + body);
+}
+});
+}
+}
+
 function requestNotification(){
 if(!("Notification" in window)){
 alert("Browser does not support notifications");
@@ -652,73 +790,109 @@ return;
 Notification.requestPermission().then(perm=>{
 document.getElementById("notifStatus").innerText=
 `Notifications: ${perm}`;
-if(perm==="granted"){
-new Notification("GoatTutor NG",{body:"Notifications enabled! ✅"});
+if(perm === "granted"){
+showNotification("GoatTutor NG", "Notifications enabled! ✅");
+} else {
+alert("Notifications " + perm + ". We'll use in-app alerts instead.");
 }
 });
 }
 
+// Store active reminders
+let activeReminders = [];
+
 function setReminder(){
-let timeStr=document.getElementById("reminderTime").value;
-let msg=document.getElementById("reminderMsg").value||"Time to study!";
-if(!timeStr) return alert("Set a time");
+let timeStr = document.getElementById("reminderTime").value;
+let msg = document.getElementById("reminderMsg").value || "Time to study! 📚";
+if(!timeStr) return alert("Please set a time first");
 
-let now=new Date();
-let [h,m]=timeStr.split(":").map(Number);
-let reminderDate=new Date(now);
-reminderDate.setHours(h,m,0,0);
-if(reminderDate<=now) reminderDate.setDate(reminderDate.getDate()+1);
+let now = new Date();
+let [h, m] = timeStr.split(":").map(Number);
+let reminderDate = new Date(now);
+reminderDate.setHours(h, m, 0, 0);
 
-let delay=reminderDate-now;
-setTimeout(()=>{
-if(Notification.permission==="granted"){
-new Notification("⏰ Reminder",{body:msg});
-}else{
-alert("Reminder: "+msg);
+// If time has passed today, set for tomorrow
+if(reminderDate <= now){
+reminderDate.setDate(reminderDate.getDate() + 1);
 }
-document.getElementById("reminderStatus").innerText="Reminder sent!";
-},delay);
 
-document.getElementById("reminderStatus").innerText=
-`Reminder set for ${reminderDate.toLocaleTimeString()}`;
+let delay = reminderDate - now;
+let reminderId = Date.now();
+
+// Store reminder info
+let reminder = {
+id: reminderId,
+time: reminderDate.toLocaleTimeString(),
+message: msg,
+timer: setTimeout(() => {
+showNotification("⏰ Study Reminder", msg);
+// Remove from active reminders after firing
+activeReminders = activeReminders.filter(r => r.id !== reminderId);
+updateReminderStatus();
+}, delay)
+};
+
+activeReminders.push(reminder);
+document.getElementById("reminderStatus").innerHTML = 
+`✅ Reminder set for ${reminderDate.toLocaleTimeString()} (${Math.floor(delay/60000)} min from now)<br>
+<small>Active reminders: ${activeReminders.length}</small>`;
+
+// Show immediate test notification
+setTimeout(() => {
+showNotification("⏰ Test", "Your reminder is set! You'll be notified at " + reminderDate.toLocaleTimeString());
+}, 500);
+}
+
+function updateReminderStatus(){
+if(activeReminders.length === 0){
+document.getElementById("reminderStatus").innerText = "No active reminders";
+} else {
+document.getElementById("reminderStatus").innerHTML = 
+`Active reminders: ${activeReminders.length}<br>
+${activeReminders.map(r => `• ${r.time} - ${r.message}`).join('<br>')}`;
+}
 }
 
 /* ==================== INITIALIZATION ==================== */
-// Load saved data
 (function init(){
 // Planner
 let savedPlan=localStorage.getItem("plan");
 if(savedPlan) document.getElementById("plan").value=savedPlan;
 
-// GPA history display
+// GPA history
 displayGPAHistory();
 
-// Countdown display
+// Countdown
 updateCountdown();
 
-// Update dashboard
+// Dashboard
 updateDash();
 
-// Update timer
+// Timer
 updateTimerDisplay();
 
-// Notification permission status
-if(Notification.permission==="granted"){
-document.getElementById("notifStatus").innerText="Notifications: granted";
-}else if(Notification.permission==="denied"){
-document.getElementById("notifStatus").innerText="Notifications: denied";
-}else{
-document.getElementById("notifStatus").innerText="Notifications: not requested";
+// Notification status
+if(Notification.permission === "granted"){
+document.getElementById("notifStatus").innerText = "Notifications: granted ✅";
+} else if(Notification.permission === "denied"){
+document.getElementById("notifStatus").innerText = "Notifications: denied ❌ (using alerts)";
+} else {
+document.getElementById("notifStatus").innerText = "Notifications: click 'Enable' to allow";
 }
 
-// Load target exam date from storage if exists
+// Load exam date if exists
 if(localStorage.getItem("examTarget")){
-document.getElementById("examDate").valueAsDate=
+document.getElementById("examDate").valueAsDate = 
 new Date(parseInt(localStorage.getItem("examTarget")));
 }
+
+// Update countdown every minute
+setInterval(updateCountdown, 60000);
+
+// Test if notifications work
+console.log("GoatTutor NG initialized. Notifications: " + Notification.permission);
 })();
 
 </script>
-
 </body>
 </html>
