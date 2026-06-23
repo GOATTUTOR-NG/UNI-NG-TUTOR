@@ -165,10 +165,23 @@ display:block;
 <button onclick="askAI()">Ask AI</button>
 </div>
 
-<!-- DASHBOARD -->
+<!-- DASHBOARD 2.0 -->
 <div class="card">
 <h3>📊 Academic Dashboard</h3>
-<div id="dash">No data yet</div>
+
+<div id="dash">
+Loading...
+</div>
+
+<div class="small" style="margin-top:10px;">
+🔥 Study Streak:
+<span id="streakDisplay">0</span> Days
+</div>
+
+<div class="small">
+⏱ Study Hours:
+<span id="hoursDisplay">0</span> hrs
+</div>
 </div>
 
 <!-- GPA -->
@@ -271,13 +284,80 @@ window.open("https://chatgpt.com/?q="+encodeURIComponent(
 ));
 }
 
-/* DASH */
+  /* DEGREE CLASSIFICATION */
+function getDegreeClass(cgpa){
+
+cgpa=parseFloat(cgpa);
+
+if(cgpa>=4.50) return "🥇 First Class";
+if(cgpa>=3.50) return "🥈 Second Class Upper";
+if(cgpa>=2.40) return "🥉 Second Class Lower";
+if(cgpa>=1.50) return "📘 Third Class";
+if(cgpa>=1.00) return "📗 Pass";
+
+return "Not Available";
+}
+
+/* STUDY STREAK */
+function updateStreak(){
+
+let today=new Date().toDateString();
+
+let lastVisit=localStorage.getItem("lastVisit");
+let streak=parseInt(localStorage.getItem("streak"))||0;
+
+if(lastVisit!==today){
+
+let yesterday=new Date();
+yesterday.setDate(yesterday.getDate()-1);
+
+if(lastVisit===yesterday.toDateString()){
+streak++;
+}else{
+streak=1;
+}
+
+localStorage.setItem("streak",streak);
+localStorage.setItem("lastVisit",today);
+}
+
+document.getElementById("streakDisplay").innerText=
+localStorage.getItem("streak")||1;
+}
+
+/* STUDY HOURS */
+function updateStudyHours(){
+
+let minutes=parseInt(
+localStorage.getItem("studyMinutes")
+)||0;
+
+document.getElementById("hoursDisplay").innerText=
+(minutes/60).toFixed(1);
+}
+  
 function updateDash(){
+
 let gpa=localStorage.getItem("gpa")||"0";
 let cgpa=localStorage.getItem("cgpa")||"0";
 
+let degree=getDegreeClass(cgpa);
+
 document.getElementById("dash").innerHTML=
-`GPA: ${gpa}<br>CGPA: ${cgpa}<br>Status: ${cgpa>=3.5?"Good 👍":"Needs Improvement ⚠️"}`;
+`
+🎓 GPA: ${gpa}<br><br>
+
+📈 CGPA: ${cgpa}<br><br>
+
+🏆 Degree Class: ${degree}<br><br>
+
+${cgpa>=3.5
+?"✅ Academic Standing: Good"
+:"⚠️ Academic Standing: Needs Improvement"}
+`;
+
+updateStreak();
+updateStudyHours();
 }
 
 /* GPA */
