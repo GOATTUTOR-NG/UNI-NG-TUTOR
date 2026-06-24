@@ -528,6 +528,7 @@
         <button onclick="navigateTo('calendar')" id="navCalendar">📅 Academic Calendar</button>
         <button onclick="navigateTo('cgpaTracker')" id="navCGPA">📊 CGPA Tracker</button>
         <button onclick="navigateTo('cutoff')" id="navCutoff">📊 Cut‑off Marks (2024/2025)</button>
+        <button onclick="navigateTo('screening')" id="navScreening">🎯 Screening Calculator</button>
         <button onclick="navigateTo('countdown')" id="navCountdown">⏳ Exam Countdown</button>
         <button onclick="navigateTo('sessionLog')" id="navSessionLog">📝 Session Log</button>
         <button class="close-btn" onclick="closeMenu()">✕ Close Menu</button>
@@ -766,6 +767,95 @@
             </div>
         </div>
 
+        <!-- ========== UNIOSUN SCREENING CALCULATOR ========== -->
+        <div class="page-section" id="sectionScreening">
+            <div class="card">
+                <h3>🎯 UNIOSUN Screening Calculator</h3>
+                <p class="small">Calculate your screening aggregate using your JAMB score and O'level grades for 5 relevant subjects.</p>
+
+                <!-- JAMB Score -->
+                <div class="row">
+                    <input type="number" id="jambScore" placeholder="JAMB Score (e.g., 280)" min="0" max="400" style="flex:2;">
+                </div>
+
+                <!-- 5 Subject Rows -->
+                <div class="row">
+                    <input type="text" id="subject1" placeholder="Subject 1 (e.g., English)" style="flex:2;">
+                    <select id="grade1" style="flex:1;">
+                        <option value="8">A1 (8)</option>
+                        <option value="7">B2 (7)</option>
+                        <option value="6">B3 (6)</option>
+                        <option value="5">C4 (5)</option>
+                        <option value="4">C5 (4)</option>
+                        <option value="3">C6 (3)</option>
+                        <option value="2">D7 (2)</option>
+                        <option value="1">E8 (1)</option>
+                        <option value="0">F9 (0)</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <input type="text" id="subject2" placeholder="Subject 2 (e.g., Mathematics)" style="flex:2;">
+                    <select id="grade2" style="flex:1;">
+                        <option value="8">A1 (8)</option>
+                        <option value="7">B2 (7)</option>
+                        <option value="6">B3 (6)</option>
+                        <option value="5">C4 (5)</option>
+                        <option value="4">C5 (4)</option>
+                        <option value="3">C6 (3)</option>
+                        <option value="2">D7 (2)</option>
+                        <option value="1">E8 (1)</option>
+                        <option value="0">F9 (0)</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <input type="text" id="subject3" placeholder="Subject 3" style="flex:2;">
+                    <select id="grade3" style="flex:1;">
+                        <option value="8">A1 (8)</option>
+                        <option value="7">B2 (7)</option>
+                        <option value="6">B3 (6)</option>
+                        <option value="5">C4 (5)</option>
+                        <option value="4">C5 (4)</option>
+                        <option value="3">C6 (3)</option>
+                        <option value="2">D7 (2)</option>
+                        <option value="1">E8 (1)</option>
+                        <option value="0">F9 (0)</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <input type="text" id="subject4" placeholder="Subject 4" style="flex:2;">
+                    <select id="grade4" style="flex:1;">
+                        <option value="8">A1 (8)</option>
+                        <option value="7">B2 (7)</option>
+                        <option value="6">B3 (6)</option>
+                        <option value="5">C4 (5)</option>
+                        <option value="4">C5 (4)</option>
+                        <option value="3">C6 (3)</option>
+                        <option value="2">D7 (2)</option>
+                        <option value="1">E8 (1)</option>
+                        <option value="0">F9 (0)</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <input type="text" id="subject5" placeholder="Subject 5" style="flex:2;">
+                    <select id="grade5" style="flex:1;">
+                        <option value="8">A1 (8)</option>
+                        <option value="7">B2 (7)</option>
+                        <option value="6">B3 (6)</option>
+                        <option value="5">C4 (5)</option>
+                        <option value="4">C5 (4)</option>
+                        <option value="3">C6 (3)</option>
+                        <option value="2">D7 (2)</option>
+                        <option value="1">E8 (1)</option>
+                        <option value="0">F9 (0)</option>
+                    </select>
+                </div>
+
+                <!-- Calculate Button & Result -->
+                <button onclick="calcUNIOSUN()">📊 Calculate Screening Score</button>
+                <div id="uniosunResult" style="margin-top:8px;font-weight:600;color:#fbbf24;text-align:center;"></div>
+            </div>
+        </div>
+
         <!-- ========== COUNTDOWN ========== -->
         <div class="page-section" id="sectionCountdown">
             <div class="card">
@@ -797,7 +887,7 @@
 
     <script>
         /* ============================================================
-               GOATTUTOR NG v6 – FULLY RESPONSIVE FIX
+               GOATTUTOR NG v6 – COMPLETE WITH SCREENING CALCULATOR
                ============================================================ */
 
         // ─── GLOBAL STATE ───
@@ -828,6 +918,7 @@
             'calendar': 'sectionCalendar',
             'cgpaTracker': 'sectionCGPA',
             'cutoff': 'sectionCutoff',
+            'screening': 'sectionScreening',
             'countdown': 'sectionCountdown',
             'sessionLog': 'sectionSessionLog'
         };
@@ -840,6 +931,7 @@
             'calendar': 'navCalendar',
             'cgpaTracker': 'navCGPA',
             'cutoff': 'navCutoff',
+            'screening': 'navScreening',
             'countdown': 'navCountdown',
             'sessionLog': 'navSessionLog'
         };
@@ -855,7 +947,6 @@
             if (navBtnId) document.getElementById(navBtnId).classList.add('active-nav');
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            // Refresh content for specific sections
             if (section === 'planner') loadPlan(true);
             if (section === 'gpaHistory') renderSavedSemesters();
             if (section === 'calendar') renderAcademicCalendar();
@@ -976,18 +1067,18 @@
             row.className = 'row course-row';
             row.id = 'courseRow' + courseRowCounter;
             row.innerHTML = `
-                    <input type="text" id="cname${courseRowCounter}" placeholder="Course Name" style="flex:2;">
-                    <input type="number" id="cunit${courseRowCounter}" placeholder="Units" min="0" step="0.5" style="flex:1;">
-                    <select id="cgrade${courseRowCounter}" style="flex:1;">
-                        <option value="5">A (5.0)</option>
-                        <option value="4">B (4.0)</option>
-                        <option value="3">C (3.0)</option>
-                        <option value="2">D (2.0)</option>
-                        <option value="1">E (1.0)</option>
-                        <option value="0">F (0.0)</option>
-                    </select>
-                    <button onclick="removeCourseRow(${courseRowCounter})" class="danger small-btn" style="width:auto;flex:0;">✕</button>
-                `;
+                <input type="text" id="cname${courseRowCounter}" placeholder="Course Name" style="flex:2;">
+                <input type="number" id="cunit${courseRowCounter}" placeholder="Units" min="0" step="0.5" style="flex:1;">
+                <select id="cgrade${courseRowCounter}" style="flex:1;">
+                    <option value="5">A (5.0)</option>
+                    <option value="4">B (4.0)</option>
+                    <option value="3">C (3.0)</option>
+                    <option value="2">D (2.0)</option>
+                    <option value="1">E (1.0)</option>
+                    <option value="0">F (0.0)</option>
+                </select>
+                <button onclick="removeCourseRow(${courseRowCounter})" class="danger small-btn" style="width:auto;flex:0;">✕</button>
+            `;
             container.appendChild(row);
         }
 
@@ -1119,20 +1210,20 @@
             }
             const sorted = [...semesters].reverse();
             const html = sorted.map(s => `
-                    <div class="history-item" style="display:flex;flex-direction:column;align-items:stretch;gap:4px;background:#0f172a;padding:10px;border-radius:8px;margin-top:6px;border:1px solid #334155;">
-                        <div style="display:flex;justify-content:space-between;font-weight:600;color:#fbbf24;">
-                            <span>📘 ${s.title}</span>
-                            <span>GPA: ${s.gpa.toFixed(2)}</span>
-                        </div>
-                        <div style="display:flex;flex-wrap:wrap;gap:4px;font-size:0.75rem;color:#94a3b8;">
-                            ${s.courses.map(c => `<span style="background:#1e293b;padding:2px 8px;border-radius:12px;">${c.name} (${c.units}u, ${c.grade})</span>`).join('')}
-                        </div>
-                        <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:#64748b;margin-top:2px;">
-                            <span>📅 ${s.date}</span>
-                            <button onclick="deleteSemester(${s.id})" class="danger small-btn" style="width:auto;padding:2px 10px;font-size:0.65rem;">✕ Delete</button>
-                        </div>
+                <div class="history-item" style="display:flex;flex-direction:column;align-items:stretch;gap:4px;background:#0f172a;padding:10px;border-radius:8px;margin-top:6px;border:1px solid #334155;">
+                    <div style="display:flex;justify-content:space-between;font-weight:600;color:#fbbf24;">
+                        <span>📘 ${s.title}</span>
+                        <span>GPA: ${s.gpa.toFixed(2)}</span>
                     </div>
-                `).join('');
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;font-size:0.75rem;color:#94a3b8;">
+                        ${s.courses.map(c => `<span style="background:#1e293b;padding:2px 8px;border-radius:12px;">${c.name} (${c.units}u, ${c.grade})</span>`).join('')}
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:#64748b;margin-top:2px;">
+                        <span>📅 ${s.date}</span>
+                        <button onclick="deleteSemester(${s.id})" class="danger small-btn" style="width:auto;padding:2px 10px;font-size:0.65rem;">✕ Delete</button>
+                    </div>
+                </div>
+            `).join('');
             container.innerHTML = html;
             if (historyContainer) historyContainer.innerHTML = html;
         }
@@ -1173,10 +1264,10 @@
             row.className = 'row';
             row.id = 'cgpaRow' + semCounter;
             row.innerHTML = `
-                    <input type="number" id="cunit${semCounter}_cgpa" placeholder="Semester Units" min="0" step="0.5" style="flex:1;">
-                    <input type="number" id="cgpa${semCounter}_cgpa" placeholder="Semester GPA" min="0" max="5" step="0.01" style="flex:1;">
-                    <button onclick="removeCGPARow(${semCounter})" class="danger small-btn" style="width:auto;flex:0;">✕</button>
-                `;
+                <input type="number" id="cunit${semCounter}_cgpa" placeholder="Semester Units" min="0" step="0.5" style="flex:1;">
+                <input type="number" id="cgpa${semCounter}_cgpa" placeholder="Semester GPA" min="0" max="5" step="0.01" style="flex:1;">
+                <button onclick="removeCGPARow(${semCounter})" class="danger small-btn" style="width:auto;flex:0;">✕</button>
+            `;
             container.appendChild(row);
         }
 
@@ -1269,11 +1360,11 @@
                 const dateStr = event.dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short',
                     year: 'numeric' });
                 html += `
-                        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #334155;${isNext ? 'background:#1a2a4a;padding:8px 10px;border-radius:6px;margin-bottom:4px;' : ''}">
-                            <span style="${isNext ? 'font-weight:600;color:#fbbf24;' : ''}">${isNext ? '🔴 ' : ''}${event.title}</span>
-                            <span style="color:#94a3b8;font-size:0.8rem;">${dateStr}</span>
-                        </div>
-                    `;
+                    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #334155;${isNext ? 'background:#1a2a4a;padding:8px 10px;border-radius:6px;margin-bottom:4px;' : ''}">
+                        <span style="${isNext ? 'font-weight:600;color:#fbbf24;' : ''}">${isNext ? '🔴 ' : ''}${event.title}</span>
+                        <span style="color:#94a3b8;font-size:0.8rem;">${dateStr}</span>
+                    </div>
+                `;
             });
 
             if (upcomingEvents.length > 5) {
@@ -1309,17 +1400,17 @@
             }
         }, 60000);
 
-        // ─── CGPA TRACKER (FIXED FUNCTION NAME) ───
+        // ─── CGPA TRACKER ───
         function renderCGPATracker() {
             const container = document.getElementById('cgpaTrackerContent');
             const semesters = getSavedSemesters();
 
             if (semesters.length === 0) {
                 container.innerHTML = `
-                        <div class="small" style="text-align:center;padding:10px;">
-                            No semester data yet. Add and save semesters using the GPA Calculator.
-                        </div>
-                    `;
+                    <div class="small" style="text-align:center;padding:10px;">
+                        No semester data yet. Add and save semesters using the GPA Calculator.
+                    </div>
+                `;
                 return;
             }
 
@@ -1334,26 +1425,26 @@
             const overallCGPA = totalUnits > 0 ? (totalPoints / totalUnits) : 0;
 
             let html = `
-                    <div style="background:#0f172a;padding:10px;border-radius:8px;margin-bottom:8px;text-align:center;">
-                        <div style="font-size:0.75rem;color:#94a3b8;">Overall CGPA</div>
-                        <div style="font-size:2rem;font-weight:700;color:#fbbf24;">${overallCGPA.toFixed(2)}</div>
-                        <div style="font-size:0.7rem;color:#94a3b8;">${getDegreeClass(overallCGPA)}</div>
-                    </div>
-                    <div style="display:flex;flex-direction:column;gap:4px;">
-                `;
+                <div style="background:#0f172a;padding:10px;border-radius:8px;margin-bottom:8px;text-align:center;">
+                    <div style="font-size:0.75rem;color:#94a3b8;">Overall CGPA</div>
+                    <div style="font-size:2rem;font-weight:700;color:#fbbf24;">${overallCGPA.toFixed(2)}</div>
+                    <div style="font-size:0.7rem;color:#94a3b8;">${getDegreeClass(overallCGPA)}</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:4px;">
+            `;
 
             sorted.forEach((sem) => {
                 const percentage = (sem.gpa / 5) * 100;
                 const barColor = percentage >= 80 ? '#22c55e' : percentage >= 60 ? '#fbbf24' : '#ef4444';
                 html += `
-                        <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;">
-                            <span style="min-width:80px;color:#94a3b8;">${sem.title}</span>
-                            <div style="flex:1;background:#1e293b;border-radius:4px;height:8px;overflow:hidden;">
-                                <div style="width:${percentage}%;height:100%;background:${barColor};border-radius:4px;transition:width 0.5s;"></div>
-                            </div>
-                            <span style="min-width:40px;color:#fbbf24;font-weight:600;">${sem.gpa.toFixed(2)}</span>
+                    <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;">
+                        <span style="min-width:80px;color:#94a3b8;">${sem.title}</span>
+                        <div style="flex:1;background:#1e293b;border-radius:4px;height:8px;overflow:hidden;">
+                            <div style="width:${percentage}%;height:100%;background:${barColor};border-radius:4px;transition:width 0.5s;"></div>
                         </div>
-                    `;
+                        <span style="min-width:40px;color:#fbbf24;font-weight:600;">${sem.gpa.toFixed(2)}</span>
+                    </div>
+                `;
             });
 
             html += '</div>';
@@ -1438,14 +1529,14 @@
             filtered.forEach(item => {
                 const isCompetitive = item.merit >= 70;
                 html += `
-                        <div style="display:flex;justify-content:space-between;padding:6px 8px;background:#0f172a;border-radius:6px;border:1px solid #334155;${isCompetitive ? 'border-color:#fbbf24;' : ''}">
-                            <span style="font-size:0.85rem;${isCompetitive ? 'font-weight:600;' : ''}">${item.course}</span>
-                            <span style="font-size:0.8rem;color:#94a3b8;white-space:nowrap;">
-                                GM: <span style="color:#fbbf24;font-weight:600;">${item.merit}</span>
-                                IC: <span style="color:#94a3b8;">${item.indigene}</span>
-                            </span>
-                        </div>
-                    `;
+                    <div style="display:flex;justify-content:space-between;padding:6px 8px;background:#0f172a;border-radius:6px;border:1px solid #334155;${isCompetitive ? 'border-color:#fbbf24;' : ''}">
+                        <span style="font-size:0.85rem;${isCompetitive ? 'font-weight:600;' : ''}">${item.course}</span>
+                        <span style="font-size:0.8rem;color:#94a3b8;white-space:nowrap;">
+                            GM: <span style="color:#fbbf24;font-weight:600;">${item.merit}</span>
+                            IC: <span style="color:#94a3b8;">${item.indigene}</span>
+                        </span>
+                    </div>
+                `;
             });
             html += '</div>';
             container.innerHTML = html;
@@ -1455,6 +1546,68 @@
             const search = document.getElementById('cutoffSearch').value;
             const faculty = document.getElementById('cutoffFaculty').value;
             renderCutoffMarks(search, faculty);
+        }
+
+        // ─── UNIOSUN SCREENING CALCULATOR ───
+        function calcUNIOSUN() {
+            // Get JAMB score
+            const jamb = parseInt(document.getElementById('jambScore').value);
+            if (isNaN(jamb) || jamb < 0 || jamb > 400) {
+                document.getElementById('uniosunResult').innerHTML = '⚠️ Please enter a valid JAMB score (0–400).';
+                showNotification('⚠️ Invalid JAMB score.');
+                return;
+            }
+
+            // Get subject names and grades
+            const subjectNames = [
+                document.getElementById('subject1').value.trim(),
+                document.getElementById('subject2').value.trim(),
+                document.getElementById('subject3').value.trim(),
+                document.getElementById('subject4').value.trim(),
+                document.getElementById('subject5').value.trim()
+            ];
+
+            const gradeEls = [
+                document.getElementById('grade1'),
+                document.getElementById('grade2'),
+                document.getElementById('grade3'),
+                document.getElementById('grade4'),
+                document.getElementById('grade5')
+            ];
+
+            // Check all subjects are filled
+            const emptySubjects = subjectNames.filter(name => name === '');
+            if (emptySubjects.length > 0) {
+                document.getElementById('uniosunResult').innerHTML = '⚠️ Please enter all 5 subject names.';
+                showNotification('⚠️ All subject fields must be filled.');
+                return;
+            }
+
+            // Calculate total O'level points
+            let totalOlevelPoints = 0;
+            gradeEls.forEach(select => {
+                totalOlevelPoints += parseInt(select.value);
+            });
+
+            // Compute aggregate
+            const jambContribution = (jamb * 60) / 400; // max 60
+            const aggregate = jambContribution + totalOlevelPoints; // max 100
+
+            // Display result
+            const resultDiv = document.getElementById('uniosunResult');
+            resultDiv.innerHTML = `
+                <div style="background:#0f172a;padding:10px;border-radius:8px;text-align:left;font-size:0.9rem;">
+                    <div><strong>📊 Aggregate Score:</strong> ${aggregate.toFixed(2)}%</div>
+                    <div style="font-size:0.8rem;color:#94a3b8;margin-top:4px;">
+                        JAMB Contribution: ${jambContribution.toFixed(2)}% (${jamb} × 60/400)<br>
+                        O'level Points: ${totalOlevelPoints} / 40
+                    </div>
+                    <div style="margin-top:6px;font-size:0.85rem;color:#fbbf24;">
+                        ${aggregate >= 68 ? '✅ Competitive score – likely admission' : '🔍 Average – check course cut-off'}
+                    </div>
+                </div>
+            `;
+            showNotification('📊 Screening score: ' + aggregate.toFixed(2) + '%');
         }
 
         // ─── PLANNER ───
@@ -1670,11 +1823,11 @@
             }
             const reversed = [...log].reverse();
             container.innerHTML = reversed.map(s => `
-                    <div class="history-item">
-                        <span>📅 ${s.date}</span>
-                        <span><strong>${s.type}</strong> ${s.duration > 0 ? '| ' + s.duration + ' min' : ''}</span>
-                    </div>
-                `).join('');
+                <div class="history-item">
+                    <span>📅 ${s.date}</span>
+                    <span><strong>${s.type}</strong> ${s.duration > 0 ? '| ' + s.duration + ' min' : ''}</span>
+                </div>
+            `).join('');
         }
 
         function clearSessionLog() {
@@ -1722,7 +1875,7 @@
         document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMenu(); });
 
         init();
-        console.log('🐐 GoatTutor NG v6 – Fully responsive with all features fixed.');
+        console.log('🐐 GoatTutor NG v6 – Fully responsive with UNIOSUN Screening Calculator.');
     </script>
 </body>
 </html>
