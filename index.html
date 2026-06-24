@@ -454,6 +454,7 @@
         <button onclick="navigateTo('gpaHistory')" id="navGPAHistory">📜 GPA History</button>
         <button onclick="navigateTo('calendar')" id="navCalendar">📅 Academic Calendar</button>
         <button onclick="navigateTo('cgpaTracker')" id="navCGPA">📊 CGPA Tracker</button>
+        <button onclick="navigateTo('cutoff')" id="navCutoff">📊 Cut‑off Marks (2024/2025)</button>
         <button onclick="navigateTo('countdown')" id="navCountdown">⏳ Exam Countdown</button>
         <button onclick="navigateTo('sessionLog')" id="navSessionLog">📝 Session Log</button>
         <button class="close-btn" onclick="closeMenu()">✕ Close Menu</button>
@@ -668,6 +669,39 @@
             </div>
         </div>
 
+        <!-- ============ CUT-OFF MARKS (2024/2025) ============ -->
+        <div class="page-section" id="sectionCutoff">
+            <div class="card">
+                <h3>📊 UNIOSUN Cut‑off Marks 2024/2025</h3>
+                <p class="small">
+                    ⚠️ <strong>Last year's data</strong> – Use this to predict your chances for the current session. 
+                    Cut‑offs may change. Check the official portal for final decisions.
+                </p>
+                <div class="row" style="margin-top:6px;">
+                    <input type="text" id="cutoffSearch" placeholder="Search for a course..." style="flex:3;" onkeyup="filterCutoffMarks()">
+                    <select id="cutoffFaculty" style="flex:1;" onchange="filterCutoffMarks()">
+                        <option value="all">All Faculties</option>
+                        <option value="Agriculture">Agriculture</option>
+                        <option value="Education">Education</option>
+                        <option value="Science">Science</option>
+                        <option value="Social Sciences">Social Sciences</option>
+                        <option value="Law">Law</option>
+                        <option value="Medicine">Medicine</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Arts">Arts</option>
+                        <option value="Management">Management</option>
+                    </select>
+                </div>
+                <div id="cutoffResults" style="margin-top:8px;max-height:300px;overflow-y:auto;">
+                    <span class="small">Loading cut-off marks...</span>
+                </div>
+                <div class="small" style="margin-top:4px;text-align:center;">
+                    GM = General Merit &nbsp;|&nbsp; IC = Indigene/Catchment<br>
+                    Scores are in % (screening aggregate).
+                </div>
+            </div>
+        </div>
+
         <!-- ============ COUNTDOWN ============ -->
         <div class="page-section" id="sectionCountdown">
             <div class="card">
@@ -726,6 +760,7 @@
             'gpaHistory': 'sectionGPAHistory',
             'calendar': 'sectionCalendar',
             'cgpaTracker': 'sectionCGPA',
+            'cutoff': 'sectionCutoff',
             'countdown': 'sectionCountdown',
             'sessionLog': 'sectionSessionLog'
         };
@@ -737,6 +772,7 @@
             'gpaHistory': 'navGPAHistory',
             'calendar': 'navCalendar',
             'cgpaTracker': 'navCGPA',
+            'cutoff': 'navCutoff',
             'countdown': 'navCountdown',
             'sessionLog': 'navSessionLog'
         };
@@ -757,6 +793,7 @@
             if (section === 'gpaHistory') renderSavedSemesters();
             if (section === 'calendar') renderAcademicCalendar();
             if (section === 'cgpaTracker') renderCGPA Tracker();
+            if (section === 'cutoff') renderCutoffMarks();
             if (section === 'sessionLog') renderSessionLog();
             if (section === 'countdown') updateCountdownDisplay();
         }
@@ -1242,6 +1279,120 @@
             container.innerHTML = html;
         }
 
+        /* ============ CUT-OFF MARKS (2024/2025) ============ */
+        const cutoffData = [
+            // Faculty of Agriculture
+            { course: 'B. Agric. Economics', faculty: 'Agriculture', merit: 57.0, indigene: 46.4 },
+            { course: 'B. Agric. Extension', faculty: 'Agriculture', merit: 56.5, indigene: 44.5 },
+            { course: 'B. Agric. Forestry', faculty: 'Agriculture', merit: 50.0, indigene: 40.0 },
+            { course: 'B. Agric. Agronomy', faculty: 'Agriculture', merit: 54.8, indigene: 44.6 },
+            { course: 'B. Agric. Animal Science', faculty: 'Agriculture', merit: 58.5, indigene: 40.5 },
+            { course: 'B. Agric. Fisheries & Aquaculture', faculty: 'Agriculture', merit: 55.0, indigene: 45.5 },
+            { course: 'B. Agric. Wildlife Management', faculty: 'Agriculture', merit: 54.0, indigene: 44.8 },
+            
+            // Faculty of Education
+            { course: 'B.A. (Ed) English', faculty: 'Education', merit: 60.5, indigene: 45.3 },
+            { course: 'B.A. (Ed) Economics', faculty: 'Education', merit: 60.8, indigene: 46.2 },
+            { course: 'B.A. (Ed) Education Guidance & Counselling', faculty: 'Education', merit: 63.5, indigene: 50.9 },
+            { course: 'B.Sc. (Ed) Political Science', faculty: 'Education', merit: 61.7, indigene: 49.6 },
+            { course: 'B.Ed. Adult Education', faculty: 'Education', merit: 55.5, indigene: 46.8 },
+            { course: 'B.Sc. (Ed) Mathematics', faculty: 'Education', merit: 54.3, indigene: 40.0 },
+            { course: 'B.Sc. (Ed) Physics', faculty: 'Education', merit: 49.1, indigene: 40.0 },
+            { course: 'B.Sc. (Ed) Environmental Education', faculty: 'Education', merit: 47.6, indigene: 40.0 },
+            { course: 'B.A. (Ed) Social Studies', faculty: 'Education', merit: 53.5, indigene: 48.0 },
+            { course: 'B.Ed. Early Childhood Care Education', faculty: 'Education', merit: 46.5, indigene: 42.5 },
+            
+            // Faculty of Science
+            { course: 'B.Sc. Computer Science', faculty: 'Science', merit: 68.1, indigene: 62.3 },
+            { course: 'B.Sc. Biochemistry', faculty: 'Science', merit: 65.0, indigene: 58.0 },
+            { course: 'B.Sc. Microbiology', faculty: 'Science', merit: 63.5, indigene: 56.0 },
+            { course: 'B.Sc. Chemistry', faculty: 'Science', merit: 55.0, indigene: 48.0 },
+            { course: 'B.Sc. Physics', faculty: 'Science', merit: 52.0, indigene: 45.0 },
+            { course: 'B.Sc. Mathematics', faculty: 'Science', merit: 50.0, indigene: 43.0 },
+            { course: 'B.Sc. Statistics', faculty: 'Science', merit: 48.0, indigene: 41.0 },
+            { course: 'B.Sc. Geology', faculty: 'Science', merit: 52.0, indigene: 45.0 },
+            
+            // Faculty of Social Sciences
+            { course: 'B.Sc. Economics', faculty: 'Social Sciences', merit: 65.0, indigene: 58.0 },
+            { course: 'B.Sc. Political Science', faculty: 'Social Sciences', merit: 61.7, indigene: 49.6 },
+            { course: 'B.Sc. Sociology', faculty: 'Social Sciences', merit: 58.0, indigene: 50.0 },
+            { course: 'B.Sc. Psychology', faculty: 'Social Sciences', merit: 55.0, indigene: 47.0 },
+            { course: 'B.Sc. Mass Communication', faculty: 'Social Sciences', merit: 72.0, indigene: 63.7 },
+            { course: 'B.Sc. Criminology', faculty: 'Social Sciences', merit: 60.0, indigene: 52.0 },
+            
+            // Faculty of Law
+            { course: 'LL.B. Law', faculty: 'Law', merit: 79.4, indigene: 75.6 },
+            { course: 'Common & Islamic Law', faculty: 'Law', merit: 75.0, indigene: 70.0 },
+            
+            // Faculty of Medicine
+            { course: 'MBBS Medicine', faculty: 'Medicine', merit: 85.3, indigene: 82.4 },
+            { course: 'B.NSc. Nursing', faculty: 'Medicine', merit: 77.5, indigene: 74.0 },
+            
+            // Faculty of Engineering
+            { course: 'B.Eng. Civil Engineering', faculty: 'Engineering', merit: 67.1, indigene: 61.6 },
+            { course: 'B.Eng. Electrical/Electronics Engineering', faculty: 'Engineering', merit: 65.0, indigene: 59.0 },
+            { course: 'B.Eng. Mechanical Engineering', faculty: 'Engineering', merit: 63.0, indigene: 57.0 },
+            { course: 'B.Eng. Chemical Engineering', faculty: 'Engineering', merit: 60.0, indigene: 54.0 },
+            
+            // Faculty of Arts
+            { course: 'B.A. English', faculty: 'Arts', merit: 58.0, indigene: 50.0 },
+            { course: 'B.A. History', faculty: 'Arts', merit: 52.0, indigene: 45.0 },
+            { course: 'B.A. Philosophy', faculty: 'Arts', merit: 50.0, indigene: 43.0 },
+            { course: 'B.A. Religious Studies', faculty: 'Arts', merit: 48.0, indigene: 41.0 },
+            
+            // Faculty of Management
+            { course: 'B.Sc. Accounting', faculty: 'Management', merit: 62.0, indigene: 55.0 },
+            { course: 'B.Sc. Business Administration', faculty: 'Management', merit: 60.0, indigene: 53.0 },
+            { course: 'B.Sc. Public Administration', faculty: 'Management', merit: 58.0, indigene: 50.0 },
+            { course: 'B.Sc. Banking & Finance', faculty: 'Management', merit: 55.0, indigene: 48.0 },
+        ];
+
+        function renderCutoffMarks(filter = '', faculty = 'all') {
+            const container = document.getElementById('cutoffResults');
+            const searchTerm = filter.toLowerCase().trim();
+            
+            let filtered = cutoffData;
+            if (searchTerm) {
+                filtered = filtered.filter(item => 
+                    item.course.toLowerCase().includes(searchTerm) ||
+                    item.faculty.toLowerCase().includes(searchTerm)
+                );
+            }
+            if (faculty !== 'all') {
+                filtered = filtered.filter(item => item.faculty === faculty);
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<span class="small">No courses found. Try a different search.</span>';
+                return;
+            }
+
+            // Sort alphabetically
+            filtered.sort((a, b) => a.course.localeCompare(b.course));
+
+            let html = '<div style="display:flex;flex-direction:column;gap:4px;">';
+            filtered.forEach(item => {
+                const isCompetitive = item.merit >= 70;
+                html += `
+                    <div style="display:flex;justify-content:space-between;padding:6px 8px;background:#0f172a;border-radius:6px;border:1px solid #334155;${isCompetitive ? 'border-color:#fbbf24;' : ''}">
+                        <span style="font-size:0.85rem;${isCompetitive ? 'font-weight:600;' : ''}">${item.course}</span>
+                        <span style="font-size:0.8rem;color:#94a3b8;white-space:nowrap;">
+                            GM: <span style="color:#fbbf24;font-weight:600;">${item.merit}</span> 
+                            IC: <span style="color:#94a3b8;">${item.indigene}</span>
+                        </span>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function filterCutoffMarks() {
+            const search = document.getElementById('cutoffSearch').value;
+            const faculty = document.getElementById('cutoffFaculty').value;
+            renderCutoffMarks(search, faculty);
+        }
+
         /* ============ PLANNER, ANALYZER, COUNTDOWN, TIMER, SESSION LOG ============ */
         function savePlan() {
             const planText = document.getElementById('plan').value;
@@ -1472,6 +1623,7 @@
             renderSessionLog();
             initGPASection();
             renderAcademicCalendar();
+            renderCutoffMarks();
 
             // Ensure CGPA calculator has at least one row
             const cgpaRows = document.querySelectorAll('#cgpaBox .row');
@@ -1487,7 +1639,7 @@
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 
         init();
-        console.log('🐐 GoatTutor NG v6 – Academic Calendar & CGPA Tracker added.');
+        console.log('🐐 GoatTutor NG v6 – Academic Calendar, CGPA Tracker & Cut-off Marks added.');
     </script>
 </body>
 </html>
