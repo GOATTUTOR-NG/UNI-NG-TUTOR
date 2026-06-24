@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>GoatTutor NG v6 🐐</title>
     <style>
+        /* ─── RESET & BASE ─── */
         * {
             margin: 0;
             padding: 0;
@@ -19,7 +20,7 @@
             overflow-x: hidden;
         }
 
-        /* TOP BAR */
+        /* ─── TOP BAR ─── */
         .topbar {
             display: flex;
             justify-content: space-between;
@@ -58,7 +59,7 @@
             background: #334155;
         }
 
-        /* SIDEBAR OVERLAY */
+        /* ─── SIDEBAR OVERLAY ─── */
         .sidebar-overlay {
             position: fixed;
             top: 0;
@@ -74,7 +75,7 @@
             display: block;
         }
 
-        /* SIDEBAR */
+        /* ─── SIDEBAR ─── */
         .sidebar {
             position: fixed;
             top: 0;
@@ -140,10 +141,10 @@
             transform: none;
         }
 
-        /* MAIN CONTAINER */
+        /* ─── MAIN CONTAINER ─── */
         .container {
             padding: 12px 14px;
-            max-width: 700px;
+            max-width: 720px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
@@ -151,7 +152,7 @@
             padding-bottom: 40px;
         }
 
-        /* CARDS */
+        /* ─── CARDS ─── */
         .card {
             background: #1e293b;
             padding: 14px 16px;
@@ -172,7 +173,7 @@
             flex-wrap: wrap;
         }
 
-        /* INPUTS */
+        /* ─── INPUTS ─── */
         input,
         textarea,
         select {
@@ -199,7 +200,7 @@
             min-height: 70px;
         }
 
-        /* BUTTONS */
+        /* ─── BUTTONS ─── */
         button {
             width: 100%;
             padding: 12px 14px;
@@ -248,7 +249,7 @@
             min-height: 34px;
         }
 
-        /* ROW */
+        /* ─── ROW ─── */
         .row {
             display: flex;
             gap: 8px;
@@ -265,7 +266,7 @@
             min-width: 70px;
         }
 
-        /* TIMER */
+        /* ─── TIMER ─── */
         .timer {
             font-size: 44px;
             text-align: center;
@@ -286,7 +287,7 @@
             min-width: 70px;
         }
 
-        /* PAGE SECTIONS */
+        /* ─── PAGE SECTIONS ─── */
         .page-section {
             display: none;
         }
@@ -294,7 +295,7 @@
             display: block;
         }
 
-        /* DASHBOARD CARDS GRID */
+        /* ─── DASHBOARD CARDS GRID ─── */
         .dash-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -326,7 +327,7 @@
             margin-top: 2px;
         }
 
-        /* NOTIFICATIONS */
+        /* ─── NOTIFICATIONS ─── */
         .notification-toast {
             position: fixed;
             top: 16px;
@@ -363,7 +364,7 @@
             margin: 0;
         }
 
-        /* COUNTDOWN */
+        /* ─── COUNTDOWN ─── */
         .countdown-display {
             font-size: 1.8rem;
             font-weight: 700;
@@ -379,7 +380,7 @@
             margin-top: 2px;
         }
 
-        /* HISTORY LIST */
+        /* ─── HISTORY LIST ─── */
         .history-list {
             max-height: 180px;
             overflow-y: auto;
@@ -399,13 +400,13 @@
             gap: 4px;
         }
 
-        /* SMALL TEXT */
+        /* ─── SMALL TEXT ─── */
         .small {
             font-size: 0.75rem;
             color: #94a3b8;
         }
 
-        /* CGPA TRACKER PROGRESS BARS */
+        /* ─── PROGRESS BARS ─── */
         .progress-bar {
             width: 100%;
             height: 8px;
@@ -420,7 +421,7 @@
             transition: width 0.5s ease;
         }
 
-        /* RESPONSIVE */
+        /* ─── RESPONSIVE TWEAKS ─── */
         @media (max-width: 600px) {
             .timer {
                 font-size: 32px;
@@ -469,6 +470,11 @@
                 min-width: 40px;
                 min-height: 40px;
             }
+            .notification-toast {
+                max-width: 90%;
+                right: 10px;
+                top: 10px;
+            }
         }
 
         @media (max-width: 380px) {
@@ -483,15 +489,36 @@
                 padding: 10px 12px;
                 min-height: 44px;
             }
+            .timer {
+                font-size: 26px;
+            }
+            .countdown-display {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* ─── SCROLLBAR ─── */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
         }
     </style>
 </head>
 <body>
 
-    <!-- SIDEBAR OVERLAY -->
+    <!-- ─── SIDEBAR OVERLAY ─── -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMenu()"></div>
 
-    <!-- SIDEBAR -->
+    <!-- ─── SIDEBAR ─── -->
     <div class="sidebar" id="sidebar">
         <h3>📋 Navigation</h3>
         <button class="active-nav" onclick="navigateTo('main')" id="navMain">🏠 Home Dashboard</button>
@@ -506,22 +533,22 @@
         <button class="close-btn" onclick="closeMenu()">✕ Close Menu</button>
     </div>
 
-    <!-- NOTIFICATION TOAST -->
+    <!-- ─── NOTIFICATION TOAST ─── -->
     <div class="notification-toast" id="notificationToast">
         <span class="close-toast" onclick="hideNotification()">✕</span>
         <span id="notificationText">Notification</span>
     </div>
 
-    <!-- TOP BAR -->
+    <!-- ─── TOP BAR ─── -->
     <div class="topbar">
         <div class="logo">🐐 GoatTutor NG v6</div>
         <button class="menuBtn" onclick="toggleMenu()" aria-label="Open menu">☰</button>
     </div>
 
-    <!-- MAIN CONTENT -->
+    <!-- ─── MAIN CONTENT ─── -->
     <div class="container">
 
-        <!-- ============ MAIN SECTION ============ -->
+        <!-- ========== MAIN SECTION ========== -->
         <div class="page-section active" id="sectionMain">
 
             <!-- AI CORE -->
@@ -538,7 +565,7 @@
                 <button onclick="askAI()">🚀 Ask AI Now</button>
             </div>
 
-            <!-- DASHBOARD 2.0 -->
+            <!-- DASHBOARD -->
             <div class="card">
                 <h3>📊 Academic Dashboard</h3>
                 <div class="dash-grid">
@@ -570,18 +597,13 @@
                 </div>
             </div>
 
-            <!-- ===== SEMESTER‑BASED GPA CALCULATOR ===== -->
+            <!-- SEMESTER GPA CALCULATOR -->
             <div class="card">
                 <h3>📚 GPA Calculator – Semester View</h3>
-                
-                <!-- Semester Title -->
                 <div class="row">
                     <input type="text" id="semesterTitle" placeholder="Semester (e.g., 100L First Sem)" style="flex:2;">
                 </div>
-
-                <!-- Course List Container -->
                 <div id="semesterCourseBox" style="margin-top:8px;">
-                    <!-- Default first course row -->
                     <div class="row course-row" id="courseRow1">
                         <input type="text" id="cname1" placeholder="Course Name (e.g., CHM 101)" style="flex:2;">
                         <input type="number" id="cunit1" placeholder="Units" min="0" step="0.5" style="flex:1;">
@@ -596,20 +618,16 @@
                         <button onclick="removeCourseRow(1)" class="danger small-btn" style="width:auto;flex:0;">✕</button>
                     </div>
                 </div>
-
-                <!-- Action Buttons Row -->
                 <div class="row">
                     <button onclick="addCourseRow()" class="secondary" style="flex:1;">➕ Add Course</button>
-                    <button onclick="saveSemester()" style="flex:1;" id="saveSemesterBtn">💾 Save Semester</button>
+                    <button onclick="saveSemester()" style="flex:1;">💾 Save Semester</button>
                     <button onclick="deleteSemester()" class="danger" style="flex:1;">🗑 Delete</button>
                 </div>
-
-                <!-- Calculate GPA Button & Result -->
                 <button onclick="calcSemesterGPA()" class="secondary" style="margin-top:4px;">📊 Calculate GPA</button>
                 <div id="semesterGpaOut" style="margin-top:6px;font-weight:600;color:#fbbf24;text-align:center;"></div>
             </div>
 
-            <!-- ===== SAVED SEMESTERS LIST ===== -->
+            <!-- SAVED SEMESTERS -->
             <div class="card" id="savedSemestersCard">
                 <h3>📂 Saved Semesters</h3>
                 <div id="savedSemestersList">
@@ -618,7 +636,7 @@
                 <button onclick="clearAllSemesters()" class="danger small-btn" style="width:auto;margin-top:8px;">🗑 Clear All</button>
             </div>
 
-            <!-- ===== CGPA CALCULATOR (manual) ===== -->
+            <!-- CGPA CALCULATOR (manual) -->
             <div class="card">
                 <h3>📈 CGPA Calculator</h3>
                 <p class="small">Enter semester GPAs and units to compute your cumulative GPA manually.</p>
@@ -651,7 +669,7 @@
             </div>
         </div>
 
-        <!-- ============ PLANNER ============ -->
+        <!-- ========== PLANNER ========== -->
         <div class="page-section" id="sectionPlanner">
             <div class="card">
                 <h3>📅 Weekly Study Planner</h3>
@@ -663,7 +681,7 @@
             </div>
         </div>
 
-        <!-- ============ ANALYZER ============ -->
+        <!-- ========== ANALYZER ========== -->
         <div class="page-section" id="sectionAnalyzer">
             <div class="card">
                 <h3>📊 Smart Performance Analyzer</h3>
@@ -675,7 +693,7 @@
             </div>
         </div>
 
-        <!-- ============ GPA HISTORY ============ -->
+        <!-- ========== GPA HISTORY ========== -->
         <div class="page-section" id="sectionGPAHistory">
             <div class="card">
                 <h3>📜 GPA History (Saved Semesters)</h3>
@@ -686,7 +704,7 @@
             </div>
         </div>
 
-        <!-- ============ ACADEMIC CALENDAR ============ -->
+        <!-- ========== ACADEMIC CALENDAR ========== -->
         <div class="page-section" id="sectionCalendar">
             <div class="card">
                 <h3>📅 UNIOSUN Academic Calendar 2025/2026</h3>
@@ -702,7 +720,7 @@
             </div>
         </div>
 
-        <!-- ============ CGPA TRACKER ============ -->
+        <!-- ========== CGPA TRACKER ========== -->
         <div class="page-section" id="sectionCGPA">
             <div class="card">
                 <h3>📈 CGPA Tracker</h3>
@@ -715,12 +733,12 @@
             </div>
         </div>
 
-        <!-- ============ CUT-OFF MARKS (2024/2025) ============ -->
+        <!-- ========== CUT-OFF MARKS ========== -->
         <div class="page-section" id="sectionCutoff">
             <div class="card">
                 <h3>📊 UNIOSUN Cut‑off Marks 2024/2025</h3>
                 <p class="small">
-                    ⚠️ <strong>Last year's data</strong> – Use this to predict your chances for the current session. 
+                    ⚠️ <strong>Last year's data</strong> – Use this to predict your chances for the current session.
                     Cut‑offs may change. Check the official portal for final decisions.
                 </p>
                 <div class="row" style="margin-top:6px;">
@@ -748,7 +766,7 @@
             </div>
         </div>
 
-        <!-- ============ COUNTDOWN ============ -->
+        <!-- ========== COUNTDOWN ========== -->
         <div class="page-section" id="sectionCountdown">
             <div class="card">
                 <h3>⏳ Exam Countdown</h3>
@@ -763,7 +781,7 @@
             </div>
         </div>
 
-        <!-- ============ SESSION LOG ============ -->
+        <!-- ========== SESSION LOG ========== -->
         <div class="page-section" id="sectionSessionLog">
             <div class="card">
                 <h3>📝 Study Session Log</h3>
@@ -778,27 +796,30 @@
     </div>
 
     <script>
-        /* ============ GLOBAL STATE ============ */
+        /* ============================================================
+               GOATTUTOR NG v6 – FULLY RESPONSIVE FIX
+               ============================================================ */
+
+        // ─── GLOBAL STATE ───
         let timerSeconds = 1500;
         let timerInterval = null;
         let pomodoroCompleted = parseInt(localStorage.getItem('pomodoroCount')) || 0;
         let currentSection = 'main';
         let sessionActive = false;
-
-        // For CGPA calculator
+        let courseRowCounter = 1;
         let semCounter = 1;
 
-        /* ============ MENU & NAVIGATION ============ */
+        // ─── MENU & NAVIGATION ───
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('sidebarOverlay').classList.toggle('show');
         }
+
         function closeMenu() {
             document.getElementById('sidebar').classList.remove('open');
             document.getElementById('sidebarOverlay').classList.remove('show');
         }
 
-        // Updated sectionMap with new sections
         const sectionMap = {
             'main': 'sectionMain',
             'planner': 'sectionPlanner',
@@ -834,17 +855,17 @@
             if (navBtnId) document.getElementById(navBtnId).classList.add('active-nav');
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            // Refresh content when navigating to specific sections
+            // Refresh content for specific sections
             if (section === 'planner') loadPlan(true);
             if (section === 'gpaHistory') renderSavedSemesters();
             if (section === 'calendar') renderAcademicCalendar();
-            if (section === 'cgpaTracker') renderCGPA Tracker();
+            if (section === 'cgpaTracker') renderCGPATracker();
             if (section === 'cutoff') renderCutoffMarks();
             if (section === 'sessionLog') renderSessionLog();
             if (section === 'countdown') updateCountdownDisplay();
         }
 
-        /* ============ NOTIFICATIONS ============ */
+        // ─── NOTIFICATIONS ───
         function showNotification(message, duration = 3500) {
             const toast = document.getElementById('notificationToast');
             document.getElementById('notificationText').textContent = message;
@@ -852,22 +873,24 @@
             clearTimeout(toast._timeout);
             toast._timeout = setTimeout(() => toast.classList.remove('show'), duration);
         }
+
         function hideNotification() {
             document.getElementById('notificationToast').classList.remove('show');
         }
 
-        /* ============ AI ============ */
+        // ─── AI ───
         function askAI() {
             const t = document.getElementById('topic').value.trim();
             const m = document.getElementById('mode').value;
             if (!t) { showNotification('⚠️ Please enter a topic first!'); return; }
-            const prompt = `Act as GoatTutor AI, an expert academic tutor. Mode: ${m}. Topic: ${t}. Provide a clear, detailed, and helpful response suitable for a student. Format the response nicely.`;
+            const prompt = 'Act as GoatTutor AI, an expert academic tutor. Mode: ' + m + '. Topic: ' + t +
+                '. Provide a clear, detailed, and helpful response suitable for a student. Format the response nicely.';
             window.open('https://chatgpt.com/?q=' + encodeURIComponent(prompt), '_blank');
             showNotification('🚀 Opening AI with your topic...');
             logQuickAction('AI Query: ' + t + ' (' + m + ')');
         }
 
-        /* ============ DEGREE CLASSIFICATION ============ */
+        // ─── DEGREE CLASS ───
         function getDegreeClass(cgpa) {
             cgpa = parseFloat(cgpa);
             if (isNaN(cgpa)) return 'N/A';
@@ -878,6 +901,7 @@
             if (cgpa >= 1.00) return '📗 Pass';
             return '⚠️ Below Pass';
         }
+
         function getStanding(cgpa) {
             cgpa = parseFloat(cgpa);
             if (isNaN(cgpa)) return 'N/A';
@@ -886,7 +910,7 @@
             return '🔴 Needs Improvement';
         }
 
-        /* ============ STREAK, HOURS, SESSIONS ============ */
+        // ─── STREAK, HOURS, SESSIONS ───
         function updateStreak() {
             const today = new Date().toDateString();
             const lastVisit = localStorage.getItem('lastVisit');
@@ -902,24 +926,28 @@
             }
             document.getElementById('streakDisplay').innerText = localStorage.getItem('streak') || 1;
         }
+
         function updateStudyHours() {
             const minutes = parseInt(localStorage.getItem('studyMinutes')) || 0;
             document.getElementById('hoursDisplay').innerText = (minutes / 60).toFixed(1);
         }
+
         function addStudyMinutes(minutes) {
             const current = parseInt(localStorage.getItem('studyMinutes')) || 0;
             localStorage.setItem('studyMinutes', current + minutes);
             updateStudyHours();
         }
+
         function getSessionCount() {
             const log = JSON.parse(localStorage.getItem('sessionLog')) || [];
             return log.length;
         }
+
         function updateSessionCountDisplay() {
             document.getElementById('sessionCountDisplay').innerText = getSessionCount();
         }
 
-        /* ============ DASHBOARD UPDATE ============ */
+        // ─── DASHBOARD UPDATE ───
         function updateDash() {
             const gpa = localStorage.getItem('gpa') || '--';
             const cgpa = localStorage.getItem('cgpa') || '--';
@@ -932,12 +960,11 @@
             updateSessionCountDisplay();
         }
 
-        /* ============ SEMESTER‑BASED GPA SYSTEM ============ */
-        let courseRowCounter = 1;
-
+        // ─── SEMESTER SYSTEM ───
         function getSavedSemesters() {
             try { return JSON.parse(localStorage.getItem('semesters')) || []; } catch { return []; }
         }
+
         function saveSemestersToStorage(semesters) {
             localStorage.setItem('semesters', JSON.stringify(semesters));
         }
@@ -949,18 +976,18 @@
             row.className = 'row course-row';
             row.id = 'courseRow' + courseRowCounter;
             row.innerHTML = `
-                <input type="text" id="cname${courseRowCounter}" placeholder="Course Name" style="flex:2;">
-                <input type="number" id="cunit${courseRowCounter}" placeholder="Units" min="0" step="0.5" style="flex:1;">
-                <select id="cgrade${courseRowCounter}" style="flex:1;">
-                    <option value="5">A (5.0)</option>
-                    <option value="4">B (4.0)</option>
-                    <option value="3">C (3.0)</option>
-                    <option value="2">D (2.0)</option>
-                    <option value="1">E (1.0)</option>
-                    <option value="0">F (0.0)</option>
-                </select>
-                <button onclick="removeCourseRow(${courseRowCounter})" class="danger small-btn" style="width:auto;flex:0;">✕</button>
-            `;
+                    <input type="text" id="cname${courseRowCounter}" placeholder="Course Name" style="flex:2;">
+                    <input type="number" id="cunit${courseRowCounter}" placeholder="Units" min="0" step="0.5" style="flex:1;">
+                    <select id="cgrade${courseRowCounter}" style="flex:1;">
+                        <option value="5">A (5.0)</option>
+                        <option value="4">B (4.0)</option>
+                        <option value="3">C (3.0)</option>
+                        <option value="2">D (2.0)</option>
+                        <option value="1">E (1.0)</option>
+                        <option value="0">F (0.0)</option>
+                    </select>
+                    <button onclick="removeCourseRow(${courseRowCounter})" class="danger small-btn" style="width:auto;flex:0;">✕</button>
+                `;
             container.appendChild(row);
         }
 
@@ -1007,10 +1034,13 @@
                 showNotification('⚠️ No valid courses to calculate.');
                 return;
             }
-            let totalPoints = 0, totalUnits = 0;
-            data.courses.forEach(c => { totalPoints += c.units * c.gradePoint; totalUnits += c.units; });
+            let totalPoints = 0,
+                totalUnits = 0;
+            data.courses.forEach(c => { totalPoints += c.units * c.gradePoint;
+                totalUnits += c.units; });
             const gpa = (totalPoints / totalUnits).toFixed(2);
-            document.getElementById('semesterGpaOut').innerHTML = `📊 Semester GPA: <strong>${gpa}</strong> / 5.0 (${totalUnits} units)`;
+            document.getElementById('semesterGpaOut').innerHTML = '📊 Semester GPA: <strong>' + gpa + '</strong> / 5.0 (' +
+                totalUnits + ' units)';
             return { gpa: parseFloat(gpa), totalUnits };
         }
 
@@ -1020,16 +1050,18 @@
                 showNotification('⚠️ Add at least one valid course with units before saving.');
                 return;
             }
-            let totalPoints = 0, totalUnits = 0;
-            data.courses.forEach(c => { totalPoints += c.units * c.gradePoint; totalUnits += c.units; });
+            let totalPoints = 0,
+                totalUnits = 0;
+            data.courses.forEach(c => { totalPoints += c.units * c.gradePoint;
+                totalUnits += c.units; });
             const gpa = parseFloat((totalPoints / totalUnits).toFixed(2));
 
             const semester = {
                 id: Date.now(),
                 title: data.title,
                 courses: data.courses,
-                gpa,
-                totalUnits,
+                gpa: gpa,
+                totalUnits: totalUnits,
                 date: new Date().toLocaleString()
             };
 
@@ -1037,17 +1069,16 @@
             semesters.push(semester);
             saveSemestersToStorage(semesters);
 
-            // Clear form
             document.getElementById('semesterTitle').value = '';
             document.getElementById('semesterCourseBox').innerHTML = '';
             courseRowCounter = 0;
             addCourseRow();
 
-            document.getElementById('semesterGpaOut').innerHTML = `✅ Saved! GPA: ${gpa.toFixed(2)} — ${data.title}`;
+            document.getElementById('semesterGpaOut').innerHTML = '✅ Saved! GPA: ' + gpa.toFixed(2) + ' — ' + data.title;
             renderSavedSemesters();
             updateDashFromSemesters();
-            renderCGPA Tracker(); // Update tracker
-            showNotification(`💾 Semester "${data.title}" saved with GPA ${gpa.toFixed(2)}`);
+            renderCGPATracker();
+            showNotification('💾 Semester "' + data.title + '" saved with GPA ' + gpa.toFixed(2));
         }
 
         function deleteSemester(id) {
@@ -1056,14 +1087,14 @@
             let targetId = id;
             if (!targetId) {
                 const last = semesters[semesters.length - 1];
-                if (!confirm(`Delete semester "${last.title}" (GPA: ${last.gpa.toFixed(2)})?`)) return;
+                if (!confirm('Delete semester "' + last.title + '" (GPA: ' + last.gpa.toFixed(2) + ')?')) return;
                 targetId = last.id;
             }
             semesters = semesters.filter(s => s.id !== targetId);
             saveSemestersToStorage(semesters);
             renderSavedSemesters();
             updateDashFromSemesters();
-            renderCGPA Tracker(); // Update tracker
+            renderCGPATracker();
             showNotification('🗑 Semester deleted.');
         }
 
@@ -1072,7 +1103,7 @@
             saveSemestersToStorage([]);
             renderSavedSemesters();
             updateDashFromSemesters();
-            renderCGPA Tracker(); // Update tracker
+            renderCGPATracker();
             showNotification('🗑 All semesters cleared.');
         }
 
@@ -1088,20 +1119,20 @@
             }
             const sorted = [...semesters].reverse();
             const html = sorted.map(s => `
-                <div class="history-item" style="display:flex;flex-direction:column;align-items:stretch;gap:4px;background:#0f172a;padding:10px;border-radius:8px;margin-top:6px;border:1px solid #334155;">
-                    <div style="display:flex;justify-content:space-between;font-weight:600;color:#fbbf24;">
-                        <span>📘 ${s.title}</span>
-                        <span>GPA: ${s.gpa.toFixed(2)}</span>
+                    <div class="history-item" style="display:flex;flex-direction:column;align-items:stretch;gap:4px;background:#0f172a;padding:10px;border-radius:8px;margin-top:6px;border:1px solid #334155;">
+                        <div style="display:flex;justify-content:space-between;font-weight:600;color:#fbbf24;">
+                            <span>📘 ${s.title}</span>
+                            <span>GPA: ${s.gpa.toFixed(2)}</span>
+                        </div>
+                        <div style="display:flex;flex-wrap:wrap;gap:4px;font-size:0.75rem;color:#94a3b8;">
+                            ${s.courses.map(c => `<span style="background:#1e293b;padding:2px 8px;border-radius:12px;">${c.name} (${c.units}u, ${c.grade})</span>`).join('')}
+                        </div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:#64748b;margin-top:2px;">
+                            <span>📅 ${s.date}</span>
+                            <button onclick="deleteSemester(${s.id})" class="danger small-btn" style="width:auto;padding:2px 10px;font-size:0.65rem;">✕ Delete</button>
+                        </div>
                     </div>
-                    <div style="display:flex;flex-wrap:wrap;gap:4px;font-size:0.75rem;color:#94a3b8;">
-                        ${s.courses.map(c => `<span style="background:#1e293b;padding:2px 8px;border-radius:12px;">${c.name} (${c.units}u, ${c.grade})</span>`).join('')}
-                    </div>
-                    <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:#64748b;margin-top:2px;">
-                        <span>📅 ${s.date}</span>
-                        <button onclick="deleteSemester(${s.id})" class="danger small-btn" style="width:auto;padding:2px 10px;font-size:0.65rem;">✕ Delete</button>
-                    </div>
-                </div>
-            `).join('');
+                `).join('');
             container.innerHTML = html;
             if (historyContainer) historyContainer.innerHTML = html;
         }
@@ -1114,8 +1145,10 @@
                 updateDash();
                 return;
             }
-            let totalPoints = 0, totalUnits = 0;
-            semesters.forEach(s => { totalPoints += s.gpa * s.totalUnits; totalUnits += s.totalUnits; });
+            let totalPoints = 0,
+                totalUnits = 0;
+            semesters.forEach(s => { totalPoints += s.gpa * s.totalUnits;
+                totalUnits += s.totalUnits; });
             const cgpa = totalUnits > 0 ? (totalPoints / totalUnits) : 0;
             const last = semesters[semesters.length - 1];
             localStorage.setItem('gpa', last.gpa.toFixed(2));
@@ -1125,14 +1158,14 @@
 
         function initGPASection() {
             const rows = document.querySelectorAll('#semesterCourseBox .course-row');
-            if (rows.length === 0) { courseRowCounter = 0; addCourseRow(); }
-            else { courseRowCounter = rows.length; }
+            if (rows.length === 0) { courseRowCounter = 0;
+                addCourseRow(); } else { courseRowCounter = rows.length; }
             renderSavedSemesters();
             updateDashFromSemesters();
-            renderCGPA Tracker(); // Initial render
+            renderCGPATracker();
         }
 
-        /* ============ CGPA CALCULATOR (manual) ============ */
+        // ─── CGPA CALCULATOR (manual) ───
         function addCGPARow() {
             semCounter++;
             const container = document.getElementById('cgpaBox');
@@ -1140,10 +1173,10 @@
             row.className = 'row';
             row.id = 'cgpaRow' + semCounter;
             row.innerHTML = `
-                <input type="number" id="cunit${semCounter}_cgpa" placeholder="Semester Units" min="0" step="0.5" style="flex:1;">
-                <input type="number" id="cgpa${semCounter}_cgpa" placeholder="Semester GPA" min="0" max="5" step="0.01" style="flex:1;">
-                <button onclick="removeCGPARow(${semCounter})" class="danger small-btn" style="width:auto;flex:0;">✕</button>
-            `;
+                    <input type="number" id="cunit${semCounter}_cgpa" placeholder="Semester Units" min="0" step="0.5" style="flex:1;">
+                    <input type="number" id="cgpa${semCounter}_cgpa" placeholder="Semester GPA" min="0" max="5" step="0.01" style="flex:1;">
+                    <button onclick="removeCGPARow(${semCounter})" class="danger small-btn" style="width:auto;flex:0;">✕</button>
+                `;
             container.appendChild(row);
         }
 
@@ -1157,7 +1190,8 @@
         }
 
         function calcCGPA() {
-            let total = 0, units = 0;
+            let total = 0,
+                units = 0;
             const rows = document.querySelectorAll('#cgpaBox .row');
             rows.forEach(row => {
                 const id = row.id.replace('cgpaRow', '');
@@ -1178,11 +1212,12 @@
                 return;
             }
             const cgpa = (total / units).toFixed(2);
-            document.getElementById('cgpaOut').innerHTML = `✅ CGPA: <strong>${cgpa}</strong> / 5.0 &nbsp;|&nbsp; Class: ${getDegreeClass(cgpa)}`;
+            document.getElementById('cgpaOut').innerHTML = '✅ CGPA: <strong>' + cgpa + '</strong> / 5.0 &nbsp;|&nbsp; Class: ' +
+                getDegreeClass(cgpa);
             showNotification('📈 CGPA calculated: ' + cgpa);
         }
 
-        /* ============ ACADEMIC CALENDAR ============ */
+        // ─── ACADEMIC CALENDAR ───
         const academicEvents = [
             { date: '2025-11-10', title: 'Resumption – Fresh Students' },
             { date: '2025-11-10', title: 'Orientation for Fresh Students' },
@@ -1219,7 +1254,8 @@
             });
 
             if (upcomingEvents.length === 0) {
-                container.innerHTML = '<span class="small" style="display:block;text-align:center;padding:10px;">No upcoming events. Check back later.</span>';
+                container.innerHTML =
+                    '<span class="small" style="display:block;text-align:center;padding:10px;">No upcoming events. Check back later.</span>';
                 document.getElementById('calendarCountdown').innerText = '--';
                 return;
             }
@@ -1230,17 +1266,19 @@
             let html = '';
             nextFive.forEach((event, index) => {
                 const isNext = index === 0;
-                const dateStr = event.dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+                const dateStr = event.dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short',
+                    year: 'numeric' });
                 html += `
-                    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #334155;${isNext ? 'background:#1a2a4a;padding:8px 10px;border-radius:6px;margin-bottom:4px;' : ''}">
-                        <span style="${isNext ? 'font-weight:600;color:#fbbf24;' : ''}">${isNext ? '🔴 ' : ''}${event.title}</span>
-                        <span style="color:#94a3b8;font-size:0.8rem;">${dateStr}</span>
-                    </div>
-                `;
+                        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #334155;${isNext ? 'background:#1a2a4a;padding:8px 10px;border-radius:6px;margin-bottom:4px;' : ''}">
+                            <span style="${isNext ? 'font-weight:600;color:#fbbf24;' : ''}">${isNext ? '🔴 ' : ''}${event.title}</span>
+                            <span style="color:#94a3b8;font-size:0.8rem;">${dateStr}</span>
+                        </div>
+                    `;
             });
 
             if (upcomingEvents.length > 5) {
-                html += `<div class="small" style="text-align:center;padding:4px;">+ ${upcomingEvents.length - 5} more events</div>`;
+                html += '<div class="small" style="text-align:center;padding:4px;">+ ' + (upcomingEvents.length - 5) +
+                    ' more events</div>';
             }
 
             container.innerHTML = html;
@@ -1250,17 +1288,14 @@
         function updateCalendarCountdown(targetDate) {
             const now = new Date();
             const diff = targetDate - now;
-
             if (diff <= 0) {
                 document.getElementById('calendarCountdown').innerText = '🎉 Today!';
                 return;
             }
-
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
             const minutes = Math.floor((diff / (1000 * 60)) % 60);
-
-            document.getElementById('calendarCountdown').innerHTML = `${days}d ${hours}h ${minutes}m`;
+            document.getElementById('calendarCountdown').innerHTML = days + 'd ' + hours + 'h ' + minutes + 'm';
         }
 
         function viewFullCalendar() {
@@ -1268,30 +1303,30 @@
             showNotification('📅 Opening full academic calendar...');
         }
 
-        // Update countdown every minute
         setInterval(() => {
             if (currentSection === 'calendar' || document.getElementById('sectionCalendar').classList.contains('active')) {
                 renderAcademicCalendar();
             }
         }, 60000);
 
-        /* ============ CGPA TRACKER ============ */
-        function renderCGPA Tracker() {
+        // ─── CGPA TRACKER (FIXED FUNCTION NAME) ───
+        function renderCGPATracker() {
             const container = document.getElementById('cgpaTrackerContent');
             const semesters = getSavedSemesters();
 
             if (semesters.length === 0) {
                 container.innerHTML = `
-                    <div class="small" style="text-align:center;padding:10px;">
-                        No semester data yet. Add and save semesters using the GPA Calculator.
-                    </div>
-                `;
+                        <div class="small" style="text-align:center;padding:10px;">
+                            No semester data yet. Add and save semesters using the GPA Calculator.
+                        </div>
+                    `;
                 return;
             }
 
             const sorted = [...semesters].sort((a, b) => new Date(a.date) - new Date(b.date));
 
-            let totalPoints = 0, totalUnits = 0;
+            let totalPoints = 0,
+                totalUnits = 0;
             sorted.forEach(s => {
                 totalPoints += s.gpa * s.totalUnits;
                 totalUnits += s.totalUnits;
@@ -1299,35 +1334,34 @@
             const overallCGPA = totalUnits > 0 ? (totalPoints / totalUnits) : 0;
 
             let html = `
-                <div style="background:#0f172a;padding:10px;border-radius:8px;margin-bottom:8px;text-align:center;">
-                    <div style="font-size:0.75rem;color:#94a3b8;">Overall CGPA</div>
-                    <div style="font-size:2rem;font-weight:700;color:#fbbf24;">${overallCGPA.toFixed(2)}</div>
-                    <div style="font-size:0.7rem;color:#94a3b8;">${getDegreeClass(overallCGPA)}</div>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:4px;">
-            `;
+                    <div style="background:#0f172a;padding:10px;border-radius:8px;margin-bottom:8px;text-align:center;">
+                        <div style="font-size:0.75rem;color:#94a3b8;">Overall CGPA</div>
+                        <div style="font-size:2rem;font-weight:700;color:#fbbf24;">${overallCGPA.toFixed(2)}</div>
+                        <div style="font-size:0.7rem;color:#94a3b8;">${getDegreeClass(overallCGPA)}</div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:4px;">
+                `;
 
             sorted.forEach((sem) => {
                 const percentage = (sem.gpa / 5) * 100;
                 const barColor = percentage >= 80 ? '#22c55e' : percentage >= 60 ? '#fbbf24' : '#ef4444';
                 html += `
-                    <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;">
-                        <span style="min-width:80px;color:#94a3b8;">${sem.title}</span>
-                        <div style="flex:1;background:#1e293b;border-radius:4px;height:8px;overflow:hidden;">
-                            <div style="width:${percentage}%;height:100%;background:${barColor};border-radius:4px;transition:width 0.5s;"></div>
+                        <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;">
+                            <span style="min-width:80px;color:#94a3b8;">${sem.title}</span>
+                            <div style="flex:1;background:#1e293b;border-radius:4px;height:8px;overflow:hidden;">
+                                <div style="width:${percentage}%;height:100%;background:${barColor};border-radius:4px;transition:width 0.5s;"></div>
+                            </div>
+                            <span style="min-width:40px;color:#fbbf24;font-weight:600;">${sem.gpa.toFixed(2)}</span>
                         </div>
-                        <span style="min-width:40px;color:#fbbf24;font-weight:600;">${sem.gpa.toFixed(2)}</span>
-                    </div>
-                `;
+                    `;
             });
 
-            html += `</div>`;
+            html += '</div>';
             container.innerHTML = html;
         }
 
-        /* ============ CUT-OFF MARKS (2024/2025) ============ */
+        // ─── CUT-OFF MARKS ───
         const cutoffData = [
-            // Faculty of Agriculture
             { course: 'B. Agric. Economics', faculty: 'Agriculture', merit: 57.0, indigene: 46.4 },
             { course: 'B. Agric. Extension', faculty: 'Agriculture', merit: 56.5, indigene: 44.5 },
             { course: 'B. Agric. Forestry', faculty: 'Agriculture', merit: 50.0, indigene: 40.0 },
@@ -1335,8 +1369,6 @@
             { course: 'B. Agric. Animal Science', faculty: 'Agriculture', merit: 58.5, indigene: 40.5 },
             { course: 'B. Agric. Fisheries & Aquaculture', faculty: 'Agriculture', merit: 55.0, indigene: 45.5 },
             { course: 'B. Agric. Wildlife Management', faculty: 'Agriculture', merit: 54.0, indigene: 44.8 },
-            
-            // Faculty of Education
             { course: 'B.A. (Ed) English', faculty: 'Education', merit: 60.5, indigene: 45.3 },
             { course: 'B.A. (Ed) Economics', faculty: 'Education', merit: 60.8, indigene: 46.2 },
             { course: 'B.A. (Ed) Education Guidance & Counselling', faculty: 'Education', merit: 63.5, indigene: 50.9 },
@@ -1347,8 +1379,6 @@
             { course: 'B.Sc. (Ed) Environmental Education', faculty: 'Education', merit: 47.6, indigene: 40.0 },
             { course: 'B.A. (Ed) Social Studies', faculty: 'Education', merit: 53.5, indigene: 48.0 },
             { course: 'B.Ed. Early Childhood Care Education', faculty: 'Education', merit: 46.5, indigene: 42.5 },
-            
-            // Faculty of Science
             { course: 'B.Sc. Computer Science', faculty: 'Science', merit: 68.1, indigene: 62.3 },
             { course: 'B.Sc. Biochemistry', faculty: 'Science', merit: 65.0, indigene: 58.0 },
             { course: 'B.Sc. Microbiology', faculty: 'Science', merit: 63.5, indigene: 56.0 },
@@ -1357,55 +1387,44 @@
             { course: 'B.Sc. Mathematics', faculty: 'Science', merit: 50.0, indigene: 43.0 },
             { course: 'B.Sc. Statistics', faculty: 'Science', merit: 48.0, indigene: 41.0 },
             { course: 'B.Sc. Geology', faculty: 'Science', merit: 52.0, indigene: 45.0 },
-            
-            // Faculty of Social Sciences
             { course: 'B.Sc. Economics', faculty: 'Social Sciences', merit: 65.0, indigene: 58.0 },
             { course: 'B.Sc. Political Science', faculty: 'Social Sciences', merit: 61.7, indigene: 49.6 },
             { course: 'B.Sc. Sociology', faculty: 'Social Sciences', merit: 58.0, indigene: 50.0 },
             { course: 'B.Sc. Psychology', faculty: 'Social Sciences', merit: 55.0, indigene: 47.0 },
             { course: 'B.Sc. Mass Communication', faculty: 'Social Sciences', merit: 72.0, indigene: 63.7 },
             { course: 'B.Sc. Criminology', faculty: 'Social Sciences', merit: 60.0, indigene: 52.0 },
-            
-            // Faculty of Law
             { course: 'LL.B. Law', faculty: 'Law', merit: 79.4, indigene: 75.6 },
             { course: 'Common & Islamic Law', faculty: 'Law', merit: 75.0, indigene: 70.0 },
-            
-            // Faculty of Medicine
             { course: 'MBBS Medicine', faculty: 'Medicine', merit: 85.3, indigene: 82.4 },
             { course: 'B.NSc. Nursing', faculty: 'Medicine', merit: 77.5, indigene: 74.0 },
-            
-            // Faculty of Engineering
             { course: 'B.Eng. Civil Engineering', faculty: 'Engineering', merit: 67.1, indigene: 61.6 },
             { course: 'B.Eng. Electrical/Electronics Engineering', faculty: 'Engineering', merit: 65.0, indigene: 59.0 },
             { course: 'B.Eng. Mechanical Engineering', faculty: 'Engineering', merit: 63.0, indigene: 57.0 },
             { course: 'B.Eng. Chemical Engineering', faculty: 'Engineering', merit: 60.0, indigene: 54.0 },
-            
-            // Faculty of Arts
             { course: 'B.A. English', faculty: 'Arts', merit: 58.0, indigene: 50.0 },
             { course: 'B.A. History', faculty: 'Arts', merit: 52.0, indigene: 45.0 },
             { course: 'B.A. Philosophy', faculty: 'Arts', merit: 50.0, indigene: 43.0 },
             { course: 'B.A. Religious Studies', faculty: 'Arts', merit: 48.0, indigene: 41.0 },
-            
-            // Faculty of Management
             { course: 'B.Sc. Accounting', faculty: 'Management', merit: 62.0, indigene: 55.0 },
             { course: 'B.Sc. Business Administration', faculty: 'Management', merit: 60.0, indigene: 53.0 },
             { course: 'B.Sc. Public Administration', faculty: 'Management', merit: 58.0, indigene: 50.0 },
             { course: 'B.Sc. Banking & Finance', faculty: 'Management', merit: 55.0, indigene: 48.0 },
         ];
 
-        function renderCutoffMarks(filter = '', faculty = 'all') {
+        function renderCutoffMarks(filter, faculty) {
             const container = document.getElementById('cutoffResults');
-            const searchTerm = filter.toLowerCase().trim();
-            
+            const searchTerm = (filter || '').toLowerCase().trim();
+            const facultyFilter = faculty || document.getElementById('cutoffFaculty').value || 'all';
+
             let filtered = cutoffData;
             if (searchTerm) {
-                filtered = filtered.filter(item => 
+                filtered = filtered.filter(item =>
                     item.course.toLowerCase().includes(searchTerm) ||
                     item.faculty.toLowerCase().includes(searchTerm)
                 );
             }
-            if (faculty !== 'all') {
-                filtered = filtered.filter(item => item.faculty === faculty);
+            if (facultyFilter !== 'all') {
+                filtered = filtered.filter(item => item.faculty === facultyFilter);
             }
 
             if (filtered.length === 0) {
@@ -1413,21 +1432,20 @@
                 return;
             }
 
-            // Sort alphabetically
             filtered.sort((a, b) => a.course.localeCompare(b.course));
 
             let html = '<div style="display:flex;flex-direction:column;gap:4px;">';
             filtered.forEach(item => {
                 const isCompetitive = item.merit >= 70;
                 html += `
-                    <div style="display:flex;justify-content:space-between;padding:6px 8px;background:#0f172a;border-radius:6px;border:1px solid #334155;${isCompetitive ? 'border-color:#fbbf24;' : ''}">
-                        <span style="font-size:0.85rem;${isCompetitive ? 'font-weight:600;' : ''}">${item.course}</span>
-                        <span style="font-size:0.8rem;color:#94a3b8;white-space:nowrap;">
-                            GM: <span style="color:#fbbf24;font-weight:600;">${item.merit}</span> 
-                            IC: <span style="color:#94a3b8;">${item.indigene}</span>
-                        </span>
-                    </div>
-                `;
+                        <div style="display:flex;justify-content:space-between;padding:6px 8px;background:#0f172a;border-radius:6px;border:1px solid #334155;${isCompetitive ? 'border-color:#fbbf24;' : ''}">
+                            <span style="font-size:0.85rem;${isCompetitive ? 'font-weight:600;' : ''}">${item.course}</span>
+                            <span style="font-size:0.8rem;color:#94a3b8;white-space:nowrap;">
+                                GM: <span style="color:#fbbf24;font-weight:600;">${item.merit}</span>
+                                IC: <span style="color:#94a3b8;">${item.indigene}</span>
+                            </span>
+                        </div>
+                    `;
             });
             html += '</div>';
             container.innerHTML = html;
@@ -1439,20 +1457,22 @@
             renderCutoffMarks(search, faculty);
         }
 
-        /* ============ PLANNER, ANALYZER, COUNTDOWN, TIMER, SESSION LOG ============ */
+        // ─── PLANNER ───
         function savePlan() {
             const planText = document.getElementById('plan').value;
             localStorage.setItem('plan', planText);
             document.getElementById('planStatus').innerText = '✅ Plan saved successfully! ' + new Date().toLocaleString();
             showNotification('💾 Study plan saved!');
         }
-        function loadPlan(silent = false) {
+
+        function loadPlan(silent) {
             const saved = localStorage.getItem('plan') || '';
             document.getElementById('plan').value = saved;
             if (!silent) {
                 document.getElementById('planStatus').innerText = saved ? '📂 Plan loaded.' : '📂 No saved plan found.';
             }
         }
+
         function clearPlan() {
             if (confirm('Clear your study plan? Make sure you have saved it first.')) {
                 document.getElementById('plan').value = '';
@@ -1461,6 +1481,7 @@
             }
         }
 
+        // ─── ANALYZER ───
         function analyze() {
             const semesters = getSavedSemesters();
             const gpa = parseFloat(localStorage.getItem('gpa')) || 0;
@@ -1490,11 +1511,14 @@
             document.getElementById('analysisBox').innerHTML = msg;
             showNotification('🔍 Analysis complete!');
         }
+
         function resetAnalysis() {
-            document.getElementById('analysisBox').innerHTML = '<span class="small">No analysis yet. Click "Run Full Analysis" to begin.</span>';
+            document.getElementById('analysisBox').innerHTML =
+                '<span class="small">No analysis yet. Click "Run Full Analysis" to begin.</span>';
             showNotification('🔄 Analysis reset.');
         }
 
+        // ─── COUNTDOWN ───
         function setCountdown() {
             const dateVal = document.getElementById('examDate').value;
             const label = document.getElementById('examLabel').value.trim() || 'Exam';
@@ -1506,6 +1530,7 @@
             updateCountdownDisplay();
             showNotification('🎯 Countdown set for: ' + label);
         }
+
         function updateCountdownDisplay() {
             const examDateStr = localStorage.getItem('examDate');
             const label = localStorage.getItem('examLabel') || 'Exam';
@@ -1523,13 +1548,15 @@
                 labelEl.innerText = label + ' is here!';
                 return;
             }
-            const days = Math.floor(diff / (1000*60*60*24));
-            const hours = Math.floor((diff / (1000*60*60)) % 24);
-            const minutes = Math.floor((diff / (1000*60)) % 60);
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
             const seconds = Math.floor((diff / 1000) % 60);
-            display.innerText = `${String(days).padStart(2,'0')}:${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+            display.innerText = String(days).padStart(2, '0') + ':' + String(hours).padStart(2, '0') + ':' + String(minutes)
+                .padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
             labelEl.innerText = label + ' — ' + days + ' days remaining';
         }
+
         function clearCountdown() {
             localStorage.removeItem('examDate');
             localStorage.removeItem('examLabel');
@@ -1538,16 +1565,19 @@
             updateCountdownDisplay();
             showNotification('🔄 Countdown cleared.');
         }
+
         setInterval(() => {
             if (currentSection === 'countdown' || document.getElementById('sectionCountdown').classList.contains('active'))
                 updateCountdownDisplay();
         }, 1000);
 
+        // ─── TIMER ───
         function updateTimerDisplay() {
             const m = Math.floor(timerSeconds / 60);
             const s = timerSeconds % 60;
-            document.getElementById('time').innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            document.getElementById('time').innerText = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
         }
+
         function startTimer() {
             if (timerInterval) return;
             if (!sessionActive) {
@@ -1574,6 +1604,7 @@
                 }
             }, 1000);
         }
+
         function pauseTimer() {
             clearInterval(timerInterval);
             timerInterval = null;
@@ -1591,6 +1622,7 @@
                 showNotification('⏸ Timer paused. Session logged.');
             }
         }
+
         function resetTimer() {
             clearInterval(timerInterval);
             timerInterval = null;
@@ -1611,6 +1643,7 @@
             showNotification('↺ Timer reset.');
         }
 
+        // ─── SESSION LOG ───
         function logSession(minutes) {
             if (minutes <= 0) return;
             const log = JSON.parse(localStorage.getItem('sessionLog')) || [];
@@ -1618,6 +1651,7 @@
             if (log.length > 100) log.shift();
             localStorage.setItem('sessionLog', JSON.stringify(log));
         }
+
         function logQuickAction(action) {
             const log = JSON.parse(localStorage.getItem('sessionLog')) || [];
             log.push({ duration: 0, date: new Date().toLocaleString(), type: action });
@@ -1625,21 +1659,24 @@
             localStorage.setItem('sessionLog', JSON.stringify(log));
             updateSessionCountDisplay();
         }
+
         function renderSessionLog() {
             const log = JSON.parse(localStorage.getItem('sessionLog')) || [];
             const container = document.getElementById('sessionLogList');
             if (log.length === 0) {
-                container.innerHTML = '<span class="small">No sessions recorded yet. Use the Study Tracker to log sessions.</span>';
+                container.innerHTML =
+                    '<span class="small">No sessions recorded yet. Use the Study Tracker to log sessions.</span>';
                 return;
             }
-            container.innerHTML = log.reverse().map(s => `
-                <div class="history-item">
-                    <span>📅 ${s.date}</span>
-                    <span><strong>${s.type}</strong> ${s.duration > 0 ? '| ' + s.duration + ' min' : ''}</span>
-                </div>
-            `).join('');
-            log.reverse();
+            const reversed = [...log].reverse();
+            container.innerHTML = reversed.map(s => `
+                    <div class="history-item">
+                        <span>📅 ${s.date}</span>
+                        <span><strong>${s.type}</strong> ${s.duration > 0 ? '| ' + s.duration + ' min' : ''}</span>
+                    </div>
+                `).join('');
         }
+
         function clearSessionLog() {
             if (confirm('Clear all session logs? This cannot be undone.')) {
                 localStorage.removeItem('sessionLog');
@@ -1648,15 +1685,16 @@
                 showNotification('🗑 Session log cleared.');
             }
         }
+
         function exportSessionLog() {
             const log = JSON.parse(localStorage.getItem('sessionLog')) || [];
             if (log.length === 0) { showNotification('⚠️ No sessions to export.'); return; }
-            const text = log.map(s => `[${s.date}] ${s.type} - ${s.duration} min`).join('\n');
+            const text = log.map(s => '[' + s.date + '] ' + s.type + ' - ' + s.duration + ' min').join('\n');
             navigator.clipboard.writeText(text).then(() => showNotification('📋 Session log copied to clipboard!'))
                 .catch(() => showNotification('⚠️ Failed to copy.'));
         }
 
-        /* ============ INIT ============ */
+        // ─── INIT ───
         function init() {
             updateTimerDisplay();
             updateStreak();
@@ -1671,7 +1709,6 @@
             renderAcademicCalendar();
             renderCutoffMarks();
 
-            // Ensure CGPA calculator has at least one row
             const cgpaRows = document.querySelectorAll('#cgpaBox .row');
             if (cgpaRows.length === 0) {
                 semCounter = 0;
@@ -1682,10 +1719,10 @@
         }
 
         document.getElementById('sidebarOverlay').addEventListener('click', closeMenu);
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMenu(); });
 
         init();
-        console.log('🐐 GoatTutor NG v6 – Fully responsive with all features.');
+        console.log('🐐 GoatTutor NG v6 – Fully responsive with all features fixed.');
     </script>
 </body>
 </html>
