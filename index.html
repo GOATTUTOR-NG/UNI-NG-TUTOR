@@ -439,7 +439,7 @@
     <!-- MAIN CONTENT -->
     <div class="container">
 
-        <!-- ============ MAIN SECTION (AI + Dashboard + GPA + CGPA + Timer) ============ -->
+        <!-- ============ MAIN SECTION (AI + Dashboard + GPA + Timer) ============ -->
         <div class="page-section active" id="sectionMain">
 
             <!-- AI CORE -->
@@ -488,13 +488,22 @@
                 </div>
             </div>
 
-            <!-- GPA CALCULATOR -->
+            <!-- ========== NEW SEMESTER-BASED GPA SECTION ========== -->
             <div class="card">
-                <h3>📚 GPA Calculator</h3>
-                <div id="gpaBox">
-                    <div class="row">
-                        <input type="number" id="unit1" placeholder="Course Units" min="0" step="0.5">
-                        <select id="grade1">
+                <h3>📚 GPA Calculator – Semester View</h3>
+                
+                <!-- Semester Title -->
+                <div class="row">
+                    <input type="text" id="semesterTitle" placeholder="Semester (e.g., 100L First Sem)" style="flex:2;">
+                </div>
+
+                <!-- Course List Container -->
+                <div id="semesterCourseBox" style="margin-top:8px;">
+                    <!-- Default first course row -->
+                    <div class="row course-row" id="courseRow1">
+                        <input type="text" id="cname1" placeholder="Course Name (e.g., CHM 101)" style="flex:2;">
+                        <input type="number" id="cunit1" placeholder="Units" min="0" step="0.5" style="flex:1;">
+                        <select id="cgrade1" style="flex:1;">
                             <option value="5">A (5.0)</option>
                             <option value="4">B (4.0)</option>
                             <option value="3">C (3.0)</option>
@@ -502,29 +511,29 @@
                             <option value="1">E (1.0)</option>
                             <option value="0">F (0.0)</option>
                         </select>
+                        <button onclick="removeCourseRow(1)" class="danger small-btn" style="width:auto;flex:0;">✕</button>
                     </div>
                 </div>
+
+                <!-- Action Buttons Row -->
                 <div class="row">
-                    <button onclick="addGPA()" class="secondary">➕ Add Course</button>
-                    <button onclick="calcGPA()">📊 Calculate GPA</button>
+                    <button onclick="addCourseRow()" class="secondary" style="flex:1;">➕ Add Course</button>
+                    <button onclick="saveSemester()" style="flex:1;">💾 Save Semester</button>
+                    <button onclick="deleteSemester()" class="danger" style="flex:1;">🗑 Delete</button>
                 </div>
-                <div id="gpaOut" style="margin-top:8px;font-weight:600;color:#fbbf24;"></div>
+
+                <!-- Calculate GPA Button & Result -->
+                <button onclick="calcSemesterGPA()" class="secondary" style="margin-top:4px;">📊 Calculate GPA</button>
+                <div id="semesterGpaOut" style="margin-top:6px;font-weight:600;color:#fbbf24;text-align:center;"></div>
             </div>
 
-            <!-- CGPA CALCULATOR -->
-            <div class="card">
-                <h3>📈 CGPA Calculator</h3>
-                <div id="cgpaBox">
-                    <div class="row">
-                        <input type="number" id="cunit1" placeholder="Semester Total Units" min="0" step="0.5">
-                        <input type="number" id="cgpa1" placeholder="Semester GPA" min="0" max="5" step="0.01">
-                    </div>
+            <!-- ========== SAVED SEMESTERS LIST ========== -->
+            <div class="card" id="savedSemestersCard">
+                <h3>📂 Saved Semesters</h3>
+                <div id="savedSemestersList">
+                    <span class="small">No semesters saved yet. Add courses and click "Save Semester".</span>
                 </div>
-                <div class="row">
-                    <button onclick="addCGPA()" class="secondary">➕ Add Semester</button>
-                    <button onclick="calcCGPA()">📊 Calculate CGPA</button>
-                </div>
-                <div id="cgpaOut" style="margin-top:8px;font-weight:600;color:#fbbf24;"></div>
+                <button onclick="clearAllSemesters()" class="danger small-btn" style="width:auto;margin-top:8px;">🗑 Clear All</button>
             </div>
 
             <!-- STUDY TIMER -->
@@ -567,14 +576,14 @@
             </div>
         </div>
 
-        <!-- ============ GPA HISTORY SECTION ============ -->
+        <!-- ============ GPA HISTORY SECTION (now shows saved semesters) ============ -->
         <div class="page-section" id="sectionGPAHistory">
             <div class="card">
-                <h3>📜 GPA Calculation History</h3>
-                <div class="history-list" id="gpaHistoryList">
-                    <span class="small">No GPA history yet. Calculate a GPA to record it.</span>
+                <h3>📜 GPA History (Saved Semesters)</h3>
+                <div id="gpaHistoryList">
+                    <!-- This will be populated by renderSavedSemesters() -->
                 </div>
-                <button onclick="clearGPAHistory()" class="danger" style="margin-top:8px;">🗑 Clear History</button>
+                <button onclick="clearAllSemesters()" class="danger" style="margin-top:8px;">🗑 Clear All History</button>
             </div>
         </div>
 
@@ -609,8 +618,6 @@
 
     <script>
         /* ============ GLOBAL STATE ============ */
-        let gpaCount = 1;
-        let semCount = 1;
         let timerSeconds = 1500; // 25 minutes default
         let timerInterval = null;
         let pomodoroCompleted = parseInt(localStorage.getItem('pomodoroCount')) || 0;
@@ -635,7 +642,6 @@
             document.getElementById('sidebarOverlay').classList.remove('show');
         }
 
-        // Fixed navigation with exact ID mapping
         const sectionMap = {
             'main': 'sectionMain',
             'planner': 'sectionPlanner',
@@ -658,17 +664,14 @@
             closeMenu();
             currentSection = section;
 
-            // Hide all sections
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
 
-            // Show target section
             const targetId = sectionMap[section];
             if (targetId) {
                 const target = document.getElementById(targetId);
                 if (target) target.classList.add('active');
             }
 
-            // Update active nav button
             document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active-nav'));
             const navBtnId = navMap[section];
             if (navBtnId) {
@@ -678,9 +681,8 @@
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            // Load content for specific sections
             if (section === 'planner') loadPlan(true);
-            if (section === 'gpaHistory') renderGPAHistory();
+            if (section === 'gpaHistory') renderSavedSemesters(); // reuse the saved semesters render
             if (section === 'sessionLog') renderSessionLog();
             if (section === 'countdown') updateCountdownDisplay();
         }
@@ -782,6 +784,7 @@
 
         /* ============ DASHBOARD UPDATE ============ */
         function updateDash() {
+            // GPA and CGPA are now stored from semesters; read them
             const gpa = localStorage.getItem('gpa') || '--';
             const cgpa = localStorage.getItem('cgpa') || '--';
             const degree = getDegreeClass(cgpa);
@@ -797,137 +800,248 @@
             updateSessionCountDisplay();
         }
 
-        /* ============ GPA CALCULATOR ============ */
-        function addGPA() {
-            gpaCount++;
-            const d = document.createElement('div');
-            d.className = 'row';
-            d.id = 'gpaRow' + gpaCount;
-            d.innerHTML = `
-            <input type="number" id="unit${gpaCount}" placeholder="Course Units" min="0" step="0.5">
-            <select id="grade${gpaCount}">
-              <option value="5">A (5.0)</option>
-              <option value="4">B (4.0)</option>
-              <option value="3">C (3.0)</option>
-              <option value="2">D (2.0)</option>
-              <option value="1">E (1.0)</option>
-              <option value="0">F (0.0)</option>
-            </select>
-            <button onclick="removeGPARow(${gpaCount})" class="danger small-btn" style="width:auto;flex:0;">✕</button>
-          `;
-            document.getElementById('gpaBox').appendChild(d);
+        /* ============ SEMESTER-BASED GPA SYSTEM ============ */
+
+        let courseRowCounter = 1;
+
+        function getSavedSemesters() {
+            try {
+                return JSON.parse(localStorage.getItem('semesters')) || [];
+            } catch {
+                return [];
+            }
         }
 
-        function removeGPARow(id) {
-            const row = document.getElementById('gpaRow' + id);
-            if (row) row.remove();
+        function saveSemestersToStorage(semesters) {
+            localStorage.setItem('semesters', JSON.stringify(semesters));
         }
 
-        function calcGPA() {
-            let total = 0,
-                units = 0;
-            for (let i = 1; i <= gpaCount; i++) {
-                const uEl = document.getElementById('unit' + i);
-                const gEl = document.getElementById('grade' + i);
-                if (!uEl || !gEl) continue; // skip removed rows safely
-                const u = parseFloat(uEl.value);
-                const g = parseFloat(gEl.value);
-                if (!isNaN(u) && !isNaN(g) && u > 0) {
-                    total += u * g;
-                    units += u;
+        function addCourseRow() {
+            courseRowCounter++;
+            const container = document.getElementById('semesterCourseBox');
+            const row = document.createElement('div');
+            row.className = 'row course-row';
+            row.id = 'courseRow' + courseRowCounter;
+            row.innerHTML = `
+                <input type="text" id="cname${courseRowCounter}" placeholder="Course Name" style="flex:2;">
+                <input type="number" id="cunit${courseRowCounter}" placeholder="Units" min="0" step="0.5" style="flex:1;">
+                <select id="cgrade${courseRowCounter}" style="flex:1;">
+                    <option value="5">A (5.0)</option>
+                    <option value="4">B (4.0)</option>
+                    <option value="3">C (3.0)</option>
+                    <option value="2">D (2.0)</option>
+                    <option value="1">E (1.0)</option>
+                    <option value="0">F (0.0)</option>
+                </select>
+                <button onclick="removeCourseRow(${courseRowCounter})" class="danger small-btn" style="width:auto;flex:0;">✕</button>
+            `;
+            container.appendChild(row);
+        }
+
+        function removeCourseRow(id) {
+            const row = document.getElementById('courseRow' + id);
+            if (row) {
+                const rows = document.querySelectorAll('#semesterCourseBox .course-row');
+                if (rows.length <= 1) {
+                    showNotification('⚠️ You need at least one course.');
+                    return;
                 }
+                row.remove();
             }
-            if (units === 0) {
-                showNotification('⚠️ Please enter at least one course with units.');
-                return;
-            }
-            const gpa = (total / units).toFixed(2);
-            localStorage.setItem('gpa', gpa);
-            document.getElementById('gpaOut').innerText = '✅ GPA: ' + gpa + ' / 5.0';
-            saveGPAHistory(gpa, units);
-            updateDash();
-            showNotification('📊 GPA Calculated: ' + gpa);
         }
 
-        /* ============ GPA HISTORY ============ */
-        function saveGPAHistory(gpa, totalUnits) {
-            const history = JSON.parse(localStorage.getItem('gpaHistory')) || [];
-            history.push({
-                gpa: parseFloat(gpa).toFixed(2),
-                units: totalUnits,
-                date: new Date().toLocaleString(),
-                courses: gpaCount
+        function getCurrentSemesterData() {
+            const title = document.getElementById('semesterTitle').value.trim() || 'Unnamed Semester';
+            const rows = document.querySelectorAll('#semesterCourseBox .course-row');
+            const courses = [];
+            let valid = false;
+
+            rows.forEach(row => {
+                const id = row.id.replace('courseRow', '');
+                const nameEl = document.getElementById('cname' + id);
+                const unitEl = document.getElementById('cunit' + id);
+                const gradeEl = document.getElementById('cgrade' + id);
+
+                if (nameEl && unitEl && gradeEl) {
+                    const name = nameEl.value.trim() || 'Course';
+                    const units = parseFloat(unitEl.value);
+                    const gradePoint = parseFloat(gradeEl.value);
+
+                    if (!isNaN(units) && units > 0) {
+                        valid = true;
+                        courses.push({
+                            name: name,
+                            units: units,
+                            gradePoint: gradePoint,
+                            grade: gradeEl.options[gradeEl.selectedIndex].text.split(' ')[0]
+                        });
+                    }
+                }
             });
-            if (history.length > 50) history.shift();
-            localStorage.setItem('gpaHistory', JSON.stringify(history));
+
+            return { title, courses, valid };
         }
 
-        function renderGPAHistory() {
-            const history = JSON.parse(localStorage.getItem('gpaHistory')) || [];
-            const container = document.getElementById('gpaHistoryList');
-            if (history.length === 0) {
-                container.innerHTML = '<span class="small">No GPA history yet. Calculate a GPA to record it.</span>';
+        function calcSemesterGPA() {
+            const data = getCurrentSemesterData();
+            if (!data.valid || data.courses.length === 0) {
+                document.getElementById('semesterGpaOut').innerHTML = '⚠️ Please add at least one valid course with units.';
+                showNotification('⚠️ No valid courses to calculate.');
                 return;
             }
-            container.innerHTML = history.reverse().map((h, i) => `
-            <div class="history-item">
-              <span>📅 ${h.date}</span>
-              <span><strong>GPA: ${h.gpa}</strong> | Units: ${h.units} | Courses: ${h.courses}</span>
-            </div>
-          `).join('');
-            history.reverse();
+
+            let totalPoints = 0;
+            let totalUnits = 0;
+            data.courses.forEach(c => {
+                totalPoints += c.units * c.gradePoint;
+                totalUnits += c.units;
+            });
+
+            const gpa = (totalPoints / totalUnits).toFixed(2);
+            document.getElementById('semesterGpaOut').innerHTML = `📊 Semester GPA: <strong>${gpa}</strong> / 5.0 (${totalUnits} units)`;
+            return { gpa: parseFloat(gpa), totalUnits };
         }
 
-        function clearGPAHistory() {
-            if (confirm('Clear all GPA history? This cannot be undone.')) {
-                localStorage.removeItem('gpaHistory');
-                renderGPAHistory();
-                showNotification('🗑 GPA history cleared.');
-            }
-        }
-
-        /* ============ CGPA CALCULATOR ============ */
-        function addCGPA() {
-            semCount++;
-            const d = document.createElement('div');
-            d.className = 'row';
-            d.id = 'cgpaRow' + semCount;
-            d.innerHTML = `
-            <input type="number" id="cunit${semCount}" placeholder="Semester Units" min="0" step="0.5">
-            <input type="number" id="cgpa${semCount}" placeholder="Semester GPA" min="0" max="5" step="0.01">
-            <button onclick="removeCGPARow(${semCount})" class="danger small-btn" style="width:auto;flex:0;">✕</button>
-          `;
-            document.getElementById('cgpaBox').appendChild(d);
-        }
-
-        function removeCGPARow(id) {
-            const row = document.getElementById('cgpaRow' + id);
-            if (row) row.remove();
-        }
-
-        function calcCGPA() {
-            let total = 0,
-                units = 0;
-            for (let i = 1; i <= semCount; i++) {
-                const uEl = document.getElementById('cunit' + i);
-                const gEl = document.getElementById('cgpa' + i);
-                if (!uEl || !gEl) continue; // skip removed rows
-                const u = parseFloat(uEl.value);
-                const g = parseFloat(gEl.value);
-                if (!isNaN(u) && !isNaN(g) && u > 0) {
-                    total += u * g;
-                    units += u;
-                }
-            }
-            if (units === 0) {
-                showNotification('⚠️ Please enter at least one semester with units.');
+        function saveSemester() {
+            const data = getCurrentSemesterData();
+            if (!data.valid || data.courses.length === 0) {
+                showNotification('⚠️ Add at least one valid course with units before saving.');
                 return;
             }
-            const cgpa = (total / units).toFixed(2);
-            localStorage.setItem('cgpa', cgpa);
-            document.getElementById('cgpaOut').innerText = '✅ CGPA: ' + cgpa + ' / 5.0 | Class: ' + getDegreeClass(cgpa);
+
+            let totalPoints = 0;
+            let totalUnits = 0;
+            data.courses.forEach(c => {
+                totalPoints += c.units * c.gradePoint;
+                totalUnits += c.units;
+            });
+            const gpa = parseFloat((totalPoints / totalUnits).toFixed(2));
+
+            const semester = {
+                id: Date.now(),
+                title: data.title,
+                courses: data.courses,
+                gpa: gpa,
+                totalUnits: totalUnits,
+                date: new Date().toLocaleString()
+            };
+
+            const semesters = getSavedSemesters();
+            semesters.push(semester);
+            saveSemestersToStorage(semesters);
+
+            // Clear the form after saving (optional)
+            document.getElementById('semesterTitle').value = '';
+            document.getElementById('semesterCourseBox').innerHTML = '';
+            courseRowCounter = 0;
+            addCourseRow(); // creates row with id 1
+
+            document.getElementById('semesterGpaOut').innerHTML = `✅ Saved! GPA: ${gpa.toFixed(2)} — ${data.title}`;
+            renderSavedSemesters();
+            updateDashFromSemesters();
+            showNotification(`💾 Semester "${data.title}" saved with GPA ${gpa.toFixed(2)}`);
+        }
+
+        function deleteSemester(id) {
+            let semesters = getSavedSemesters();
+            if (semesters.length === 0) {
+                showNotification('⚠️ No semesters to delete.');
+                return;
+            }
+
+            let targetId = id;
+            if (!targetId) {
+                const last = semesters[semesters.length - 1];
+                if (!confirm(`Delete semester "${last.title}" (GPA: ${last.gpa.toFixed(2)})?`)) return;
+                targetId = last.id;
+            }
+
+            semesters = semesters.filter(s => s.id !== targetId);
+            saveSemestersToStorage(semesters);
+            renderSavedSemesters();
+            updateDashFromSemesters();
+            showNotification('🗑 Semester deleted.');
+        }
+
+        function clearAllSemesters() {
+            if (!confirm('Delete ALL saved semesters? This cannot be undone.')) return;
+            saveSemestersToStorage([]);
+            renderSavedSemesters();
+            updateDashFromSemesters();
+            showNotification('🗑 All semesters cleared.');
+        }
+
+        function renderSavedSemesters() {
+            const semesters = getSavedSemesters();
+            const container = document.getElementById('savedSemestersList');
+            // Also update the GPA history page list if present
+            const historyContainer = document.getElementById('gpaHistoryList');
+
+            if (semesters.length === 0) {
+                const emptyMsg = '<span class="small">No semesters saved yet. Add courses and click "Save Semester".</span>';
+                container.innerHTML = emptyMsg;
+                if (historyContainer) historyContainer.innerHTML = emptyMsg;
+                return;
+            }
+
+            const sorted = [...semesters].reverse();
+            const html = sorted.map(s => `
+                <div class="history-item" style="display:flex;flex-direction:column;align-items:stretch;gap:4px;background:#0f172a;padding:10px;border-radius:8px;margin-top:6px;border:1px solid #334155;">
+                    <div style="display:flex;justify-content:space-between;font-weight:600;color:#fbbf24;">
+                        <span>📘 ${s.title}</span>
+                        <span>GPA: ${s.gpa.toFixed(2)}</span>
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;font-size:0.75rem;color:#94a3b8;">
+                        ${s.courses.map(c => `<span style="background:#1e293b;padding:2px 8px;border-radius:12px;">${c.name} (${c.units}u, ${c.grade})</span>`).join('')}
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:#64748b;margin-top:2px;">
+                        <span>📅 ${s.date}</span>
+                        <button onclick="deleteSemester(${s.id})" class="danger small-btn" style="width:auto;padding:2px 10px;font-size:0.65rem;">✕ Delete</button>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+            if (historyContainer) historyContainer.innerHTML = html;
+        }
+
+        function updateDashFromSemesters() {
+            const semesters = getSavedSemesters();
+            if (semesters.length === 0) {
+                localStorage.removeItem('gpa');
+                localStorage.removeItem('cgpa');
+                updateDash();
+                return;
+            }
+
+            let totalPoints = 0;
+            let totalUnits = 0;
+            semesters.forEach(s => {
+                totalPoints += s.gpa * s.totalUnits;
+                totalUnits += s.totalUnits;
+            });
+            const cgpa = totalUnits > 0 ? (totalPoints / totalUnits) : 0;
+            const cgpaDisplay = cgpa.toFixed(2);
+
+            const last = semesters[semesters.length - 1];
+            const gpaDisplay = last.gpa.toFixed(2);
+
+            localStorage.setItem('gpa', gpaDisplay);
+            localStorage.setItem('cgpa', cgpaDisplay);
+
             updateDash();
-            showNotification('📈 CGPA Calculated: ' + cgpa + ' - ' + getDegreeClass(cgpa));
+        }
+
+        function initGPASection() {
+            const rows = document.querySelectorAll('#semesterCourseBox .course-row');
+            if (rows.length === 0) {
+                courseRowCounter = 0;
+                addCourseRow();
+            } else {
+                courseRowCounter = rows.length;
+            }
+            renderSavedSemesters();
+            updateDashFromSemesters();
         }
 
         /* ============ PLANNER ============ */
@@ -956,12 +1070,12 @@
 
         /* ============ ANALYZER ============ */
         function analyze() {
+            const semesters = getSavedSemesters();
             const gpa = parseFloat(localStorage.getItem('gpa')) || 0;
             const cgpa = parseFloat(localStorage.getItem('cgpa')) || 0;
             const streak = parseInt(localStorage.getItem('streak')) || 0;
             const minutes = parseInt(localStorage.getItem('studyMinutes')) || 0;
             const sessions = getSessionCount();
-            const gpaHistory = JSON.parse(localStorage.getItem('gpaHistory')) || [];
 
             let msg = '<strong>📊 Analysis Results:</strong><br><br>';
             msg += '🎓 <strong>Current GPA:</strong> ' + (gpa > 0 ? gpa.toFixed(2) : 'N/A') + '<br>';
@@ -970,7 +1084,7 @@
             msg += '🔥 <strong>Study Streak:</strong> ' + streak + ' days<br>';
             msg += '⏱ <strong>Total Study:</strong> ' + (minutes / 60).toFixed(1) + ' hours<br>';
             msg += '📝 <strong>Total Sessions:</strong> ' + sessions + '<br>';
-            msg += '📜 <strong>GPA Records:</strong> ' + gpaHistory.length + ' entries<br><br>';
+            msg += '📚 <strong>Saved Semesters:</strong> ' + semesters.length + '<br><br>';
 
             if (gpa >= 4.5) msg += '🌟 <strong>Verdict:</strong> Excellent! Keep dominating!';
             else if (gpa >= 3.5) msg += '👍 <strong>Verdict:</strong> Good performance. Push for First Class!';
@@ -1047,7 +1161,6 @@
             showNotification('🔄 Countdown cleared.');
         }
 
-        // Live countdown tick when section active
         setInterval(() => {
             if (currentSection === 'countdown' || document.getElementById('sectionCountdown').classList.contains('active')) {
                 updateCountdownDisplay();
@@ -1200,22 +1313,18 @@
             updateSessionCountDisplay();
             document.getElementById('pomodoroCount').innerText = pomodoroCompleted;
             loadPlan(true);
-            renderGPAHistory();
             renderSessionLog();
+            initGPASection(); // New GPA setup
         }
 
-        // Close sidebar on overlay click
         document.getElementById('sidebarOverlay').addEventListener('click', closeMenu);
-
-        // Close sidebar with Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeMenu();
         });
 
-        // Initialize everything
         init();
 
-        console.log('🐐 GoatTutor NG v6 – All buttons responsive & navigation fixed.');
+        console.log('🐐 GoatTutor NG v6 – Semester-based GPA fully implemented.');
     </script>
 </body>
 </html>
