@@ -1,1257 +1,513 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐐 GoatTutor NG</title>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Inter, Segoe UI, sans-serif;
-        }
-
-        body {
-            background: #0f172a;
-            color: white;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 900px;
-        }
-
-        .card {
-            background: #1e293b;
-            border-radius: 24px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, .35);
-        }
-
-        .logo {
-            font-size: 3rem;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .tagline {
-            text-align: center;
-            color: #cbd5e1;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-
-        textarea {
-            width: 100%;
-            height: 250px;
-            border: none;
-            outline: none;
-            resize: none;
-            border-radius: 18px;
-            padding: 20px;
-            font-size: 1rem;
-            background: #0f172a;
-            color: white;
-        }
-
-        textarea::placeholder {
-            color: #94a3b8;
-        }
-
-        .options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .option {
-            background: #334155;
-            padding: 15px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: .3s;
-            text-align: center;
-        }
-
-        .option:hover {
-            transform: translateY(-2px);
-        }
-
-        .selected {
-            background: #2563eb;
-        }
-
-        button {
-            width: 100%;
-            margin-top: 15px;
-            padding: 18px;
-            border: none;
-            border-radius: 14px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            background: #3b82f6;
-            color: white;
-            transition: .3s;
-        }
-
-        button:hover {
-            background: #2563eb;
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .feature {
-            background: #0f172a;
-            padding: 12px;
-            border-radius: 12px;
-            text-align: center;
-            color: #cbd5e1;
-            cursor: pointer;
-            transition: .3s;
-        }
-
-        .feature:hover {
-            background: #172554;
-        }
-
-        .feature.active-feature {
-            background: #2563eb;
-            color: white;
-        }
-
-        .quote {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 12px;
-            background: #0f172a;
-            text-align: center;
-            color: #cbd5e1;
-        }
-
-        .footer {
-            margin-top: 20px;
-            text-align: center;
-            font-size: .9rem;
-            color: #94a3b8;
-        }
-
-        /* ===== GPA CALCULATOR ===== */
-        #gpa-calculator {
-            display: none;
-            margin-top: 10px;
-            padding: 20px;
-            background: #0f172a;
-            border-radius: 18px;
-            border: 1px solid #334155;
-        }
-
-        #gpa-calculator.visible {
-            display: block;
-        }
-
-        .gpa-header {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .gpa-header h2 {
-            font-size: 1.5rem;
-            color: #facc15;
-        }
-
-        .semester-input {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .semester-input label {
-            color: #cbd5e1;
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-
-        .semester-input input {
-            padding: 10px 16px;
-            border-radius: 10px;
-            border: 1px solid #334155;
-            background: #1e293b;
-            color: white;
-            font-size: 0.95rem;
-            min-width: 200px;
-            outline: none;
-            transition: .3s;
-        }
-
-        .semester-input input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
-
-        .gpa-table-wrap {
-            overflow-x: auto;
-            margin: 16px 0 20px 0;
-            border-radius: 14px;
-            border: 1px solid #334155;
-        }
-
-        .gpa-table-wrap table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.95rem;
-            min-width: 480px;
-        }
-
-        .gpa-table-wrap th {
-            background: #1e293b;
-            color: #cbd5e1;
-            padding: 14px 12px;
-            text-align: left;
-            font-weight: 600;
-            border-bottom: 2px solid #334155;
-        }
-
-        .gpa-table-wrap td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #1e293b;
-            vertical-align: middle;
-        }
-
-        .gpa-table-wrap tr:last-child td {
-            border-bottom: none;
-        }
-
-        .gpa-table-wrap input[type="text"],
-        .gpa-table-wrap input[type="number"] {
-            width: 100%;
-            padding: 8px 10px;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            background: #1e293b;
-            color: white;
-            font-size: 0.9rem;
-            outline: none;
-            transition: .3s;
-            min-width: 60px;
-        }
-
-        .gpa-table-wrap input[type="text"]:focus,
-        .gpa-table-wrap input[type="number"]:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-
-        .gpa-table-wrap select {
-            width: 100%;
-            padding: 8px 10px;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            background: #1e293b;
-            color: white;
-            font-size: 0.9rem;
-            outline: none;
-            cursor: pointer;
-            transition: .3s;
-        }
-
-        .gpa-table-wrap select:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-
-        .gpa-table-wrap select option {
-            background: #1e293b;
-            color: white;
-        }
-
-        .delete-row-btn {
-            background: #dc2626;
-            border: none;
-            color: white;
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: .3s;
-            margin: 0 auto;
-        }
-
-        .delete-row-btn:hover {
-            background: #b91c1c;
-            transform: scale(1.05);
-        }
-
-        .gpa-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 8px;
-        }
-
-        .gpa-buttons button {
-            flex: 1 1 auto;
-            min-width: 140px;
-            margin-top: 0;
-            padding: 14px 18px;
-            font-size: 0.95rem;
-            border-radius: 12px;
-        }
-
-        .gpa-buttons .btn-add {
-            background: #22c55e;
-        }
-        .gpa-buttons .btn-add:hover {
-            background: #16a34a;
-        }
-
-        .gpa-buttons .btn-save {
-            background: #3b82f6;
-        }
-        .gpa-buttons .btn-save:hover {
-            background: #2563eb;
-        }
-
-        .gpa-buttons .btn-delete {
-            background: #dc2626;
-        }
-        .gpa-buttons .btn-delete:hover {
-            background: #b91c1c;
-        }
-
-        .gpa-buttons .btn-calc {
-            background: #facc15;
-            color: #0f172a;
-        }
-        .gpa-buttons .btn-calc:hover {
-            background: #eab308;
-        }
-
-        /* ===== GPA RESULTS ===== */
-        #gpa-results {
-            margin-top: 20px;
-            padding: 20px;
-            background: #1e293b;
-            border-radius: 14px;
-            border: 1px solid #334155;
-            display: none;
-        }
-
-        #gpa-results.visible {
-            display: block;
-        }
-
-        #gpa-results h3 {
-            color: #facc15;
-            font-size: 1.3rem;
-            margin-bottom: 14px;
-        }
-
-        .result-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-
-        .result-item {
-            background: #0f172a;
-            padding: 14px 16px;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .result-item .label {
-            color: #94a3b8;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .result-item .value {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: white;
-            margin-top: 4px;
-        }
-
-        .result-item .value.highlight {
-            color: #facc15;
-        }
-
-        .result-interp {
-            padding: 14px 18px;
-            background: #0f172a;
-            border-radius: 12px;
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #cbd5e1;
-            border-left: 4px solid #facc15;
-        }
-
-        .result-interp strong {
-            color: #facc15;
-        }
-
-        .saved-semesters {
-            margin-top: 20px;
-            padding-top: 16px;
-            border-top: 1px solid #334155;
-        }
-
-        .saved-semesters h4 {
-            color: #cbd5e1;
-            font-size: 0.95rem;
-            margin-bottom: 10px;
-        }
-
-        .semester-tag {
-            display: inline-block;
-            background: #1e293b;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: #94a3b8;
-            margin: 3px 6px 3px 0;
-            border: 1px solid #334155;
-            cursor: pointer;
-            transition: .3s;
-        }
-
-        .semester-tag:hover {
-            background: #334155;
-            color: white;
-        }
-
-        .semester-tag.active-tag {
-            background: #2563eb;
-            color: white;
-            border-color: #2563eb;
-        }
-
-        .cgpa-display {
-            margin-top: 12px;
-            padding: 14px 18px;
-            background: #0f172a;
-            border-radius: 12px;
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #facc15;
-            border: 1px solid #334155;
-        }
-
-        /* Hide textarea area when GPA is visible */
-        .tutor-area.hidden {
-            display: none;
-        }
-
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 2rem;
-            }
-
-            .logo {
-                font-size: 2.5rem;
-            }
-
-            textarea {
-                height: 220px;
-            }
-
-            .gpa-header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .semester-input {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .semester-input input {
-                min-width: unset;
-                width: 100%;
-            }
-
-            .gpa-buttons button {
-                flex: 1 1 100%;
-                min-width: unset;
-            }
-
-            .gpa-table-wrap table {
-                font-size: 0.8rem;
-                min-width: 400px;
-            }
-
-            .gpa-table-wrap th,
-            .gpa-table-wrap td {
-                padding: 8px 6px;
-            }
-
-            .gpa-table-wrap input[type="text"],
-            .gpa-table-wrap input[type="number"],
-            .gpa-table-wrap select {
-                font-size: 0.8rem;
-                padding: 6px 8px;
-            }
-
-            .result-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .result-item .value {
-                font-size: 1.3rem;
-            }
-        }
-
-        @media (max-width: 400px) {
-            .gpa-table-wrap table {
-                min-width: 340px;
-                font-size: 0.7rem;
-            }
-
-            .gpa-table-wrap th,
-            .gpa-table-wrap td {
-                padding: 6px 4px;
-            }
-
-            .gpa-table-wrap input[type="text"],
-            .gpa-table-wrap input[type="number"],
-            .gpa-table-wrap select {
-                font-size: 0.7rem;
-                padding: 4px 6px;
-            }
-
-            .delete-row-btn {
-                width: 28px;
-                height: 28px;
-                font-size: 0.9rem;
-            }
-
-            .result-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-            }
-
-            .result-item .value {
-                font-size: 1.1rem;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>🐐 GoatTutor NG</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Inter,Segoe UI,sans-serif;
+}
+
+body{
+background:#0f172a;
+color:white;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.container{
+width:100%;
+max-width:900px;
+}
+
+.card{
+background:#1e293b;
+border-radius:24px;
+padding:30px;
+box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+
+.logo{
+font-size:3rem;
+text-align:center;
+margin-bottom:10px;
+}
+
+h1{
+text-align:center;
+font-size:2.5rem;
+margin-bottom:10px;
+}
+
+.tagline{
+text-align:center;
+color:#cbd5e1;
+margin-bottom:25px;
+line-height:1.6;
+}
+
+textarea{
+width:100%;
+height:250px;
+border:none;
+outline:none;
+resize:none;
+border-radius:18px;
+padding:20px;
+font-size:1rem;
+background:#0f172a;
+color:white;
+}
+
+textarea::placeholder{
+color:#94a3b8;
+}
+
+.options{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:12px;
+margin-top:20px;
+}
+
+.option{
+background:#334155;
+padding:15px;
+border-radius:12px;
+cursor:pointer;
+transition:.3s;
+text-align:center;
+}
+
+.option:hover{
+transform:translateY(-2px);
+}
+
+.selected{
+background:#2563eb;
+}
+
+button{
+width:100%;
+margin-top:15px;
+padding:18px;
+border:none;
+border-radius:14px;
+font-size:1rem;
+font-weight:bold;
+cursor:pointer;
+background:#3b82f6;
+color:white;
+transition:.3s;
+}
+
+button:hover{
+background:#2563eb;
+}
+
+.features{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+gap:12px;
+margin-bottom:20px;
+}
+
+.feature{
+background:#0f172a;
+padding:12px;
+border-radius:12px;
+text-align:center;
+color:#cbd5e1;
+cursor:pointer;
+}
+
+.feature:hover{
+background:#172554;
+}
+
+.quote{
+margin-top:20px;
+padding:15px;
+border-radius:12px;
+background:#0f172a;
+text-align:center;
+color:#cbd5e1;
+}
+
+.footer{
+margin-top:20px;
+text-align:center;
+font-size:.9rem;
+color:#94a3b8;
+}
+
+@media(max-width:600px){
+
+h1{
+font-size:2rem;
+}
+
+.logo{
+font-size:2.5rem;
+}
+
+textarea{
+height:220px;
+}
+
+}
+
+</style>
 </head>
 
 <body>
 
-    <div class="container">
+<div class="container">
 
-        <div class="card">
+<div class="card">
 
-            <div class="logo">🐐</div>
+<div class="logo">🐐</div>
 
-            <h1>GoatTutor NG</h1>
+<h1>GoatTutor NG</h1>
 
-            <p class="tagline">
-                Explain am like I'm a goat.<br>
-                Simple explanations, exam-focused tutorials,
-                memory tricks and likely CBT questions.
-            </p>
-
-            <!-- FEATURES ROW -->
-            <div class="features">
-
-                <div class="feature" onclick="fillTopic('BIO 102')">
-                    BIO 102
-                </div>
-
-                <div class="feature" onclick="fillTopic('PHY 102')">
-                    PHY 102
-                </div>
-
-                <div class="feature" onclick="fillTopic('CHM 102')">
-                    CHM 102
-                </div>
-
-                <div class="feature" onclick="fillTopic('COS 102')">
-                    COS 102
-                </div>
-
-                <div class="feature" onclick="fillTopic('MTH 102')">
-                    MTH 102
-                </div>
-
-                <div class="feature" onclick="fillTopic('GST 112')">
-                    GST 112
-                </div>
-
-                <div class="feature active-feature" id="cgpa-toggle" onclick="toggleGPA()">
-                    📊 CGPA Calculator
-                </div>
-            </div>
-
-            <!-- TUTOR AREA (textarea + buttons) -->
-            <div class="tutor-area" id="tutor-area">
-
-                <textarea id="topic" placeholder="Paste your lecture note, topic, or course title here…
-
-        Example:
-        Ampere-Maxwell Law
-        CHM 102 Organic Chemistry
-        Electromagnetism
-        Atomic Structure"></textarea>
-
-                <div class="options">
-
-                    <div class="option selected" onclick="selectMode(this,'tutorial')">
-                        📚 Full Tutorial
-                    </div>
-
-                    <div class="option" onclick="selectMode(this,'summary')">
-                        📝 Summary Notes
-                    </div>
-
-                    <div class="option" onclick="selectMode(this,'mcq')">
-                        🎯 Exam MCQs
-                    </div>
-
-                    <div class="option" onclick="selectMode(this,'revision')">
-                        ⚡ Crash Revision
-                    </div>
-
-                    <div class="option" onclick="selectMode(this,'exam')">
-                        🔥 Exam Tomorrow
-                    </div>
-
-                </div>
-
-                <button onclick="teachMe()">🚀 Teach Me</button>
-                <button onclick="copyPrompt()">📋 Copy Prompt</button>
-
-            </div>
-            <!-- end tutor-area -->
-
-            <!-- ===== GPA CALCULATOR ===== -->
-            <div id="gpa-calculator">
-
-                <div class="gpa-header">
-                    <h2>📊 GPA Calculator</h2>
-                    <div class="semester-input">
-                        <label for="semester-name">Semester</label>
-                        <input type="text" id="semester-name" placeholder="e.g. 100L First Sem" value="100L First Sem">
-                    </div>
-                </div>
-
-                <div class="gpa-table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width:50px;">S/N</th>
-                                <th>Course</th>
-                                <th style="width:80px;">Unit</th>
-                                <th style="width:100px;">Grade</th>
-                                <th style="width:60px;">✕</th>
-                            </tr>
-                        </thead>
-                        <tbody id="course-list">
-                            <!-- rows injected by JS -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="gpa-buttons">
-                    <button class="btn-add" onclick="addCourse()">➕ Add Course</button>
-                    <button class="btn-save" onclick="saveSemester()">💾 Save Semester</button>
-                    <button class="btn-delete" onclick="deleteSemester()">🗑️ Delete</button>
-                    <button class="btn-calc" onclick="calculateGPA()">📊 Calculate GPA</button>
-                </div>
-
-                <!-- Results -->
-                <div id="gpa-results">
-                    <h3>📈 Result</h3>
-                    <div class="result-grid" id="result-grid">
-                        <div class="result-item">
-                            <div class="label">Total Units</div>
-                            <div class="value" id="res-units">0</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="label">Grade Points</div>
-                            <div class="value" id="res-points">0</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="label">GPA</div>
-                            <div class="value highlight" id="res-gpa">0.00</div>
-                        </div>
-                    </div>
-                    <div class="result-interp" id="res-interp">
-                        🎓 <strong>—</strong>
-                    </div>
-
-                    <!-- Saved semesters + CGPA -->
-                    <div class="saved-semesters" id="saved-semesters-area">
-                        <h4>📁 Saved Semesters</h4>
-                        <div id="semester-tags">
-                            <!-- tags injected by JS -->
-                        </div>
-                        <div class="cgpa-display" id="cgpa-display">
-                            📊 CGPA: <span id="cgpa-value">—</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <!-- end gpa-calculator -->
-
-            <div class="quote" id="quote">
-                📚 Read today so exam won't read you tomorrow.
-            </div>
-
-            <div class="quote">
-                🚀 Coming Soon: CGPA Calculator • Past Questions • Flashcards • Study Planner
-            </div>
-
-            <div class="footer">
-                Made by Students, for Students 🇳🇬
-            </div>
-
-        </div>
-
-    </div>
-
-    <script>
-        // ============================================================
-        //  EXISTING TUTOR LOGIC (unchanged)
-        // ============================================================
-
-        let mode = "tutorial";
-
-        const quotes = [
-            "📚 Read today so exam won't read you tomorrow.",
-            "🐐 Small reading every day beats overnight reading.",
-            "🎓 Your CGPA is watching your decisions.",
-            "🔥 Consistency beats motivation.",
-            "🧠 If you can explain it simply, you understand it."
-        ];
-
-        document.getElementById("quote").innerHTML =
-            quotes[Math.floor(Math.random() * quotes.length)];
-
-        function fillTopic(topic) {
-            // If GPA is visible, hide it and show tutor area
-            const gpaEl = document.getElementById('gpa-calculator');
-            if (gpaEl.classList.contains('visible')) {
-                toggleGPA();
-            }
-            document.getElementById('topic').value = topic;
-            // remove active highlight from CGPA toggle
-            document.getElementById('cgpa-toggle').classList.remove('active-feature');
-        }
-
-        function selectMode(element, value) {
-            mode = value;
-            document.querySelectorAll('.options .option').forEach(item => {
-                item.classList.remove('selected');
-            });
-            element.classList.add('selected');
-        }
-
-        function copyPrompt() {
-            let topic = document.getElementById('topic').value;
-            if (topic.trim() === "") {
-                alert("Enter a topic first.");
-                return;
-            }
-            navigator.clipboard.writeText(topic).then(() => {
-                alert("Copied successfully!");
-            }).catch(() => {
-                // fallback
-                const ta = document.createElement('textarea');
-                ta.value = topic;
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand('copy');
-                document.body.removeChild(ta);
-                alert("Copied successfully!");
-            });
-        }
-
-        function teachMe() {
-            let topic = document.getElementById('topic').value;
-            if (topic.trim() === "") {
-                alert("Please enter a topic first.");
-                return;
-            }
-
-            let instruction = "";
-
-            if (mode === "tutorial") {
-                instruction = `
-            Act as GoatTutor AI.
-
-            Teach this topic like a professional university tutor.
-
-            Requirements:
-
-            - Explain from beginner to advanced.
-            - Use simple language.
-            - Use funny analogies.
-            - Use Nigerian student examples.
-            - Include memory tricks.
-            - Highlight likely exam questions.
-            - End with 10 MCQs and answers.
-
-            Topic:
-            `;
-            }
-
-            if (mode === "summary") {
-                instruction = `
-            Summarize this topic into exam-ready notes.
-
-            Requirements:
-
-            - Short and comprehensive.
-            - Important formulas.
-            - Key definitions.
-            - Most likely exam points.
-
-            Topic:
-            `;
-            }
-
-            if (mode === "mcq") {
-                instruction = `
-            Generate 20 university-level MCQs.
-
-            Requirements:
-
-            - Tough exam standard.
-            - Include calculations where needed.
-            - Provide answers after each question.
-
-            Topic:
-            `;
-            }
-
-            if (mode === "revision") {
-                instruction = `
-            Create a crash revision guide.
-
-            Requirements:
-
-            - Everything needed for an exam tomorrow.
-            - Key points only.
-            - Memory tricks.
-            - Likely questions.
-
-            Topic:
-            `;
-            }
-
-            if (mode === "exam") {
-                instruction = `
-            Create an emergency exam guide.
-
-            Requirements:
-
-            - Most important concepts only.
-            - Memory tricks.
-            - Common exam questions.
-            - Key formulas.
-            - Topics likely to appear.
-
-            Topic:
-            `;
-            }
-
-            let prompt = instruction + topic;
-            let url = "https://chatgpt.com/?q=" + encodeURIComponent(prompt);
-            window.open(url, "_blank");
-        }
-
-        // ============================================================
-        //  GPA CALCULATOR LOGIC
-        // ============================================================
-
-        // ---------- state ----------
-        let courses = [];
-        let savedSemesters = []; // array of { name, courses: [{code, unit, grade}] }
-        let semesterCounter = 0;
-
-        // grading scale
-        const GRADE_POINTS = {
-            'A': 5,
-            'B': 4,
-            'C': 3,
-            'D': 2,
-            'E': 1,
-            'F': 0
-        };
-
-        const GRADE_INTERP = {
-            'A': 'Excellent',
-            'B': 'Very Good',
-            'C': 'Good',
-            'D': 'Fair',
-            'E': 'Pass',
-            'F': 'Fail'
-        };
-
-        // ---------- DOM refs ----------
-        const courseListEl = document.getElementById('course-list');
-        const semesterNameInput = document.getElementById('semester-name');
-        const resultsEl = document.getElementById('gpa-results');
-        const resUnits = document.getElementById('res-units');
-        const resPoints = document.getElementById('res-points');
-        const resGpa = document.getElementById('res-gpa');
-        const resInterp = document.getElementById('res-interp');
-        const semesterTags = document.getElementById('semester-tags');
-        const cgpaValue = document.getElementById('cgpa-value');
-
-        // ---------- init ----------
-        function initGPA() {
-            // Load saved semesters from localStorage
-            const stored = localStorage.getItem('goatTutorSemesters');
-            if (stored) {
-                try {
-                    savedSemesters = JSON.parse(stored);
-                    if (!Array.isArray(savedSemesters)) savedSemesters = [];
-                } catch (_) { savedSemesters = []; }
-            }
-            // load default courses from screenshot
-            const defaultCourses = [
-                { code: 'CHM 101', unit: 2, grade: 'A' },
-                { code: 'PHY 101', unit: 2, grade: 'A' },
-                { code: 'MTH 101', unit: 2, grade: 'A' },
-                { code: 'GST 101', unit: 2, grade: 'B' }
-            ];
-            courses = defaultCourses.map(c => ({ ...c }));
-            renderCourses();
-            renderSemesterTags();
-            updateCGPA();
-        }
-
-        // ---------- render ----------
-        function renderCourses() {
-            if (!courseListEl) return;
-            if (courses.length === 0) {
-                courseListEl.innerHTML = `
-              <tr>
-                <td colspan="5" style="text-align:center;color:#64748b;padding:24px 12px;">
-                  No courses added yet. Click <strong>➕ Add Course</strong>.
-                </td>
-              </tr>
-            `;
-                return;
-            }
-
-            let html = '';
-            courses.forEach((c, idx) => {
-                const sn = idx + 1;
-                const gradeOptions = ['A', 'B', 'C', 'D', 'E', 'F']
-                    .map(g => `<option value="${g}" ${g === c.grade ? 'selected' : ''}>${g}</option>`)
-                    .join('');
-                html += `
-              <tr>
-                <td style="text-align:center;color:#94a3b8;">${sn}</td>
-                <td>
-                  <input type="text" class="course-code" value="${c.code}" 
-                         placeholder="e.g. CHM 101" 
-                         data-idx="${idx}" onchange="updateCourse(${idx},'code',this.value)">
-                </td>
-                <td>
-                  <input type="number" class="course-unit" value="${c.unit}" 
-                         placeholder="2" min="0" max="6" step="1"
-                         data-idx="${idx}" onchange="updateCourse(${idx},'unit',parseInt(this.value)||0)">
-                </td>
-                <td>
-                  <select class="course-grade" data-idx="${idx}" 
-                          onchange="updateCourse(${idx},'grade',this.value)">
-                    ${gradeOptions}
-                  </select>
-                </td>
-                <td style="text-align:center;">
-                  <button class="delete-row-btn" onclick="deleteCourse(${idx})" title="Delete course">✕</button>
-                </td>
-              </tr>
-            `;
-            });
-            courseListEl.innerHTML = html;
-        }
-
-        // ---------- course CRUD ----------
-        function addCourse() {
-            courses.push({ code: '', unit: 1, grade: 'A' });
-            renderCourses();
-            // auto-focus the new course code input
-            const inputs = document.querySelectorAll('.course-code');
-            if (inputs.length) {
-                inputs[inputs.length - 1].focus();
-            }
-        }
-
-        function deleteCourse(idx) {
-            if (courses.length <= 1) {
-                if (!confirm('Delete the last course?')) return;
-            }
-            courses.splice(idx, 1);
-            renderCourses();
-            // hide results if showing
-            resultsEl.classList.remove('visible');
-        }
-
-        function updateCourse(idx, field, value) {
-            if (idx >= 0 && idx < courses.length) {
-                if (field === 'unit') {
-                    const v = parseInt(value) || 0;
-                    courses[idx].unit = Math.max(0, v);
-                } else if (field === 'grade') {
-                    courses[idx].grade = value;
-                } else if (field === 'code') {
-                    courses[idx].code = value.trim();
-                }
-                // auto-hide results when editing
-                resultsEl.classList.remove('visible');
-            }
-        }
-
-        // ---------- delete semester (clear all courses) ----------
-        function deleteSemester() {
-            if (courses.length === 0) {
-                alert('No courses to delete.');
-                return;
-            }
-            if (!confirm('Delete all courses in this semester?')) return;
-            courses = [];
-            renderCourses();
-            resultsEl.classList.remove('visible');
-        }
-
-        // ---------- save semester ----------
-        function saveSemester() {
-            const name = semesterNameInput.value.trim() || 'Unnamed Semester';
-            // filter out empty course codes
-            const validCourses = courses.filter(c => c.code.trim() !== '');
-            if (validCourses.length === 0) {
-                alert('Add at least one course with a course code.');
-                return;
-            }
-
-            // Check for duplicate semester names – we'll allow but warn
-            const existing = savedSemesters.find(s => s.name === name);
-            if (existing) {
-                if (!confirm(`Semester "${name}" already exists. Replace it?`)) {
-                    return;
-                }
-                // replace
-                existing.courses = validCourses.map(c => ({ ...c }));
-            } else {
-                savedSemesters.push({
-                    name: name,
-                    courses: validCourses.map(c => ({ ...c }))
-                });
-            }
-
-            localStorage.setItem('goatTutorSemesters', JSON.stringify(savedSemesters));
-            renderSemesterTags();
-            updateCGPA();
-            alert(`✅ Semester "${name}" saved successfully!`);
-            resultsEl.classList.remove('visible');
-        }
-
-        // ---------- render semester tags ----------
-        function renderSemesterTags() {
-            if (!semesterTags) return;
-            if (savedSemesters.length === 0) {
-                semesterTags.innerHTML = `<span style="color:#64748b;font-size:0.9rem;">No semesters saved yet.</span>`;
-                return;
-            }
-            let html = '';
-            savedSemesters.forEach((s, idx) => {
-                const count = s.courses ? s.courses.length : 0;
-                html += `
-              <span class="semester-tag" onclick="loadSemester(${idx})" title="${count} courses">
-                📘 ${s.name} (${count})
-              </span>
-            `;
-            });
-            semesterTags.innerHTML = html;
-        }
-
-        // ---------- load a saved semester ----------
-        function loadSemester(idx) {
-            if (idx < 0 || idx >= savedSemesters.length) return;
-            const s = savedSemesters[idx];
-            if (!s || !s.courses) return;
-            // ask if we should replace current courses
-            if (courses.length > 0) {
-                if (!confirm(`Load "${s.name}"? This will replace your current courses.`)) {
-                    return;
-                }
-            }
-            courses = s.courses.map(c => ({ ...c }));
-            semesterNameInput.value = s.name;
-            renderCourses();
-            resultsEl.classList.remove('visible');
-            // highlight tag
-            document.querySelectorAll('.semester-tag').forEach(el => el.classList.remove('active-tag'));
-            const tags = document.querySelectorAll('.semester-tag');
-            if (tags[idx]) tags[idx].classList.add('active-tag');
-        }
-
-        // ---------- calculate GPA ----------
-        function calculateGPA() {
-            const validCourses = courses.filter(c => c.code.trim() !== '' && c.unit > 0);
-            if (validCourses.length === 0) {
-                alert('Add at least one valid course (with code and unit > 0).');
-                return;
-            }
-
-            let totalUnits = 0;
-            let totalPoints = 0;
-
-            validCourses.forEach(c => {
-                const gp = GRADE_POINTS[c.grade] || 0;
-                totalUnits += c.unit;
-                totalPoints += c.unit * gp;
-            });
-
-            const gpa = totalUnits > 0 ? totalPoints / totalUnits : 0;
-
-            // display
-            resUnits.textContent = totalUnits;
-            resPoints.textContent = totalPoints.toFixed(1);
-            resGpa.textContent = gpa.toFixed(2);
-
-            // interpretation
-            let interp = '';
-            let emoji = '';
-            if (gpa >= 4.5) { interp = 'First Class';
-                emoji = '🏆'; } else if (gpa >= 3.5) { interp = 'Second Class Upper';
-                emoji = '🥇'; } else if (gpa >= 2.5) { interp = 'Second Class Lower';
-                emoji = '🥈'; } else if (gpa >= 1.5) { interp = 'Third Class';
-                emoji = '🥉'; } else if (gpa >= 1.0) { interp = 'Pass';
-                emoji = '📄'; } else { interp = 'Fail';
-                emoji = '💔'; }
-
-            resInterp.innerHTML = `${emoji} <strong>${interp}</strong> &nbsp;·&nbsp; GPA = ${gpa.toFixed(2)}`;
-
-            resultsEl.classList.add('visible');
-
-            // update CGPA after this calculation
-            updateCGPA();
-        }
-
-        // ---------- update CGPA (across all semesters) ----------
-        function updateCGPA() {
-            if (savedSemesters.length === 0) {
-                cgpaValue.textContent = '— (no semesters saved)';
-                return;
-            }
-
-            let totalUnits = 0;
-            let totalPoints = 0;
-
-            savedSemesters.forEach(s => {
-                if (!s.courses) return;
-                s.courses.forEach(c => {
-                    const gp = GRADE_POINTS[c.grade] || 0;
-                    const u = c.unit || 0;
-                    totalUnits += u;
-                    totalPoints += u * gp;
-                });
-            });
-
-            // Also include current unsaved courses in CGPA? No – CGPA is only saved semesters.
-            // But we can show current semester's GPA separately.
-            // We'll show CGPA from saved semesters only.
-
-            if (totalUnits === 0) {
-                cgpaValue.textContent = '— (no units)';
-                return;
-            }
-
-            const cgpa = totalPoints / totalUnits;
-            cgpaValue.textContent = cgpa.toFixed(2) + '  (' + totalUnits + ' units)';
-        }
-
-        // ---------- toggle GPA / Tutor area ----------
-        function toggleGPA() {
-            const gpaEl = document.getElementById('gpa-calculator');
-            const tutorEl = document.getElementById('tutor-area');
-            const toggleBtn = document.getElementById('cgpa-toggle');
-
-            const isVisible = gpaEl.classList.contains('visible');
-
-            if (isVisible) {
-                // hide GPA, show tutor
-                gpaEl.classList.remove('visible');
-                tutorEl.classList.remove('hidden');
-                toggleBtn.classList.remove('active-feature');
-                // re-initialize the textarea content if needed
-            } else {
-                // show GPA, hide tutor
-                gpaEl.classList.add('visible');
-                tutorEl.classList.add('hidden');
-                toggleBtn.classList.add('active-feature');
-                // refresh render
-                renderCourses();
-                renderSemesterTags();
-                updateCGPA();
-                // if results were visible, keep them; else hide
-                // but we want to show results if there are courses
-                if (courses.length > 0) {
-                    // optionally auto-calculate? No – user clicks Calculate.
-                }
-            }
-        }
-
-        // ---------- auto-init on load ----------
-        document.addEventListener('DOMContentLoaded', function() {
-            initGPA();
-            // ensure GPA is hidden initially, tutor visible
-            const gpaEl = document.getElementById('gpa-calculator');
-            const tutorEl = document.getElementById('tutor-area');
-            gpaEl.classList.remove('visible');
-            tutorEl.classList.remove('hidden');
-            document.getElementById('cgpa-toggle').classList.remove('active-feature');
-        });
-
-        // also call init if script runs after DOM
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-            // already loaded
-        } else {
-            document.addEventListener('DOMContentLoaded', initGPA);
-        }
-    </script>
+<p class="tagline">
+Explain am like I'm a goat.<br>
+Simple explanations, exam-focused tutorials,
+memory tricks and likely CBT questions.
+</p>
+
+<div class="features">
+
+<div class="feature" onclick="fillTopic('BIO 102')">
+BIO 102
+</div>
+
+<div class="feature" onclick="fillTopic('PHY 102')">
+PHY 102
+</div>
+
+<div class="feature" onclick="fillTopic('CHM 102')">
+CHM 102
+</div>
+
+<div class="feature" onclick="fillTopic('COS 102')">
+COS 102
+</div>
+
+<div class="feature" onclick="fillTopic('MTH 102')">
+MTH 102
+</div>
+
+<div class="feature" onclick="fillTopic('GST 112')">
+GST 112
+</div>
+
+  <div class="option"
+onclick="selectMode(this,'cgpa')">
+📊 CGPA Calculator
+  </div>
+</div>
+
+<textarea id="topic"
+placeholder="Paste your lecture note, topic, or course title here...
+
+Example:
+Ampere-Maxwell Law
+CHM 102 Organic Chemistry
+Electromagnetism
+Atomic Structure">
+</textarea>
+
+<div class="options">
+
+<div class="option selected"
+onclick="selectMode(this,'tutorial')">
+📚 Full Tutorial
+</div>
+
+<div class="option"
+onclick="selectMode(this,'summary')">
+📝 Summary Notes
+</div>
+
+<div class="option"
+onclick="selectMode(this,'mcq')">
+🎯 Exam MCQs
+</div>
+
+<div class="option"
+onclick="selectMode(this,'revision')">
+⚡ Crash Revision
+</div>
+
+<div class="option"
+onclick="selectMode(this,'exam')">
+🔥 Exam Tomorrow
+</div>
+
+</div>
+
+<button onclick="teachMe(if(mode==="cgpa"){
+
+instruction=`
+Act as a professional Nigerian university CGPA calculator.
+
+Calculate GPA or CGPA accurately using the 5-point grading system.
+
+Requirements:
+
+- Accept courses in this format:
+Course - Unit - Grade
+
+Example:
+PHY101 - 3 - A
+CHM101 - 2 - B
+MTH101 - 3 - A
+
+- Show:
+1. Total Units
+2. Total Grade Points
+3. GPA/CGPA
+4. Interpretation (First Class, Second Class Upper, etc.)
+
+Nigerian Grading Scale:
+A = 5
+B = 4
+C = 3
+D = 2
+E = 1
+F = 0
+
+Provide a neat table and show all calculations step-by-step.
+
+Courses:
+`;
+
+  })">
+🚀 Teach Me
+</button>
+  
+
+<button onclick="copyPrompt()">
+📋 Copy Prompt
+</button>
+
+<div class="features" style="margin-top:20px;">
+
+<div class="feature">
+🎓 University Level
+</div>
+
+<div class="feature">
+😂 Funny Analogies
+</div>
+
+<div class="feature">
+🧠 Memory Tricks
+</div>
+
+<div class="feature">
+📖 Exam Focus
+</div>
+
+</div>
+
+<div class="quote" id="quote">
+📚 Read today so exam won't read you tomorrow.
+</div>
+
+<div class="quote">
+🚀 Coming Soon: CGPA Calculator • Past Questions • Flashcards • Study Planner
+</div>
+
+<div class="footer">
+Made by Students, for Students 🇳🇬
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let mode = "tutorial";
+
+const quotes = [
+
+"📚 Read today so exam won't read you tomorrow.",
+
+"🐐 Small reading every day beats overnight reading.",
+
+"🎓 Your CGPA is watching your decisions.",
+
+"🔥 Consistency beats motivation.",
+
+"🧠 If you can explain it simply, you understand it."
+
+];
+
+document.getElementById("quote").innerHTML =
+quotes[Math.floor(Math.random()*quotes.length)];
+
+function fillTopic(topic){
+
+document.getElementById("topic").value = topic;
+
+}
+
+function selectMode(element,value){
+
+mode = value;
+
+document.querySelectorAll('.option')
+.forEach(item=>{
+item.classList.remove('selected');
+});
+
+element.classList.add('selected');
+
+}
+
+function copyPrompt(){
+
+let topic =
+document.getElementById('topic').value;
+
+if(topic.trim()===""){
+alert("Enter a topic first.");
+return;
+}
+
+navigator.clipboard.writeText(topic);
+
+alert("Copied successfully!");
+
+}
+
+function teachMe(){
+
+let topic =
+document.getElementById('topic').value;
+
+if(topic.trim()===""){
+alert("Please enter a topic first.");
+return;
+}
+
+let instruction="";
+
+if(mode==="tutorial"){
+
+instruction=`
+Act as GoatTutor AI.
+
+Teach this topic like a professional university tutor.
+
+Requirements:
+
+- Explain from beginner to advanced.
+- Use simple language.
+- Use funny analogies.
+- Use Nigerian student examples.
+- Include memory tricks.
+- Highlight likely exam questions.
+- End with 10 MCQs and answers.
+
+Topic:
+`;
+
+}
+
+if(mode==="summary"){
+
+instruction=`
+Summarize this topic into exam-ready notes.
+
+Requirements:
+
+- Short and comprehensive.
+- Important formulas.
+- Key definitions.
+- Most likely exam points.
+
+Topic:
+`;
+
+}
+
+if(mode==="mcq"){
+
+instruction=`
+Generate 20 university-level MCQs.
+
+Requirements:
+
+- Tough exam standard.
+- Include calculations where needed.
+- Provide answers after each question.
+
+Topic:
+`;
+
+}
+
+if(mode==="revision"){
+
+instruction=`
+Create a crash revision guide.
+
+Requirements:
+
+- Everything needed for an exam tomorrow.
+- Key points only.
+- Memory tricks.
+- Likely questions.
+
+Topic:
+`;
+
+}
+
+if(mode==="exam"){
+
+instruction=`
+Create an emergency exam guide.
+
+Requirements:
+
+- Most important concepts only.
+- Memory tricks.
+- Common exam questions.
+- Key formulas.
+- Topics likely to appear.
+
+Topic:
+`;
+
+}
+
+let prompt =
+instruction + topic;
+
+let url =
+"https://chatgpt.com/?q=" +
+encodeURIComponent(prompt);
+
+window.open(url,"_blank");
+
+}
+
+</script>
 
 </body>
-</html>
+  </html>
