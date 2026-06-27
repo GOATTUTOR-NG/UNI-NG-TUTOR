@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>GoatTutor NG v6 🐐</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -601,7 +603,7 @@
         /* ─── SMALL TEXT ─── */
         .small {
             font-size: 0.75rem;
-            color: #94a3b8;
+            color: #a5b4fc;   /* better contrast */
         }
 
         /* ─── PDF LIBRARY SPECIFIC ─── */
@@ -763,6 +765,26 @@
             background: #1e293b;
             color: #fbbf24;
             margin-top: 4px;
+        }
+
+        /* ─── BACK TO TOP ─── */
+        #backToTopBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            z-index: 200;
+            display: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
         }
 
         /* ─── RESPONSIVE TWEAKS ─── */
@@ -1154,11 +1176,14 @@
 
             <!-- ========== PDF LIBRARY ========== -->
             <div class="page-section" id="sectionPdfLibrary">
-                <div class="card"><h3>📄 PDF Library</h3><p class="small">Upload, view, summarise, quiz</p><div class="upload-area" id="uploadArea" onclick="document.getElementById('pdfUploadInput').click()"><div class="icon">📂</div><div style="font-weight:500;">Click or drag & drop PDF files</div><div style="font-size:0.75rem;color:#94a3b8;">Max 50MB</div><input type="file" id="pdfUploadInput" accept=".pdf,application/pdf" multiple style="display:none;" onchange="handleFileUpload(event)"></div><div style="margin-top:10px;"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span style="font-weight:600;">📑 My PDFs</span><span style="font-size:0.75rem;color:#94a3b8;" id="pdfCount">0 files</span></div><div id="pdfList" style="margin-top:6px;max-height:250px;overflow-y:auto;"><span class="small">No PDFs uploaded.</span></div></div><div class="pdf-viewer-container" id="pdfViewerContainer"><div class="pdf-viewer-placeholder" id="pdfViewerPlaceholder"><div class="icon">📄</div><div style="font-weight:500;margin-bottom:4px;">Select a PDF</div><div style="font-size:0.8rem;color:#64748b;">Click on any PDF above</div></div><iframe id="pdfViewer" style="display:none;width:100%;height:100%;border:none;"></iframe></div></div>
+                <div class="card"><h3>📄 PDF Library</h3><p class="small">Upload, view, summarise, quiz</p><div class="upload-area" id="uploadArea" onclick="document.getElementById('pdfUploadInput').click()"><div class="icon">📂</div><div style="font-weight:500;">Click or drag & drop PDF files</div><div style="font-size:0.75rem;color:#94a3b8;">Max 50MB</div><input type="file" id="pdfUploadInput" accept=".pdf,application/pdf" multiple style="display:none;" onchange="handleFileUpload(event)"></div><div style="margin-top:10px;"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span style="font-weight:600;">📑 My PDFs</span><div><span style="font-size:0.75rem;color:#94a3b8;" id="pdfCount">0 files</span><span style="font-size:0.7rem;color:#94a3b8;margin-left:8px;" id="storageInfo"></span></div></div><div id="pdfList" style="margin-top:6px;max-height:250px;overflow-y:auto;"><span class="small">No PDFs uploaded.</span></div></div><div class="pdf-viewer-container" id="pdfViewerContainer"><div class="pdf-viewer-placeholder" id="pdfViewerPlaceholder"><div class="icon">📄</div><div style="font-weight:500;margin-bottom:4px;">Select a PDF</div><div style="font-size:0.8rem;color:#64748b;">Click on any PDF above</div></div><iframe id="pdfViewer" style="display:none;width:100%;height:100%;border:none;"></iframe></div></div>
             </div>
 
         </div>
     </div>
+
+    <!-- Back to Top Button -->
+    <button id="backToTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆</button>
 
     <script>
         // ─── FIREBASE CONFIG ───
@@ -1384,6 +1409,7 @@
                 console.log('✅ Data synced.');
             } catch (err) {
                 console.error('Sync error:', err);
+                showNotification('⚠️ Cloud sync failed. Data saved locally.', 4000);
             }
         }
 
@@ -2323,6 +2349,32 @@
             loadPdfList();
         }
 
+        async function displayStorageInfo() {
+            const storageEl = document.getElementById('storageInfo');
+            if (!storageEl) return;
+            try {
+                const files = await getAllFiles();
+                let totalSize = 0;
+                files.forEach(f => totalSize += f.size);
+                const totalMB = (totalSize / (1024*1024)).toFixed(2);
+                let quotaInfo = '';
+                if (navigator.storage && navigator.storage.estimate) {
+                    const estimate = await navigator.storage.estimate();
+                    const used = estimate.usage || totalSize;
+                    const quota = estimate.quota || 'unknown';
+                    const usedMB = (used / (1024*1024)).toFixed(2);
+                    const quotaMB = quota === 'unknown' ? 'unknown' : (quota / (1024*1024)).toFixed(2);
+                    quotaInfo = `Used: ${usedMB} MB ${quota !== 'unknown' ? '/ Quota: ' + quotaMB + ' MB' : ''}`;
+                } else {
+                    quotaInfo = `Total: ${totalMB} MB`;
+                }
+                storageEl.textContent = quotaInfo;
+            } catch (err) {
+                console.error('Storage info error:', err);
+                storageEl.textContent = '';
+            }
+        }
+
         async function loadPdfList() {
             const container = document.getElementById('pdfList');
             const countEl = document.getElementById('pdfCount');
@@ -2331,6 +2383,7 @@
                 if (!files.length) {
                     container.innerHTML = '<span class="small">No PDFs uploaded yet.</span>';
                     countEl.innerText = '0 files';
+                    displayStorageInfo();
                     return;
                 }
                 countEl.innerText = files.length + ' file' + (files.length > 1 ? 's' : '');
@@ -2352,14 +2405,47 @@
                                 <button onclick="event.stopPropagation();summarizePdf(${file.id})" class="ai-btn small-btn" style="padding:4px 10px;font-size:0.7rem;">🤖 Summarize</button>
                                 <button onclick="event.stopPropagation();quizPdf(${file.id})" class="ai-btn small-btn" style="padding:4px 10px;font-size:0.7rem;">📝 Quiz Me</button>
                                 <button onclick="event.stopPropagation();viewPdf(${file.id})" class="secondary small-btn" style="padding:4px 10px;font-size:0.7rem;">👁 View</button>
+                                <button onclick="event.stopPropagation();renamePdf(${file.id})" class="secondary small-btn" style="padding:4px 8px;">✏️</button>
                                 <button onclick="event.stopPropagation();deletePdf(${file.id})" class="danger small-btn" style="padding:4px 10px;font-size:0.7rem;">🗑</button>
                             </div>
                         </div>
                     `;
                 }).join('');
+                displayStorageInfo();
             } catch (err) {
                 console.error(err);
-                container.innerHTML = '<span class="small">Error loading PDFs.</span>';
+                container.innerHTML = '<span class="small">Error loading PDFs. Check storage permissions.</span>';
+                showNotification('❌ Could not load PDF library.');
+            }
+        }
+
+        async function renamePdf(id) {
+            const newName = prompt('Enter new name for this PDF:');
+            if (!newName || !newName.trim()) return;
+            try {
+                const database = await openDB();
+                const transaction = database.transaction([STORE_NAME], 'readwrite');
+                const store = transaction.objectStore(STORE_NAME);
+                const file = await new Promise((resolve, reject) => {
+                    const req = store.get(id);
+                    req.onsuccess = () => resolve(req.result);
+                    req.onerror = () => reject(req.error);
+                });
+                if (!file) {
+                    showNotification('⚠️ PDF not found.');
+                    return;
+                }
+                file.name = newName.trim();
+                await new Promise((resolve, reject) => {
+                    const req = store.put(file);
+                    req.onsuccess = () => resolve();
+                    req.onerror = () => reject(req.error);
+                });
+                loadPdfList();
+                showNotification('✏️ Renamed to ' + file.name);
+            } catch (err) {
+                console.error(err);
+                showNotification('❌ Failed to rename PDF.');
             }
         }
 
@@ -2420,12 +2506,13 @@
                     fullText += textContent.items.map(item => item.str).join(' ') + '\n\n';
                 }
                 if (!fullText.trim()) {
-                    showNotification('⚠️ No text extracted.');
+                    showNotification('⚠️ No text extracted from PDF.');
                     return null;
                 }
                 return fullText.length > 6000 ? fullText.substring(0,6000) + '... [truncated]' : fullText;
             } catch (err) {
-                showNotification('❌ Failed to extract text.');
+                console.error('PDF extraction error:', err);
+                showNotification('❌ Failed to extract text from PDF. The file might be image-based.');
                 return null;
             }
         }
@@ -2611,6 +2698,16 @@
             }, 10000);
         }
 
+        // ─── BACK TO TOP BUTTON ───
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('backToTopBtn');
+            if (window.scrollY > 300) {
+                btn.style.display = 'flex';
+            } else {
+                btn.style.display = 'none';
+            }
+        });
+
         // ─── INIT ───
         function init() {
             updateTimerDisplay();
@@ -2643,13 +2740,22 @@
             } else {
                 document.getElementById('notifStatus').innerText = 'Click to enable';
             }
+
+            // Service Worker Registration
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('service-worker.js')
+                        .then(reg => console.log('SW registered', reg))
+                        .catch(err => console.error('SW registration failed', err));
+                });
+            }
         }
 
         document.getElementById('sidebarOverlay').addEventListener('click', closeMenu);
         document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMenu(); });
 
         init();
-        console.log('🐐 GoatTutor v6 – Fixed and responsive.');
+        console.log('🐐 GoatTutor v6 – Enhanced & PWA ready.');
     </script>
     <!-- Clarity Tracking -->
     <script type="text/javascript">
