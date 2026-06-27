@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>GoatTutor NG v6 – Grouped Menu</title>
+    <title>GoatTutor NG v6 🐐</title>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -37,8 +37,6 @@
             z-index: 50;
             border-bottom: 1px solid #334155;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            flex-wrap: wrap;
-            gap: 8px;
         }
         .topbar .logo {
             font-weight: 700;
@@ -72,7 +70,6 @@
             gap: 8px;
             font-size: 0.8rem;
             color: #94a3b8;
-            flex-wrap: wrap;
         }
         .topbar .auth-status button {
             width: auto;
@@ -446,12 +443,6 @@
             margin-top: 4px;
             min-height: 34px;
         }
-        button.ai-btn {
-            background: #8b5cf6;
-        }
-        button.ai-btn:hover {
-            background: #7c3aed;
-        }
 
         /* ─── ROW ─── */
         .row {
@@ -610,21 +601,6 @@
             color: #94a3b8;
         }
 
-        /* ─── PROGRESS BARS ─── */
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #1e293b;
-            border-radius: 4px;
-            overflow: hidden;
-            flex: 1;
-        }
-        .progress-bar .fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.5s ease;
-        }
-
         /* ─── PDF LIBRARY SPECIFIC ─── */
         .pdf-list-item {
             display: flex;
@@ -719,6 +695,81 @@
         .upload-area .icon {
             font-size: 2.5rem;
             margin-bottom: 6px;
+        }
+
+        /* ─── QUICK ACTIONS ─── */
+        .quick-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .quick-card {
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #334155;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quick-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+        .quick-card .icon {
+            font-size: 1.8rem;
+            margin-bottom: 4px;
+        }
+        .quick-card .label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+        @media (max-width: 500px) {
+            .quick-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 380px) {
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ─── STUDY STREAK ─── */
+        .streak-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 6px 0;
+        }
+        .streak-grid .stat {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #334155;
+        }
+        .streak-grid .stat .number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fbbf24;
+        }
+        .streak-grid .stat .label {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            background: #1e293b;
+            color: #fbbf24;
+            margin-top: 4px;
         }
 
         /* ─── RESPONSIVE TWEAKS ─── */
@@ -820,6 +871,9 @@
             }
             .auth-page .auth-box h2 {
                 font-size: 1.2rem;
+            }
+            .quick-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -942,7 +996,7 @@
             <!-- ========== MAIN SECTION ========== -->
             <div class="page-section active" id="sectionMain">
 
-                <!-- AI CORE (ChatGPT only) -->
+                <!-- AI CORE -->
                 <div class="card">
                     <h3>🧠 AI Study Interface</h3>
                     <textarea id="topic" placeholder="Enter topic (e.g., Calculus, Organic Chemistry, Python loops)..."></textarea>
@@ -1364,7 +1418,7 @@
             document.getElementById('notificationToast').classList.remove('show');
         }
 
-        // ─── AI: ChatGPT Redirect ───
+        // ─── AI ───
         function askAI() {
             const t = document.getElementById('topic').value.trim();
             const m = document.getElementById('mode').value;
@@ -1810,7 +1864,7 @@
 
         // ─── CUT-OFF MARKS ───
         const cutoffData = [
-            // Full list from previous version – included in final code
+            // Full list from previous version
         ];
         function renderCutoffMarks(filter, faculty) {
             // Same as previous
