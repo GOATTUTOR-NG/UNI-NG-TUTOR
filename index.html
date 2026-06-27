@@ -37,6 +37,8 @@
             z-index: 50;
             border-bottom: 1px solid #334155;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            flex-wrap: wrap;
+            gap: 8px;
         }
         .topbar .logo {
             font-weight: 700;
@@ -70,6 +72,7 @@
             gap: 8px;
             font-size: 0.8rem;
             color: #94a3b8;
+            flex-wrap: wrap;
         }
         .topbar .auth-status button {
             width: auto;
@@ -700,7 +703,7 @@
         /* ─── QUICK ACTIONS ─── */
         .quick-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 8px;
             margin-top: 6px;
         }
@@ -725,16 +728,6 @@
         .quick-card .label {
             font-size: 0.7rem;
             color: #94a3b8;
-        }
-        @media (max-width: 500px) {
-            .quick-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-        @media (max-width: 380px) {
-            .quick-grid {
-                grid-template-columns: 1fr;
-            }
         }
 
         /* ─── STUDY STREAK ─── */
@@ -838,21 +831,35 @@
                 font-size: 2.5rem;
             }
             .topbar {
-                flex-direction: column;
-                align-items: stretch;
+                flex-direction: row;
+                flex-wrap: wrap;
                 gap: 6px;
             }
             .topbar .auth-status {
-                justify-content: center;
+                order: 1;
             }
             .topbar .menuBtn {
-                align-self: flex-end;
-                margin-top: -44px;
+                order: 2;
+            }
+            .quick-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .streak-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .dash-grid {
+                grid-template-columns: 1fr 1fr;
             }
         }
 
-        @media (max-width: 380px) {
+        @media (max-width: 400px) {
             .dash-grid {
+                grid-template-columns: 1fr;
+            }
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+            .streak-grid {
                 grid-template-columns: 1fr;
             }
             .card h3 {
@@ -871,9 +878,6 @@
             }
             .auth-page .auth-box h2 {
                 font-size: 1.2rem;
-            }
-            .quick-grid {
-                grid-template-columns: 1fr;
             }
         }
 
@@ -980,7 +984,7 @@
     <!-- ─── TOP BAR ─── -->
     <div class="topbar">
         <div class="logo">🐐 GoatTutor NG v6</div>
-        <div style="display:flex;align-items:center;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <div class="auth-status" id="authStatus">
                 <span id="userDisplay">👤 Guest</span>
                 <button onclick="handleLogout()" id="authActionBtn" style="display:none;">Logout</button>
@@ -1140,7 +1144,7 @@
 
             <!-- ========== SCREENING CALCULATOR ========== -->
             <div class="page-section" id="sectionScreening">
-                <div class="card"><h3>🎯 UNIOSUN Screening Calculator</h3><p class="small">JAMB + O'level</p><div class="row"><input type="number" id="jambScore" placeholder="JAMB Score" min="0" max="400" style="flex:2;"></div><div class="row"><input type="text" id="subject1" placeholder="Subject 1" style="flex:2;"><select id="grade1" style="flex:1;"><option value="8">A1</option><option value="7">B2</option><option value="6">B3</option><option value="5">C4</option><option value="4">C5</option><option value="3">C6</option><option value="2">D7</option><option value="1">E8</option><option value="0">F9</option></select></div><div class="row"><input type="text" id="subject2" placeholder="Subject 2" style="flex:2;"><select id="grade2" style="flex:1;">... same ...</select></div><div class="row"><input type="text" id="subject3" placeholder="Subject 3" style="flex:2;"><select id="grade3" style="flex:1;">... same ...</select></div><div class="row"><input type="text" id="subject4" placeholder="Subject 4" style="flex:2;"><select id="grade4" style="flex:1;">... same ...</select></div><div class="row"><input type="text" id="subject5" placeholder="Subject 5" style="flex:2;"><select id="grade5" style="flex:1;">... same ...</select></div><button onclick="calcUNIOSUN()">📊 Calculate</button><div id="uniosunResult" style="margin-top:8px;font-weight:600;color:#fbbf24;text-align:center;"></div></div>
+                <div class="card"><h3>🎯 UNIOSUN Screening Calculator</h3><p class="small">JAMB + O'level</p><div class="row"><input type="number" id="jambScore" placeholder="JAMB Score" min="0" max="400" style="flex:2;"></div><div class="row"><input type="text" id="subject1" placeholder="Subject 1" style="flex:2;"><select id="grade1" style="flex:1;"><option value="8">A1</option><option value="7">B2</option><option value="6">B3</option><option value="5">C4</option><option value="4">C5</option><option value="3">C6</option><option value="2">D7</option><option value="1">E8</option><option value="0">F9</option></select></div><div class="row"><input type="text" id="subject2" placeholder="Subject 2" style="flex:2;"><select id="grade2" style="flex:1;"><option value="8">A1</option><option value="7">B2</option><option value="6">B3</option><option value="5">C4</option><option value="4">C5</option><option value="3">C6</option><option value="2">D7</option><option value="1">E8</option><option value="0">F9</option></select></div><div class="row"><input type="text" id="subject3" placeholder="Subject 3" style="flex:2;"><select id="grade3" style="flex:1;"><option value="8">A1</option><option value="7">B2</option><option value="6">B3</option><option value="5">C4</option><option value="4">C5</option><option value="3">C6</option><option value="2">D7</option><option value="1">E8</option><option value="0">F9</option></select></div><div class="row"><input type="text" id="subject4" placeholder="Subject 4" style="flex:2;"><select id="grade4" style="flex:1;"><option value="8">A1</option><option value="7">B2</option><option value="6">B3</option><option value="5">C4</option><option value="4">C5</option><option value="3">C6</option><option value="2">D7</option><option value="1">E8</option><option value="0">F9</option></select></div><div class="row"><input type="text" id="subject5" placeholder="Subject 5" style="flex:2;"><select id="grade5" style="flex:1;"><option value="8">A1</option><option value="7">B2</option><option value="6">B3</option><option value="5">C4</option><option value="4">C5</option><option value="3">C6</option><option value="2">D7</option><option value="1">E8</option><option value="0">F9</option></select></div><button onclick="calcUNIOSUN()">📊 Calculate</button><div id="uniosunResult" style="margin-top:8px;font-weight:600;color:#fbbf24;text-align:center;"></div></div>
             </div>
 
             <!-- ========== COUNTDOWN ========== -->
@@ -1181,6 +1185,81 @@
         let semCounter = 1;
         let currentUser = null;
         let userDocRef = null;
+
+        // ─── ACADEMIC EVENTS ───
+        const academicEvents = [
+            { date: '2025-11-10', title: 'Resumption – Fresh Students' },
+            { date: '2025-11-10', title: 'Orientation for Fresh Students' },
+            { date: '2025-11-17', title: 'Resumption – Returning Students' },
+            { date: '2025-11-17', title: 'Commencement of Lectures (Harmattan)' },
+            { date: '2025-12-04', title: 'Matriculation of Fresh Students' },
+            { date: '2025-12-22', title: 'Christmas/New Year Break Begins' },
+            { date: '2026-01-05', title: 'Resumption from Break' },
+            { date: '2026-02-27', title: 'Lecture Free Week' },
+            { date: '2026-03-02', title: 'Harmattan Semester Examinations Begin' },
+            { date: '2026-03-23', title: 'Semester Break / Marking Begins' },
+            { date: '2026-04-06', title: 'Resumption – Rain Semester' },
+            { date: '2026-04-06', title: 'Commencement of Lectures (Rain)' },
+            { date: '2026-05-01', title: 'Late Registration with Penalty' },
+            { date: '2026-05-08', title: 'Portal Closes for Registration' },
+            { date: '2026-07-03', title: 'End of Lectures (Rain Semester)' },
+            { date: '2026-07-06', title: 'Lecture Free Week' },
+            { date: '2026-07-13', title: 'Rain Semester Examinations Begin' },
+            { date: '2026-08-07', title: 'Marking & Grading Begins' },
+            { date: '2026-09-14', title: 'Annual Leave for Academic Staff' },
+            { date: '2026-09-24', title: 'Convocation Ceremonies' }
+        ];
+
+        // ─── CUT-OFF DATA ───
+        const cutoffData = [
+            { course: 'B. Agric. Economics', faculty: 'Agriculture', merit: 57.0, indigene: 46.4 },
+            { course: 'B. Agric. Extension', faculty: 'Agriculture', merit: 56.5, indigene: 44.5 },
+            { course: 'B. Agric. Forestry', faculty: 'Agriculture', merit: 50.0, indigene: 40.0 },
+            { course: 'B. Agric. Agronomy', faculty: 'Agriculture', merit: 54.8, indigene: 44.6 },
+            { course: 'B. Agric. Animal Science', faculty: 'Agriculture', merit: 58.5, indigene: 40.5 },
+            { course: 'B. Agric. Fisheries & Aquaculture', faculty: 'Agriculture', merit: 55.0, indigene: 45.5 },
+            { course: 'B. Agric. Wildlife Management', faculty: 'Agriculture', merit: 54.0, indigene: 44.8 },
+            { course: 'B.A. (Ed) English', faculty: 'Education', merit: 60.5, indigene: 45.3 },
+            { course: 'B.A. (Ed) Economics', faculty: 'Education', merit: 60.8, indigene: 46.2 },
+            { course: 'B.A. (Ed) Education Guidance & Counselling', faculty: 'Education', merit: 63.5, indigene: 50.9 },
+            { course: 'B.Sc. (Ed) Political Science', faculty: 'Education', merit: 61.7, indigene: 49.6 },
+            { course: 'B.Ed. Adult Education', faculty: 'Education', merit: 55.5, indigene: 46.8 },
+            { course: 'B.Sc. (Ed) Mathematics', faculty: 'Education', merit: 54.3, indigene: 40.0 },
+            { course: 'B.Sc. (Ed) Physics', faculty: 'Education', merit: 49.1, indigene: 40.0 },
+            { course: 'B.Sc. (Ed) Environmental Education', faculty: 'Education', merit: 47.6, indigene: 40.0 },
+            { course: 'B.A. (Ed) Social Studies', faculty: 'Education', merit: 53.5, indigene: 48.0 },
+            { course: 'B.Ed. Early Childhood Care Education', faculty: 'Education', merit: 46.5, indigene: 42.5 },
+            { course: 'B.Sc. Computer Science', faculty: 'Science', merit: 68.1, indigene: 62.3 },
+            { course: 'B.Sc. Biochemistry', faculty: 'Science', merit: 65.0, indigene: 58.0 },
+            { course: 'B.Sc. Microbiology', faculty: 'Science', merit: 63.5, indigene: 56.0 },
+            { course: 'B.Sc. Chemistry', faculty: 'Science', merit: 55.0, indigene: 48.0 },
+            { course: 'B.Sc. Physics', faculty: 'Science', merit: 52.0, indigene: 45.0 },
+            { course: 'B.Sc. Mathematics', faculty: 'Science', merit: 50.0, indigene: 43.0 },
+            { course: 'B.Sc. Statistics', faculty: 'Science', merit: 48.0, indigene: 41.0 },
+            { course: 'B.Sc. Geology', faculty: 'Science', merit: 52.0, indigene: 45.0 },
+            { course: 'B.Sc. Economics', faculty: 'Social Sciences', merit: 65.0, indigene: 58.0 },
+            { course: 'B.Sc. Political Science', faculty: 'Social Sciences', merit: 61.7, indigene: 49.6 },
+            { course: 'B.Sc. Sociology', faculty: 'Social Sciences', merit: 58.0, indigene: 50.0 },
+            { course: 'B.Sc. Psychology', faculty: 'Social Sciences', merit: 55.0, indigene: 47.0 },
+            { course: 'B.Sc. Mass Communication', faculty: 'Social Sciences', merit: 72.0, indigene: 63.7 },
+            { course: 'B.Sc. Criminology', faculty: 'Social Sciences', merit: 60.0, indigene: 52.0 },
+            { course: 'LL.B. Law', faculty: 'Law', merit: 79.4, indigene: 75.6 },
+            { course: 'Common & Islamic Law', faculty: 'Law', merit: 75.0, indigene: 70.0 },
+            { course: 'MBBS Medicine', faculty: 'Medicine', merit: 85.3, indigene: 82.4 },
+            { course: 'B.NSc. Nursing', faculty: 'Medicine', merit: 77.5, indigene: 74.0 },
+            { course: 'B.Eng. Civil Engineering', faculty: 'Engineering', merit: 67.1, indigene: 61.6 },
+            { course: 'B.Eng. Electrical/Electronics Engineering', faculty: 'Engineering', merit: 65.0, indigene: 59.0 },
+            { course: 'B.Eng. Mechanical Engineering', faculty: 'Engineering', merit: 63.0, indigene: 57.0 },
+            { course: 'B.Eng. Chemical Engineering', faculty: 'Engineering', merit: 60.0, indigene: 54.0 },
+            { course: 'B.A. English', faculty: 'Arts', merit: 58.0, indigene: 50.0 },
+            { course: 'B.A. History', faculty: 'Arts', merit: 52.0, indigene: 45.0 },
+            { course: 'B.A. Philosophy', faculty: 'Arts', merit: 50.0, indigene: 43.0 },
+            { course: 'B.A. Religious Studies', faculty: 'Arts', merit: 48.0, indigene: 41.0 },
+            { course: 'B.Sc. Accounting', faculty: 'Management', merit: 62.0, indigene: 55.0 },
+            { course: 'B.Sc. Business Administration', faculty: 'Management', merit: 60.0, indigene: 53.0 },
+            { course: 'B.Sc. Public Administration', faculty: 'Management', merit: 58.0, indigene: 50.0 },
+            { course: 'B.Sc. Banking & Finance', faculty: 'Management', merit: 55.0, indigene: 48.0 }
+        ];
 
         // ─── AUTH STATE ───
         auth.onAuthStateChanged(async user => {
@@ -1766,29 +1845,6 @@
         }
 
         // ─── ACADEMIC CALENDAR ───
-        const academicEvents = [
-            { date: '2025-11-10', title: 'Resumption – Fresh Students' },
-            { date: '2025-11-10', title: 'Orientation for Fresh Students' },
-            { date: '2025-11-17', title: 'Resumption – Returning Students' },
-            { date: '2025-11-17', title: 'Commencement of Lectures (Harmattan)' },
-            { date: '2025-12-04', title: 'Matriculation of Fresh Students' },
-            { date: '2025-12-22', title: 'Christmas/New Year Break Begins' },
-            { date: '2026-01-05', title: 'Resumption from Break' },
-            { date: '2026-02-27', title: 'Lecture Free Week' },
-            { date: '2026-03-02', title: 'Harmattan Semester Examinations Begin' },
-            { date: '2026-03-23', title: 'Semester Break / Marking Begins' },
-            { date: '2026-04-06', title: 'Resumption – Rain Semester' },
-            { date: '2026-04-06', title: 'Commencement of Lectures (Rain)' },
-            { date: '2026-05-01', title: 'Late Registration with Penalty' },
-            { date: '2026-05-08', title: 'Portal Closes for Registration' },
-            { date: '2026-07-03', title: 'End of Lectures (Rain Semester)' },
-            { date: '2026-07-06', title: 'Lecture Free Week' },
-            { date: '2026-07-13', title: 'Rain Semester Examinations Begin' },
-            { date: '2026-08-07', title: 'Marking & Grading Begins' },
-            { date: '2026-09-14', title: 'Annual Leave for Academic Staff' },
-            { date: '2026-09-24', title: 'Convocation Ceremonies' },
-        ];
-
         function renderAcademicCalendar() {
             const container = document.getElementById('academicCalendarList');
             const now = new Date();
@@ -1863,12 +1919,46 @@
         }
 
         // ─── CUT-OFF MARKS ───
-        const cutoffData = [
-            // Full list from previous version
-        ];
         function renderCutoffMarks(filter, faculty) {
-            // Same as previous
+            const container = document.getElementById('cutoffResults');
+            const searchTerm = (filter || '').toLowerCase().trim();
+            const facultyFilter = faculty || document.getElementById('cutoffFaculty').value || 'all';
+
+            let filtered = cutoffData;
+            if (searchTerm) {
+                filtered = filtered.filter(item =>
+                    item.course.toLowerCase().includes(searchTerm) ||
+                    item.faculty.toLowerCase().includes(searchTerm)
+                );
+            }
+            if (facultyFilter !== 'all') {
+                filtered = filtered.filter(item => item.faculty === facultyFilter);
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<span class="small">No courses found. Try a different search.</span>';
+                return;
+            }
+
+            filtered.sort((a, b) => a.course.localeCompare(b.course));
+
+            let html = '<div style="display:flex;flex-direction:column;gap:4px;">';
+            filtered.forEach(item => {
+                const isCompetitive = item.merit >= 70;
+                html += `
+                    <div style="display:flex;justify-content:space-between;padding:6px 8px;background:#0f172a;border-radius:6px;border:1px solid #334155;${isCompetitive ? 'border-color:#fbbf24;' : ''}">
+                        <span style="font-size:0.85rem;${isCompetitive ? 'font-weight:600;' : ''}">${item.course}</span>
+                        <span style="font-size:0.8rem;color:#94a3b8;white-space:nowrap;">
+                            GM: <span style="color:#fbbf24;font-weight:600;">${item.merit}</span>
+                            IC: <span style="color:#94a3b8;">${item.indigene}</span>
+                        </span>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
         }
+
         function filterCutoffMarks() {
             const search = document.getElementById('cutoffSearch').value;
             const faculty = document.getElementById('cutoffFaculty').value;
@@ -1877,7 +1967,58 @@
 
         // ─── UNIOSUN SCREENING ───
         function calcUNIOSUN() {
-            // Same as previous
+            const jamb = parseInt(document.getElementById('jambScore').value);
+            if (isNaN(jamb) || jamb < 0 || jamb > 400) {
+                document.getElementById('uniosunResult').innerHTML = '⚠️ Please enter a valid JAMB score (0–400).';
+                showNotification('⚠️ Invalid JAMB score.');
+                return;
+            }
+
+            const subjectNames = [
+                document.getElementById('subject1').value.trim(),
+                document.getElementById('subject2').value.trim(),
+                document.getElementById('subject3').value.trim(),
+                document.getElementById('subject4').value.trim(),
+                document.getElementById('subject5').value.trim()
+            ];
+
+            const gradeEls = [
+                document.getElementById('grade1'),
+                document.getElementById('grade2'),
+                document.getElementById('grade3'),
+                document.getElementById('grade4'),
+                document.getElementById('grade5')
+            ];
+
+            const emptySubjects = subjectNames.filter(name => name === '');
+            if (emptySubjects.length > 0) {
+                document.getElementById('uniosunResult').innerHTML = '⚠️ Please enter all 5 subject names.';
+                showNotification('⚠️ All subject fields must be filled.');
+                return;
+            }
+
+            let totalOlevelPoints = 0;
+            gradeEls.forEach(select => {
+                totalOlevelPoints += parseInt(select.value);
+            });
+
+            const jambContribution = (jamb * 60) / 400;
+            const aggregate = jambContribution + totalOlevelPoints;
+
+            const resultDiv = document.getElementById('uniosunResult');
+            resultDiv.innerHTML = `
+                <div style="background:#0f172a;padding:10px;border-radius:8px;text-align:left;font-size:0.9rem;">
+                    <div><strong>📊 Aggregate Score:</strong> ${aggregate.toFixed(2)}%</div>
+                    <div style="font-size:0.8rem;color:#94a3b8;margin-top:4px;">
+                        JAMB Contribution: ${jambContribution.toFixed(2)}% (${jamb} × 60/400)<br>
+                        O'level Points: ${totalOlevelPoints} / 40
+                    </div>
+                    <div style="margin-top:6px;font-size:0.85rem;color:#fbbf24;">
+                        ${aggregate >= 68 ? '✅ Competitive score – likely admission' : '🔍 Average – check course cut-off'}
+                    </div>
+                </div>
+            `;
+            showNotification('📊 Screening score: ' + aggregate.toFixed(2) + '%');
         }
 
         // ─── PLANNER ───
@@ -2508,7 +2649,7 @@
         document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMenu(); });
 
         init();
-        console.log('🐐 GoatTutor v6 – Grouped menu, ChatGPT only.');
+        console.log('🐐 GoatTutor v6 – Fixed and responsive.');
     </script>
     <!-- Clarity Tracking -->
     <script type="text/javascript">
