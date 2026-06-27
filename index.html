@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>GoatTutor NG v6 🐐</title>
-    <!-- PDF.js for text extraction -->
+    <title>GoatTutor NG v6 – Secure</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
         /* ─── RESET & BASE ─── */
@@ -34,6 +38,8 @@
             z-index: 50;
             border-bottom: 1px solid #334155;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            flex-wrap: wrap;
+            gap: 8px;
         }
         .topbar .logo {
             font-weight: 700;
@@ -59,6 +65,34 @@
         }
         .topbar .menuBtn:hover {
             background: #334155;
+        }
+
+        .topbar .auth-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            flex-wrap: wrap;
+        }
+        .topbar .auth-status button {
+            width: auto;
+            padding: 4px 12px;
+            margin: 0;
+            font-size: 0.7rem;
+            min-height: 30px;
+            background: #dc2626;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            cursor: pointer;
+        }
+        .topbar .auth-status button:hover {
+            background: #b91c1c;
+        }
+        .topbar .auth-status .user-email {
+            color: #fbbf24;
+            font-weight: 500;
         }
 
         /* ─── SIDEBAR OVERLAY ─── */
@@ -141,6 +175,100 @@
         .sidebar .close-btn:hover {
             background: #b91c1c;
             transform: none;
+        }
+
+        /* ─── AUTH PAGE ─── */
+        .auth-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            transition: opacity 0.5s ease;
+            padding: 20px;
+        }
+        .auth-page.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .auth-page .auth-box {
+            background: #1e293b;
+            padding: 30px 24px;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid #334155;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+        .auth-page .auth-box h2 {
+            color: #fbbf24;
+            margin-bottom: 16px;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+        .auth-page .auth-box input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            outline: none;
+            min-height: 44px;
+        }
+        .auth-page .auth-box input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+        .auth-page .auth-box button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border: none;
+            border-radius: 10px;
+            background: #3b82f6;
+            color: #fff;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            min-height: 48px;
+            transition: all 0.2s;
+        }
+        .auth-page .auth-box button:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+        }
+        .auth-page .auth-box .auth-toggle {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            text-align: center;
+            margin-top: 12px;
+        }
+        .auth-page .auth-box .auth-toggle span {
+            color: #3b82f6;
+            cursor: pointer;
+        }
+        .auth-page .auth-box .auth-toggle span:hover {
+            text-decoration: underline;
+        }
+        .auth-page .auth-box .auth-error {
+            color: #ef4444;
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 6px;
+        }
+        .auth-page .logo-big {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 10px;
         }
 
         /* ─── MAIN CONTAINER ─── */
@@ -584,6 +712,24 @@
                 padding: 4px 8px;
                 min-height: 28px;
             }
+            .auth-page .auth-box {
+                padding: 20px 16px;
+            }
+            .auth-page .logo-big {
+                font-size: 2.5rem;
+            }
+            .topbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+            }
+            .topbar .auth-status {
+                justify-content: center;
+            }
+            .topbar .menuBtn {
+                align-self: flex-end;
+                margin-top: -44px;
+            }
         }
 
         @media (max-width: 380px) {
@@ -603,6 +749,9 @@
             }
             .countdown-display {
                 font-size: 1.4rem;
+            }
+            .auth-page .auth-box h2 {
+                font-size: 1.2rem;
             }
         }
 
@@ -624,6 +773,21 @@
 </head>
 <body>
 
+    <!-- ─── AUTH PAGE (full screen) ─── -->
+    <div class="auth-page" id="authPage">
+        <div class="auth-box">
+            <div class="logo-big">🐐</div>
+            <h2 id="authTitle">🔐 Sign Up</h2>
+            <input type="email" id="authEmail" placeholder="Email" />
+            <input type="password" id="authPassword" placeholder="Password (min 6 chars)" />
+            <button id="authButton" onclick="handleAuth()">Sign Up</button>
+            <div class="auth-toggle">
+                <span id="authToggleText">Already have an account? <span onclick="toggleAuthMode()">Login</span></span>
+            </div>
+            <div class="auth-error" id="authError"></div>
+        </div>
+    </div>
+
     <!-- ─── SIDEBAR OVERLAY ─── -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMenu()"></div>
 
@@ -640,7 +804,6 @@
         <button onclick="navigateTo('screening')" id="navScreening">🎯 Screening Calculator</button>
         <button onclick="navigateTo('countdown')" id="navCountdown">⏳ Exam Countdown</button>
         <button onclick="navigateTo('sessionLog')" id="navSessionLog">📝 Session Log</button>
-        <!-- NEW: PDF Library -->
         <button onclick="navigateTo('pdfLibrary')" id="navPdfLibrary">📄 PDF Library</button>
         <button class="close-btn" onclick="closeMenu()">✕ Close Menu</button>
     </div>
@@ -654,389 +817,408 @@
     <!-- ─── TOP BAR ─── -->
     <div class="topbar">
         <div class="logo">🐐 GoatTutor NG v6</div>
-        <button class="menuBtn" onclick="toggleMenu()" aria-label="Open menu">☰</button>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <div class="auth-status" id="authStatus">
+                <span id="userDisplay">👤 Guest</span>
+                <button onclick="handleLogout()" id="authActionBtn" style="display:none;">Logout</button>
+            </div>
+            <button class="menuBtn" onclick="toggleMenu()" aria-label="Open menu">☰</button>
+        </div>
     </div>
 
-    <!-- ─── MAIN CONTENT ─── -->
-    <div class="container">
+    <!-- ─── MAIN APP CONTENT (hidden until login) ─── -->
+    <div id="appContainer" style="display:none;">
+        <div class="container">
 
-        <!-- ========== MAIN SECTION ========== -->
-        <div class="page-section active" id="sectionMain">
+            <!-- ========== MAIN SECTION ========== -->
+            <div class="page-section active" id="sectionMain">
 
-            <!-- AI CORE -->
-            <div class="card">
-                <h3>🧠 AI Study Interface</h3>
-                <textarea id="topic" placeholder="Enter topic (e.g., Calculus, Organic Chemistry, Python loops)..."></textarea>
-                <select id="mode">
-                    <option value="tutorial">📖 Tutorial</option>
-                    <option value="summary">📝 Summary</option>
-                    <option value="mcq">❓ MCQ Quiz</option>
-                    <option value="revision">🔄 Revision Notes</option>
-                    <option value="flashcards">🃏 Flashcards</option>
-                </select>
-                <button onclick="askAI()">🚀 Ask AI Now</button>
-            </div>
+                <!-- AI CORE -->
+                <div class="card">
+                    <h3>🧠 AI Study Interface</h3>
+                    <textarea id="topic" placeholder="Enter topic (e.g., Calculus, Organic Chemistry, Python loops)..."></textarea>
+                    <select id="mode">
+                        <option value="tutorial">📖 Tutorial</option>
+                        <option value="summary">📝 Summary</option>
+                        <option value="mcq">❓ MCQ Quiz</option>
+                        <option value="revision">🔄 Revision Notes</option>
+                        <option value="flashcards">🃏 Flashcards</option>
+                    </select>
+                    <button onclick="askAI()">🚀 Ask AI Now</button>
+                </div>
 
-            <!-- DASHBOARD -->
-            <div class="card">
-                <h3>📊 Academic Dashboard</h3>
-                <div class="dash-grid">
-                    <div class="dash-card">
-                        <div class="value" id="dashGPA">--</div>
-                        <div class="label">GPA</div>
+                <!-- DASHBOARD -->
+                <div class="card">
+                    <h3>📊 Academic Dashboard</h3>
+                    <div class="dash-grid">
+                        <div class="dash-card">
+                            <div class="value" id="dashGPA">--</div>
+                            <div class="label">GPA</div>
+                        </div>
+                        <div class="dash-card">
+                            <div class="value" id="dashCGPA">--</div>
+                            <div class="label">CGPA</div>
+                        </div>
+                        <div class="dash-card">
+                            <div class="value" id="dashDegree">--</div>
+                            <div class="label">Degree Class</div>
+                        </div>
+                        <div class="dash-card">
+                            <div class="value" id="dashStanding">--</div>
+                            <div class="label">Standing</div>
+                        </div>
                     </div>
-                    <div class="dash-card">
-                        <div class="value" id="dashCGPA">--</div>
-                        <div class="label">CGPA</div>
+                    <div class="small" style="margin-top:10px;">
+                        🔥 Study Streak: <strong><span id="streakDisplay">0</span> Days</strong>
                     </div>
-                    <div class="dash-card">
-                        <div class="value" id="dashDegree">--</div>
-                        <div class="label">Degree Class</div>
+                    <div class="small">
+                        ⏱ Total Study: <strong><span id="hoursDisplay">0</span> hrs</strong>
                     </div>
-                    <div class="dash-card">
-                        <div class="value" id="dashStanding">--</div>
-                        <div class="label">Standing</div>
-                    </div>
-                </div>
-                <div class="small" style="margin-top:10px;">
-                    🔥 Study Streak: <strong><span id="streakDisplay">0</span> Days</strong>
-                </div>
-                <div class="small">
-                    ⏱ Total Study: <strong><span id="hoursDisplay">0</span> hrs</strong>
-                </div>
-                <div class="small">
-                    📅 Sessions: <strong><span id="sessionCountDisplay">0</span></strong>
-                </div>
-            </div>
-
-            <!-- SEMESTER GPA CALCULATOR -->
-            <div class="card">
-                <h3>📚 GPA Calculator – Semester View</h3>
-                <div class="row">
-                    <input type="text" id="semesterTitle" placeholder="Semester (e.g., 100L First Sem)" style="flex:2;">
-                </div>
-                <div id="semesterCourseBox" style="margin-top:8px;">
-                    <div class="row course-row" id="courseRow1">
-                        <input type="text" id="cname1" placeholder="Course Name (e.g., CHM 101)" style="flex:2;">
-                        <input type="number" id="cunit1" placeholder="Units" min="0" step="0.5" style="flex:1;">
-                        <select id="cgrade1" style="flex:1;">
-                            <option value="5">A (5.0)</option>
-                            <option value="4">B (4.0)</option>
-                            <option value="3">C (3.0)</option>
-                            <option value="2">D (2.0)</option>
-                            <option value="1">E (1.0)</option>
-                            <option value="0">F (0.0)</option>
-                        </select>
-                        <button onclick="removeCourseRow(1)" class="danger small-btn" style="width:auto;flex:0;">✕</button>
+                    <div class="small">
+                        📅 Sessions: <strong><span id="sessionCountDisplay">0</span></strong>
                     </div>
                 </div>
-                <div class="row">
-                    <button onclick="addCourseRow()" class="secondary" style="flex:1;">➕ Add Course</button>
-                    <button onclick="saveSemester()" style="flex:1;">💾 Save Semester</button>
-                    <button onclick="deleteSemester()" class="danger" style="flex:1;">🗑 Delete</button>
-                </div>
-                <button onclick="calcSemesterGPA()" class="secondary" style="margin-top:4px;">📊 Calculate GPA</button>
-                <div id="semesterGpaOut" style="margin-top:6px;font-weight:600;color:#fbbf24;text-align:center;"></div>
-            </div>
 
-            <!-- SAVED SEMESTERS -->
-            <div class="card" id="savedSemestersCard">
-                <h3>📂 Saved Semesters</h3>
-                <div id="savedSemestersList">
-                    <span class="small">No semesters saved yet. Add courses and click "Save Semester".</span>
-                </div>
-                <button onclick="clearAllSemesters()" class="danger small-btn" style="width:auto;margin-top:8px;">🗑 Clear All</button>
-            </div>
-
-            <!-- CGPA CALCULATOR (manual) -->
-            <div class="card">
-                <h3>📈 CGPA Calculator</h3>
-                <p class="small">Enter semester GPAs and units to compute your cumulative GPA manually.</p>
-                <div id="cgpaBox">
+                <!-- SEMESTER GPA CALCULATOR -->
+                <div class="card">
+                    <h3>📚 GPA Calculator – Semester View</h3>
                     <div class="row">
-                        <input type="number" id="cunit1_cgpa" placeholder="Semester Units" min="0" step="0.5" style="flex:1;">
-                        <input type="number" id="cgpa1_cgpa" placeholder="Semester GPA" min="0" max="5" step="0.01" style="flex:1;">
+                        <input type="text" id="semesterTitle" placeholder="Semester (e.g., 100L First Sem)" style="flex:2;">
                     </div>
+                    <div id="semesterCourseBox" style="margin-top:8px;">
+                        <div class="row course-row" id="courseRow1">
+                            <input type="text" id="cname1" placeholder="Course Name (e.g., CHM 101)" style="flex:2;">
+                            <input type="number" id="cunit1" placeholder="Units" min="0" step="0.5" style="flex:1;">
+                            <select id="cgrade1" style="flex:1;">
+                                <option value="5">A (5.0)</option>
+                                <option value="4">B (4.0)</option>
+                                <option value="3">C (3.0)</option>
+                                <option value="2">D (2.0)</option>
+                                <option value="1">E (1.0)</option>
+                                <option value="0">F (0.0)</option>
+                            </select>
+                            <button onclick="removeCourseRow(1)" class="danger small-btn" style="width:auto;flex:0;">✕</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button onclick="addCourseRow()" class="secondary" style="flex:1;">➕ Add Course</button>
+                        <button onclick="saveSemester()" style="flex:1;">💾 Save Semester</button>
+                        <button onclick="deleteSemester()" class="danger" style="flex:1;">🗑 Delete</button>
+                    </div>
+                    <button onclick="calcSemesterGPA()" class="secondary" style="margin-top:4px;">📊 Calculate GPA</button>
+                    <div id="semesterGpaOut" style="margin-top:6px;font-weight:600;color:#fbbf24;text-align:center;"></div>
                 </div>
-                <div class="row">
-                    <button onclick="addCGPARow()" class="secondary" style="flex:1;">➕ Add Semester</button>
-                    <button onclick="calcCGPA()" style="flex:1;">📊 Calculate CGPA</button>
-                </div>
-                <div id="cgpaOut" style="margin-top:8px;font-weight:600;color:#fbbf24;text-align:center;"></div>
-            </div>
 
-            <!-- STUDY TIMER -->
-            <div class="card">
-                <h3>⏱ Study Tracker</h3>
-                <div class="timer" id="time">25:00</div>
-                <div class="timer-row">
-                    <button onclick="startTimer()">▶ Start</button>
-                    <button onclick="pauseTimer()" class="secondary">⏸ Pause</button>
-                    <button onclick="resetTimer()" class="danger">↺ Reset</button>
+                <!-- SAVED SEMESTERS -->
+                <div class="card" id="savedSemestersCard">
+                    <h3>📂 Saved Semesters</h3>
+                    <div id="savedSemestersList">
+                        <span class="small">No semesters saved yet. Add courses and click "Save Semester".</span>
+                    </div>
+                    <button onclick="clearAllSemesters()" class="danger small-btn" style="width:auto;margin-top:8px;">🗑 Clear All</button>
                 </div>
-                <div class="small" style="text-align:center;margin-top:6px;">
-                    Session: <span id="sessionTimerStatus">Idle</span> |
-                    Pomodoro: <span id="pomodoroCount">0</span> completed
-                </div>
-            </div>
-        </div>
 
-        <!-- ========== PLANNER ========== -->
-        <div class="page-section" id="sectionPlanner">
-            <div class="card">
-                <h3>📅 Weekly Study Planner</h3>
-                <textarea id="plan" placeholder="Write your weekly study plan here...&#10;&#10;Example:&#10;Monday - Math 2hrs&#10;Tuesday - Physics 1.5hrs&#10;Wednesday - Review & Practice..."></textarea>
-                <button onclick="savePlan()">💾 Save Plan</button>
-                <button onclick="loadPlan()" class="secondary">📂 Load Saved Plan</button>
-                <button onclick="clearPlan()" class="danger">🗑 Clear Plan</button>
-                <div class="small" id="planStatus" style="margin-top:6px;"></div>
-            </div>
-        </div>
-
-        <!-- ========== ANALYZER ========== -->
-        <div class="page-section" id="sectionAnalyzer">
-            <div class="card">
-                <h3>📊 Smart Performance Analyzer</h3>
-                <button onclick="analyze()">🔍 Run Full Analysis</button>
-                <div class="card" style="margin-top:10px;background:#0f172a;" id="analysisBox">
-                    <span class="small">No analysis yet. Click "Run Full Analysis" to begin.</span>
+                <!-- CGPA CALCULATOR (manual) -->
+                <div class="card">
+                    <h3>📈 CGPA Calculator</h3>
+                    <p class="small">Enter semester GPAs and units to compute your cumulative GPA manually.</p>
+                    <div id="cgpaBox">
+                        <div class="row">
+                            <input type="number" id="cunit1_cgpa" placeholder="Semester Units" min="0" step="0.5" style="flex:1;">
+                            <input type="number" id="cgpa1_cgpa" placeholder="Semester GPA" min="0" max="5" step="0.01" style="flex:1;">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button onclick="addCGPARow()" class="secondary" style="flex:1;">➕ Add Semester</button>
+                        <button onclick="calcCGPA()" style="flex:1;">📊 Calculate CGPA</button>
+                    </div>
+                    <div id="cgpaOut" style="margin-top:8px;font-weight:600;color:#fbbf24;text-align:center;"></div>
                 </div>
-                <button onclick="resetAnalysis()" class="secondary" style="margin-top:6px;">🔄 Reset Analysis</button>
-            </div>
-        </div>
 
-        <!-- ========== GPA HISTORY ========== -->
-        <div class="page-section" id="sectionGPAHistory">
-            <div class="card">
-                <h3>📜 GPA History (Saved Semesters)</h3>
-                <div id="gpaHistoryList">
-                    <span class="small">No semesters saved yet.</span>
-                </div>
-                <button onclick="clearAllSemesters()" class="danger" style="margin-top:8px;">🗑 Clear All History</button>
-            </div>
-        </div>
-
-        <!-- ========== ACADEMIC CALENDAR ========== -->
-        <div class="page-section" id="sectionCalendar">
-            <div class="card">
-                <h3>📅 UNIOSUN Academic Calendar 2025/2026</h3>
-                <p class="small">Key dates for the current academic session. The next event is highlighted with a countdown.</p>
-                <div id="academicCalendarList">
-                    <span class="small" style="display:block;text-align:center;padding:10px;">Loading calendar...</span>
-                </div>
-                <div style="margin-top:8px;padding:10px;background:#0f172a;border-radius:8px;text-align:center;">
-                    <div style="font-size:0.75rem;color:#94a3b8;">⏳ Next Event In</div>
-                    <div id="calendarCountdown" style="font-size:1.4rem;font-weight:700;color:#fbbf24;font-family:'Courier New',monospace;">--</div>
-                </div>
-                <button onclick="viewFullCalendar()" class="secondary small-btn" style="width:auto;margin-top:4px;">📄 View Full Calendar</button>
-            </div>
-        </div>
-
-        <!-- ========== CGPA TRACKER ========== -->
-        <div class="page-section" id="sectionCGPA">
-            <div class="card">
-                <h3>📈 CGPA Tracker</h3>
-                <p class="small">Track your CGPA progress across all saved semesters.</p>
-                <div id="cgpaTrackerContent">
-                    <div class="small" style="text-align:center;padding:10px;">
-                        No semester data yet. Add and save semesters using the GPA Calculator.
+                <!-- STUDY TIMER -->
+                <div class="card">
+                    <h3>⏱ Study Tracker</h3>
+                    <div class="timer" id="time">25:00</div>
+                    <div class="timer-row">
+                        <button onclick="startTimer()">▶ Start</button>
+                        <button onclick="pauseTimer()" class="secondary">⏸ Pause</button>
+                        <button onclick="resetTimer()" class="danger">↺ Reset</button>
+                    </div>
+                    <div class="small" style="text-align:center;margin-top:6px;">
+                        Session: <span id="sessionTimerStatus">Idle</span> |
+                        Pomodoro: <span id="pomodoroCount">0</span> completed
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- ========== CUT-OFF MARKS ========== -->
-        <div class="page-section" id="sectionCutoff">
-            <div class="card">
-                <h3>📊 UNIOSUN Cut‑off Marks 2024/2025</h3>
-                <p class="small">
-                    ⚠️ <strong>Last year's data</strong> – Use this to predict your chances for the current session.
-                    Cut‑offs may change. Check the official portal for final decisions.
-                </p>
-                <div class="row" style="margin-top:6px;">
-                    <input type="text" id="cutoffSearch" placeholder="Search for a course..." style="flex:3;" onkeyup="filterCutoffMarks()">
-                    <select id="cutoffFaculty" style="flex:1;" onchange="filterCutoffMarks()">
-                        <option value="all">All Faculties</option>
-                        <option value="Agriculture">Agriculture</option>
-                        <option value="Education">Education</option>
-                        <option value="Science">Science</option>
-                        <option value="Social Sciences">Social Sciences</option>
-                        <option value="Law">Law</option>
-                        <option value="Medicine">Medicine</option>
-                        <option value="Engineering">Engineering</option>
-                        <option value="Arts">Arts</option>
-                        <option value="Management">Management</option>
-                    </select>
-                </div>
-                <div id="cutoffResults" style="margin-top:8px;max-height:300px;overflow-y:auto;">
-                    <span class="small">Loading cut-off marks...</span>
-                </div>
-                <div class="small" style="margin-top:4px;text-align:center;">
-                    GM = General Merit &nbsp;|&nbsp; IC = Indigene/Catchment<br>
-                    Scores are in % (screening aggregate).
+            <!-- ========== PLANNER ========== -->
+            <div class="page-section" id="sectionPlanner">
+                <div class="card">
+                    <h3>📅 Weekly Study Planner</h3>
+                    <textarea id="plan" placeholder="Write your weekly study plan here...&#10;&#10;Example:&#10;Monday - Math 2hrs&#10;Tuesday - Physics 1.5hrs&#10;Wednesday - Review & Practice..."></textarea>
+                    <button onclick="savePlan()">💾 Save Plan</button>
+                    <button onclick="loadPlan()" class="secondary">📂 Load Saved Plan</button>
+                    <button onclick="clearPlan()" class="danger">🗑 Clear Plan</button>
+                    <div class="small" id="planStatus" style="margin-top:6px;"></div>
                 </div>
             </div>
-        </div>
 
-        <!-- ========== UNIOSUN SCREENING CALCULATOR ========== -->
-        <div class="page-section" id="sectionScreening">
-            <div class="card">
-                <h3>🎯 UNIOSUN Screening Calculator</h3>
-                <p class="small">Calculate your screening aggregate using your JAMB score and O'level grades for 5 relevant subjects.</p>
-
-                <!-- JAMB Score -->
-                <div class="row">
-                    <input type="number" id="jambScore" placeholder="JAMB Score (e.g., 280)" min="0" max="400" style="flex:2;">
-                </div>
-
-                <!-- 5 Subject Rows -->
-                <div class="row">
-                    <input type="text" id="subject1" placeholder="Subject 1 (e.g., English)" style="flex:2;">
-                    <select id="grade1" style="flex:1;">
-                        <option value="8">A1 (8)</option>
-                        <option value="7">B2 (7)</option>
-                        <option value="6">B3 (6)</option>
-                        <option value="5">C4 (5)</option>
-                        <option value="4">C5 (4)</option>
-                        <option value="3">C6 (3)</option>
-                        <option value="2">D7 (2)</option>
-                        <option value="1">E8 (1)</option>
-                        <option value="0">F9 (0)</option>
-                    </select>
-                </div>
-                <div class="row">
-                    <input type="text" id="subject2" placeholder="Subject 2 (e.g., Mathematics)" style="flex:2;">
-                    <select id="grade2" style="flex:1;">
-                        <option value="8">A1 (8)</option>
-                        <option value="7">B2 (7)</option>
-                        <option value="6">B3 (6)</option>
-                        <option value="5">C4 (5)</option>
-                        <option value="4">C5 (4)</option>
-                        <option value="3">C6 (3)</option>
-                        <option value="2">D7 (2)</option>
-                        <option value="1">E8 (1)</option>
-                        <option value="0">F9 (0)</option>
-                    </select>
-                </div>
-                <div class="row">
-                    <input type="text" id="subject3" placeholder="Subject 3" style="flex:2;">
-                    <select id="grade3" style="flex:1;">
-                        <option value="8">A1 (8)</option>
-                        <option value="7">B2 (7)</option>
-                        <option value="6">B3 (6)</option>
-                        <option value="5">C4 (5)</option>
-                        <option value="4">C5 (4)</option>
-                        <option value="3">C6 (3)</option>
-                        <option value="2">D7 (2)</option>
-                        <option value="1">E8 (1)</option>
-                        <option value="0">F9 (0)</option>
-                    </select>
-                </div>
-                <div class="row">
-                    <input type="text" id="subject4" placeholder="Subject 4" style="flex:2;">
-                    <select id="grade4" style="flex:1;">
-                        <option value="8">A1 (8)</option>
-                        <option value="7">B2 (7)</option>
-                        <option value="6">B3 (6)</option>
-                        <option value="5">C4 (5)</option>
-                        <option value="4">C5 (4)</option>
-                        <option value="3">C6 (3)</option>
-                        <option value="2">D7 (2)</option>
-                        <option value="1">E8 (1)</option>
-                        <option value="0">F9 (0)</option>
-                    </select>
-                </div>
-                <div class="row">
-                    <input type="text" id="subject5" placeholder="Subject 5" style="flex:2;">
-                    <select id="grade5" style="flex:1;">
-                        <option value="8">A1 (8)</option>
-                        <option value="7">B2 (7)</option>
-                        <option value="6">B3 (6)</option>
-                        <option value="5">C4 (5)</option>
-                        <option value="4">C5 (4)</option>
-                        <option value="3">C6 (3)</option>
-                        <option value="2">D7 (2)</option>
-                        <option value="1">E8 (1)</option>
-                        <option value="0">F9 (0)</option>
-                    </select>
-                </div>
-
-                <!-- Calculate Button & Result -->
-                <button onclick="calcUNIOSUN()">📊 Calculate Screening Score</button>
-                <div id="uniosunResult" style="margin-top:8px;font-weight:600;color:#fbbf24;text-align:center;"></div>
-            </div>
-        </div>
-
-        <!-- ========== COUNTDOWN ========== -->
-        <div class="page-section" id="sectionCountdown">
-            <div class="card">
-                <h3>⏳ Exam Countdown</h3>
-                <div class="row">
-                    <input type="date" id="examDate" style="flex:2;">
-                    <input type="text" id="examLabel" placeholder="Exam name (e.g., MATH 101)" style="flex:2;">
-                </div>
-                <button onclick="setCountdown()">🎯 Set Countdown</button>
-                <div class="countdown-display" id="countdownDisplay">--:--:--:--</div>
-                <div class="countdown-label" id="countdownLabel">No exam set</div>
-                <button onclick="clearCountdown()" class="secondary" style="margin-top:4px;">🔄 Clear Countdown</button>
-            </div>
-        </div>
-
-        <!-- ========== SESSION LOG ========== -->
-        <div class="page-section" id="sectionSessionLog">
-            <div class="card">
-                <h3>📝 Study Session Log</h3>
-                <div class="history-list" id="sessionLogList">
-                    <span class="small">No sessions recorded yet.</span>
-                </div>
-                <button onclick="clearSessionLog()" class="danger" style="margin-top:8px;">🗑 Clear Log</button>
-                <button onclick="exportSessionLog()" class="secondary" style="margin-top:4px;">📋 Copy Log</button>
-            </div>
-        </div>
-
-        <!-- ========== PDF LIBRARY (NEW) ========== -->
-        <div class="page-section" id="sectionPdfLibrary">
-            <div class="card">
-                <h3>📄 PDF Library</h3>
-                <p class="small">Upload, view, summarise, or quiz your PDF study materials.</p>
-
-                <!-- Upload Area -->
-                <div class="upload-area" id="uploadArea" onclick="document.getElementById('pdfUploadInput').click()">
-                    <div class="icon">📂</div>
-                    <div style="font-weight:500;">Click or drag & drop PDF files here</div>
-                    <div style="font-size:0.75rem;color:#94a3b8;margin-top:4px;">Max 50MB per file</div>
-                    <input type="file" id="pdfUploadInput" accept=".pdf,application/pdf" multiple style="display:none;" onchange="handleFileUpload(event)">
-                </div>
-
-                <!-- File List -->
-                <div style="margin-top:10px;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
-                        <span style="font-weight:600;font-size:0.9rem;">📑 My PDFs</span>
-                        <span style="font-size:0.75rem;color:#94a3b8;" id="pdfCount">0 files</span>
+            <!-- ========== ANALYZER ========== -->
+            <div class="page-section" id="sectionAnalyzer">
+                <div class="card">
+                    <h3>📊 Smart Performance Analyzer</h3>
+                    <button onclick="analyze()">🔍 Run Full Analysis</button>
+                    <div class="card" style="margin-top:10px;background:#0f172a;" id="analysisBox">
+                        <span class="small">No analysis yet. Click "Run Full Analysis" to begin.</span>
                     </div>
-                    <div id="pdfList" style="margin-top:6px;max-height:250px;overflow-y:auto;">
-                        <span class="small">No PDFs uploaded yet.</span>
+                    <button onclick="resetAnalysis()" class="secondary" style="margin-top:6px;">🔄 Reset Analysis</button>
+                </div>
+            </div>
+
+            <!-- ========== GPA HISTORY ========== -->
+            <div class="page-section" id="sectionGPAHistory">
+                <div class="card">
+                    <h3>📜 GPA History (Saved Semesters)</h3>
+                    <div id="gpaHistoryList">
+                        <span class="small">No semesters saved yet.</span>
+                    </div>
+                    <button onclick="clearAllSemesters()" class="danger" style="margin-top:8px;">🗑 Clear All History</button>
+                </div>
+            </div>
+
+            <!-- ========== ACADEMIC CALENDAR ========== -->
+            <div class="page-section" id="sectionCalendar">
+                <div class="card">
+                    <h3>📅 UNIOSUN Academic Calendar 2025/2026</h3>
+                    <p class="small">Key dates for the current academic session. The next event is highlighted with a countdown.</p>
+                    <div id="academicCalendarList">
+                        <span class="small" style="display:block;text-align:center;padding:10px;">Loading calendar...</span>
+                    </div>
+                    <div style="margin-top:8px;padding:10px;background:#0f172a;border-radius:8px;text-align:center;">
+                        <div style="font-size:0.75rem;color:#94a3b8;">⏳ Next Event In</div>
+                        <div id="calendarCountdown" style="font-size:1.4rem;font-weight:700;color:#fbbf24;font-family:'Courier New',monospace;">--</div>
+                    </div>
+                    <button onclick="viewFullCalendar()" class="secondary small-btn" style="width:auto;margin-top:4px;">📄 View Full Calendar</button>
+                </div>
+            </div>
+
+            <!-- ========== CGPA TRACKER ========== -->
+            <div class="page-section" id="sectionCGPA">
+                <div class="card">
+                    <h3>📈 CGPA Tracker</h3>
+                    <p class="small">Track your CGPA progress across all saved semesters.</p>
+                    <div id="cgpaTrackerContent">
+                        <div class="small" style="text-align:center;padding:10px;">
+                            No semester data yet. Add and save semesters using the GPA Calculator.
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- PDF Viewer -->
-                <div class="pdf-viewer-container" id="pdfViewerContainer">
-                    <div class="pdf-viewer-placeholder" id="pdfViewerPlaceholder">
-                        <div class="icon">📄</div>
-                        <div style="font-weight:500;margin-bottom:4px;">Select a PDF to view</div>
-                        <div style="font-size:0.8rem;color:#64748b;">Click on any PDF in the list above</div>
+            <!-- ========== CUT-OFF MARKS ========== -->
+            <div class="page-section" id="sectionCutoff">
+                <div class="card">
+                    <h3>📊 UNIOSUN Cut‑off Marks 2024/2025</h3>
+                    <p class="small">
+                        ⚠️ <strong>Last year's data</strong> – Use this to predict your chances for the current session.
+                        Cut‑offs may change. Check the official portal for final decisions.
+                    </p>
+                    <div class="row" style="margin-top:6px;">
+                        <input type="text" id="cutoffSearch" placeholder="Search for a course..." style="flex:3;" onkeyup="filterCutoffMarks()">
+                        <select id="cutoffFaculty" style="flex:1;" onchange="filterCutoffMarks()">
+                            <option value="all">All Faculties</option>
+                            <option value="Agriculture">Agriculture</option>
+                            <option value="Education">Education</option>
+                            <option value="Science">Science</option>
+                            <option value="Social Sciences">Social Sciences</option>
+                            <option value="Law">Law</option>
+                            <option value="Medicine">Medicine</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Arts">Arts</option>
+                            <option value="Management">Management</option>
+                        </select>
                     </div>
-                    <iframe id="pdfViewer" style="display:none;width:100%;height:100%;border:none;"></iframe>
+                    <div id="cutoffResults" style="margin-top:8px;max-height:300px;overflow-y:auto;">
+                        <span class="small">Loading cut-off marks...</span>
+                    </div>
+                    <div class="small" style="margin-top:4px;text-align:center;">
+                        GM = General Merit &nbsp;|&nbsp; IC = Indigene/Catchment<br>
+                        Scores are in % (screening aggregate).
+                    </div>
                 </div>
             </div>
-        </div>
 
+            <!-- ========== UNIOSUN SCREENING CALCULATOR ========== -->
+            <div class="page-section" id="sectionScreening">
+                <div class="card">
+                    <h3>🎯 UNIOSUN Screening Calculator</h3>
+                    <p class="small">Calculate your screening aggregate using your JAMB score and O'level grades for 5 relevant subjects.</p>
+
+                    <!-- JAMB Score -->
+                    <div class="row">
+                        <input type="number" id="jambScore" placeholder="JAMB Score (e.g., 280)" min="0" max="400" style="flex:2;">
+                    </div>
+
+                    <!-- 5 Subject Rows -->
+                    <div class="row">
+                        <input type="text" id="subject1" placeholder="Subject 1 (e.g., English)" style="flex:2;">
+                        <select id="grade1" style="flex:1;">
+                            <option value="8">A1 (8)</option>
+                            <option value="7">B2 (7)</option>
+                            <option value="6">B3 (6)</option>
+                            <option value="5">C4 (5)</option>
+                            <option value="4">C5 (4)</option>
+                            <option value="3">C6 (3)</option>
+                            <option value="2">D7 (2)</option>
+                            <option value="1">E8 (1)</option>
+                            <option value="0">F9 (0)</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <input type="text" id="subject2" placeholder="Subject 2 (e.g., Mathematics)" style="flex:2;">
+                        <select id="grade2" style="flex:1;">
+                            <option value="8">A1 (8)</option>
+                            <option value="7">B2 (7)</option>
+                            <option value="6">B3 (6)</option>
+                            <option value="5">C4 (5)</option>
+                            <option value="4">C5 (4)</option>
+                            <option value="3">C6 (3)</option>
+                            <option value="2">D7 (2)</option>
+                            <option value="1">E8 (1)</option>
+                            <option value="0">F9 (0)</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <input type="text" id="subject3" placeholder="Subject 3" style="flex:2;">
+                        <select id="grade3" style="flex:1;">
+                            <option value="8">A1 (8)</option>
+                            <option value="7">B2 (7)</option>
+                            <option value="6">B3 (6)</option>
+                            <option value="5">C4 (5)</option>
+                            <option value="4">C5 (4)</option>
+                            <option value="3">C6 (3)</option>
+                            <option value="2">D7 (2)</option>
+                            <option value="1">E8 (1)</option>
+                            <option value="0">F9 (0)</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <input type="text" id="subject4" placeholder="Subject 4" style="flex:2;">
+                        <select id="grade4" style="flex:1;">
+                            <option value="8">A1 (8)</option>
+                            <option value="7">B2 (7)</option>
+                            <option value="6">B3 (6)</option>
+                            <option value="5">C4 (5)</option>
+                            <option value="4">C5 (4)</option>
+                            <option value="3">C6 (3)</option>
+                            <option value="2">D7 (2)</option>
+                            <option value="1">E8 (1)</option>
+                            <option value="0">F9 (0)</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <input type="text" id="subject5" placeholder="Subject 5" style="flex:2;">
+                        <select id="grade5" style="flex:1;">
+                            <option value="8">A1 (8)</option>
+                            <option value="7">B2 (7)</option>
+                            <option value="6">B3 (6)</option>
+                            <option value="5">C4 (5)</option>
+                            <option value="4">C5 (4)</option>
+                            <option value="3">C6 (3)</option>
+                            <option value="2">D7 (2)</option>
+                            <option value="1">E8 (1)</option>
+                            <option value="0">F9 (0)</option>
+                        </select>
+                    </div>
+
+                    <!-- Calculate Button & Result -->
+                    <button onclick="calcUNIOSUN()">📊 Calculate Screening Score</button>
+                    <div id="uniosunResult" style="margin-top:8px;font-weight:600;color:#fbbf24;text-align:center;"></div>
+                </div>
+            </div>
+
+            <!-- ========== COUNTDOWN ========== -->
+            <div class="page-section" id="sectionCountdown">
+                <div class="card">
+                    <h3>⏳ Exam Countdown</h3>
+                    <div class="row">
+                        <input type="date" id="examDate" style="flex:2;">
+                        <input type="text" id="examLabel" placeholder="Exam name (e.g., MATH 101)" style="flex:2;">
+                    </div>
+                    <button onclick="setCountdown()">🎯 Set Countdown</button>
+                    <div class="countdown-display" id="countdownDisplay">--:--:--:--</div>
+                    <div class="countdown-label" id="countdownLabel">No exam set</div>
+                    <button onclick="clearCountdown()" class="secondary" style="margin-top:4px;">🔄 Clear Countdown</button>
+                </div>
+            </div>
+
+            <!-- ========== SESSION LOG ========== -->
+            <div class="page-section" id="sectionSessionLog">
+                <div class="card">
+                    <h3>📝 Study Session Log</h3>
+                    <div class="history-list" id="sessionLogList">
+                        <span class="small">No sessions recorded yet.</span>
+                    </div>
+                    <button onclick="clearSessionLog()" class="danger" style="margin-top:8px;">🗑 Clear Log</button>
+                    <button onclick="exportSessionLog()" class="secondary" style="margin-top:4px;">📋 Copy Log</button>
+                </div>
+            </div>
+
+            <!-- ========== PDF LIBRARY ========== -->
+            <div class="page-section" id="sectionPdfLibrary">
+                <div class="card">
+                    <h3>📄 PDF Library</h3>
+                    <p class="small">Upload, view, summarise, or quiz your PDF study materials.</p>
+
+                    <!-- Upload Area -->
+                    <div class="upload-area" id="uploadArea" onclick="document.getElementById('pdfUploadInput').click()">
+                        <div class="icon">📂</div>
+                        <div style="font-weight:500;">Click or drag & drop PDF files here</div>
+                        <div style="font-size:0.75rem;color:#94a3b8;margin-top:4px;">Max 50MB per file</div>
+                        <input type="file" id="pdfUploadInput" accept=".pdf,application/pdf" multiple style="display:none;" onchange="handleFileUpload(event)">
+                    </div>
+
+                    <!-- File List -->
+                    <div style="margin-top:10px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+                            <span style="font-weight:600;font-size:0.9rem;">📑 My PDFs</span>
+                            <span style="font-size:0.75rem;color:#94a3b8;" id="pdfCount">0 files</span>
+                        </div>
+                        <div id="pdfList" style="margin-top:6px;max-height:250px;overflow-y:auto;">
+                            <span class="small">No PDFs uploaded yet.</span>
+                        </div>
+                    </div>
+
+                    <!-- PDF Viewer -->
+                    <div class="pdf-viewer-container" id="pdfViewerContainer">
+                        <div class="pdf-viewer-placeholder" id="pdfViewerPlaceholder">
+                            <div class="icon">📄</div>
+                            <div style="font-weight:500;margin-bottom:4px;">Select a PDF to view</div>
+                            <div style="font-size:0.8rem;color:#64748b;">Click on any PDF in the list above</div>
+                        </div>
+                        <iframe id="pdfViewer" style="display:none;width:100%;height:100%;border:none;"></iframe>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
     <script>
-        /* ============================================================
-           GOATTUTOR NG v6 – COMPLETE WITH SCREENING CALCULATOR + PDF LIBRARY
-           ============================================================ */
+        // ─── FIREBASE CONFIG ───
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-3UXCEekG1u657jtDwMtCIZW0EwX9L0E",
+            authDomain: "dayveedo.firebaseapp.com",
+            projectId: "dayveedo",
+            storageBucket: "dayveedo.firebasestorage.app",
+            messagingSenderId: "576630332768",
+            appId: "1:576630332768:web:cba937cfeb898d35259205"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
         // ─── GLOBAL STATE ───
         let timerSeconds = 1500;
@@ -1046,6 +1228,149 @@
         let sessionActive = false;
         let courseRowCounter = 1;
         let semCounter = 1;
+        let currentUser = null;
+        let userDocRef = null;
+
+        // ─── AUTH STATE ───
+        auth.onAuthStateChanged(async user => {
+            if (user) {
+                currentUser = user;
+                // Show app, hide auth page
+                document.getElementById('authPage').classList.add('hidden');
+                document.getElementById('appContainer').style.display = 'block';
+                document.getElementById('userDisplay').innerHTML = `👤 ${user.email}`;
+                document.getElementById('authActionBtn').style.display = 'inline-block';
+                // Load user data from Firestore
+                userDocRef = db.collection('users').doc(user.uid);
+                const doc = await userDocRef.get();
+                if (doc.exists) {
+                    loadUserData(doc.data());
+                } else {
+                    await userDocRef.set({
+                        email: user.email,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+                // Sync local data to cloud
+                syncLocalToCloud();
+                showNotification('✅ Welcome back, ' + user.email);
+            } else {
+                currentUser = null;
+                userDocRef = null;
+                // Hide app, show auth page
+                document.getElementById('authPage').classList.remove('hidden');
+                document.getElementById('appContainer').style.display = 'none';
+                document.getElementById('userDisplay').innerHTML = '👤 Guest';
+                document.getElementById('authActionBtn').style.display = 'none';
+                // Load local data (if any)
+                loadLocalData();
+            }
+            updateDash();
+        });
+
+        // ─── AUTH FUNCTIONS ───
+        let isLoginMode = false;
+
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('authTitle').innerText = isLoginMode ? '🔐 Login' : '🔐 Sign Up';
+            document.getElementById('authButton').innerText = isLoginMode ? 'Login' : 'Sign Up';
+            document.getElementById('authToggleText').innerHTML = isLoginMode ?
+                'Don\'t have an account? <span onclick="toggleAuthMode()">Sign Up</span>' :
+                'Already have an account? <span onclick="toggleAuthMode()">Login</span>';
+            document.getElementById('authError').innerText = '';
+        }
+
+        async function handleAuth() {
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value;
+            const errorEl = document.getElementById('authError');
+            if (!email || !password) { errorEl.innerText = 'Please fill in all fields.'; return; }
+            try {
+                if (isLoginMode) {
+                    await auth.signInWithEmailAndPassword(email, password);
+                } else {
+                    await auth.createUserWithEmailAndPassword(email, password);
+                }
+            } catch (err) {
+                errorEl.innerText = err.message;
+            }
+        }
+
+        function handleLogout() {
+            auth.signOut();
+            showNotification('👋 Logged out.');
+        }
+
+        // ─── DATA SYNC ───
+        function loadLocalData() {
+            // All data is already read from localStorage by existing functions.
+            // Just call update UI functions.
+            updateStreakUI();
+            renderSavedSemesters();
+            renderCGPATracker();
+            renderCutoffMarks();
+            loadPdfList();
+            renderSessionLog();
+            loadPlan(true);
+            updateDash();
+        }
+
+        function loadUserData(data) {
+            // Overwrite localStorage with cloud data
+            if (data.streak) localStorage.setItem('streak', data.streak);
+            if (data.bestStreak) localStorage.setItem('bestStreak', data.bestStreak);
+            if (data.totalStudyDays) localStorage.setItem('totalStudyDays', data.totalStudyDays);
+            if (data.lastStudyDay) localStorage.setItem('lastStudyDay', data.lastStudyDay);
+            if (data.semesters) localStorage.setItem('semesters', JSON.stringify(data.semesters));
+            if (data.gpa) localStorage.setItem('gpa', data.gpa);
+            if (data.cgpa) localStorage.setItem('cgpa', data.cgpa);
+            if (data.studyMinutes) localStorage.setItem('studyMinutes', data.studyMinutes);
+            if (data.plan) localStorage.setItem('plan', data.plan);
+            if (data.sessionLog) localStorage.setItem('sessionLog', JSON.stringify(data.sessionLog));
+            if (data.reminders) localStorage.setItem('reminders', JSON.stringify(data.reminders));
+            if (data.examDate) localStorage.setItem('examDate', data.examDate);
+            if (data.examLabel) localStorage.setItem('examLabel', data.examLabel);
+            updateDash();
+            updateStreakUI();
+            renderSavedSemesters();
+            renderCGPATracker();
+            renderCutoffMarks();
+            loadPdfList();
+            renderSessionLog();
+            loadPlan(true);
+            updateCountdownDisplay();
+            showNotification('📥 Data synced from cloud.');
+        }
+
+        async function syncLocalToCloud() {
+            if (!currentUser) return;
+            try {
+                const data = {
+                    streak: parseInt(localStorage.getItem('streak')) || 0,
+                    bestStreak: parseInt(localStorage.getItem('bestStreak')) || 0,
+                    totalStudyDays: parseInt(localStorage.getItem('totalStudyDays')) || 0,
+                    lastStudyDay: localStorage.getItem('lastStudyDay') || '',
+                    semesters: JSON.parse(localStorage.getItem('semesters') || '[]'),
+                    gpa: localStorage.getItem('gpa') || '',
+                    cgpa: localStorage.getItem('cgpa') || '',
+                    studyMinutes: parseInt(localStorage.getItem('studyMinutes')) || 0,
+                    plan: localStorage.getItem('plan') || '',
+                    sessionLog: JSON.parse(localStorage.getItem('sessionLog') || '[]'),
+                    reminders: JSON.parse(localStorage.getItem('reminders') || '[]'),
+                    examDate: localStorage.getItem('examDate') || '',
+                    examLabel: localStorage.getItem('examLabel') || ''
+                };
+                await userDocRef.set(data, { merge: true });
+                console.log('✅ Data synced to cloud.');
+            } catch (err) {
+                console.error('Sync error:', err);
+            }
+        }
+
+        setInterval(() => {
+            if (currentUser) syncLocalToCloud();
+        }, 30000);
 
         // ─── MENU & NAVIGATION ───
         function toggleMenu() {
@@ -1321,6 +1646,7 @@
             updateDashFromSemesters();
             renderCGPATracker();
             showNotification('💾 Semester "' + data.title + '" saved with GPA ' + gpa.toFixed(2));
+            if (currentUser) syncLocalToCloud();
         }
 
         function deleteSemester(id) {
@@ -1338,6 +1664,7 @@
             updateDashFromSemesters();
             renderCGPATracker();
             showNotification('🗑 Semester deleted.');
+            if (currentUser) syncLocalToCloud();
         }
 
         function clearAllSemesters() {
@@ -1347,6 +1674,7 @@
             updateDashFromSemesters();
             renderCGPATracker();
             showNotification('🗑 All semesters cleared.');
+            if (currentUser) syncLocalToCloud();
         }
 
         function renderSavedSemesters() {
@@ -1761,6 +2089,7 @@
             localStorage.setItem('plan', planText);
             document.getElementById('planStatus').innerText = '✅ Plan saved successfully! ' + new Date().toLocaleString();
             showNotification('💾 Study plan saved!');
+            if (currentUser) syncLocalToCloud();
         }
 
         function loadPlan(silent) {
@@ -1776,6 +2105,7 @@
                 document.getElementById('plan').value = '';
                 document.getElementById('planStatus').innerText = '🗑 Plan editor cleared. (Saved version untouched)';
                 showNotification('🗑 Plan editor cleared.');
+                if (currentUser) syncLocalToCloud();
             }
         }
 
@@ -1827,6 +2157,7 @@
             localStorage.setItem('examLabel', label);
             updateCountdownDisplay();
             showNotification('🎯 Countdown set for: ' + label);
+            if (currentUser) syncLocalToCloud();
         }
 
         function updateCountdownDisplay() {
@@ -1862,6 +2193,7 @@
             document.getElementById('examLabel').value = '';
             updateCountdownDisplay();
             showNotification('🔄 Countdown cleared.');
+            if (currentUser) syncLocalToCloud();
         }
 
         setInterval(() => {
@@ -1948,6 +2280,7 @@
             log.push({ duration: minutes, date: new Date().toLocaleString(), type: 'Study Session' });
             if (log.length > 100) log.shift();
             localStorage.setItem('sessionLog', JSON.stringify(log));
+            if (currentUser) syncLocalToCloud();
         }
 
         function logQuickAction(action) {
@@ -1956,6 +2289,7 @@
             if (log.length > 100) log.shift();
             localStorage.setItem('sessionLog', JSON.stringify(log));
             updateSessionCountDisplay();
+            if (currentUser) syncLocalToCloud();
         }
 
         function renderSessionLog() {
@@ -1981,6 +2315,7 @@
                 renderSessionLog();
                 updateSessionCountDisplay();
                 showNotification('🗑 Session log cleared.');
+                if (currentUser) syncLocalToCloud();
             }
         }
 
@@ -1993,13 +2328,13 @@
         }
 
         // ─── PDF LIBRARY (IndexedDB) ───
-        let db = null;
+        let dbPdf = null;
         const DB_NAME = 'GoatTutorDB';
         const STORE_NAME = 'pdfs';
 
         function openDB() {
             return new Promise((resolve, reject) => {
-                if (db) { resolve(db); return; }
+                if (dbPdf) { resolve(dbPdf); return; }
                 const request = indexedDB.open(DB_NAME, 1);
                 request.onupgradeneeded = (event) => {
                     const database = event.target.result;
@@ -2008,8 +2343,8 @@
                     }
                 };
                 request.onsuccess = (event) => {
-                    db = event.target.result;
-                    resolve(db);
+                    dbPdf = event.target.result;
+                    resolve(dbPdf);
                 };
                 request.onerror = (event) => {
                     reject(event.target.error);
@@ -2089,7 +2424,6 @@
             });
         }
 
-        // ─── PDF LIBRARY UI ───
         async function handleFileUpload(event) {
             const files = event.target.files;
             if (!files.length) return;
@@ -2220,7 +2554,6 @@
                     showNotification('⚠️ No text could be extracted from this PDF.');
                     return null;
                 }
-                // Truncate to keep the prompt manageable
                 return fullText.length > 6000 ? fullText.substring(0, 6000) + '... [truncated]' : fullText;
             } catch (err) {
                 console.error(err);
@@ -2232,21 +2565,21 @@
         async function summarizePdf(id) {
             const text = await extractPdfText(id);
             if (!text) return;
-            const prompt = `Please summarise the following text in a clear and structured way. Focus on the key points and main arguments. Format the summary with headings and bullet points where appropriate.\n\n${text}`;
-            document.getElementById('topic').value = prompt;
+            document.getElementById('topic').value = text;
             document.getElementById('mode').value = 'summary';
             navigateTo('main');
             showNotification('📄 PDF text sent to AI for summarization.');
+            setTimeout(() => askAI(), 500);
         }
 
         async function quizPdf(id) {
             const text = await extractPdfText(id);
             if (!text) return;
-            const prompt = `Based on the following text, generate a 5-question multiple-choice quiz to test understanding. Each question should have 4 options (A, B, C, D) and the correct answer should be clearly indicated.\n\n${text}`;
-            document.getElementById('topic').value = prompt;
+            document.getElementById('topic').value = text;
             document.getElementById('mode').value = 'mcq';
             navigateTo('main');
             showNotification('📄 PDF text sent to AI for quiz generation.');
+            setTimeout(() => askAI(), 500);
         }
 
         // ─── DRAG & DROP SUPPORT ───
@@ -2269,6 +2602,203 @@
                 }
             });
         }
+
+        // ─── REMINDERS ───
+        function getReminders() {
+            try { return JSON.parse(localStorage.getItem('reminders')) || []; } catch { return []; }
+        }
+
+        function saveReminders(r) {
+            localStorage.setItem('reminders', JSON.stringify(r));
+            if (currentUser) syncLocalToCloud();
+        }
+
+        function addReminder() {
+            const title = document.getElementById('reminderTitle').value.trim();
+            const dateTime = document.getElementById('reminderDateTime').value;
+            const priority = document.getElementById('reminderPriority').value;
+            if (!title) { showNotification('⚠️ Please enter a reminder title.'); return; }
+            if (!dateTime) { showNotification('⚠️ Please select a date and time.'); return; }
+            const reminders = getReminders();
+            reminders.push({
+                id: Date.now(),
+                title,
+                dateTime,
+                priority,
+                completed: false,
+                createdAt: new Date().toISOString()
+            });
+            saveReminders(reminders);
+            renderReminders();
+            document.getElementById('reminderTitle').value = '';
+            document.getElementById('reminderDateTime').value = '';
+            showNotification('🔔 Reminder set: "' + title + '"');
+            if (Notification.permission === 'default') {
+                Notification.requestPermission().then(perm => {
+                    document.getElementById('notifStatus').innerText = perm === 'granted' ? '✅ Enabled' : '❌ Blocked';
+                });
+            }
+            if (currentUser) syncLocalToCloud();
+        }
+
+        function renderReminders() {
+            const reminders = getReminders();
+            const container = document.getElementById('reminderList');
+            if (reminders.length === 0) {
+                container.innerHTML = '<span class="small">No reminders set.</span>';
+                return;
+            }
+            const sorted = [...reminders].sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime));
+            container.innerHTML = sorted.map(r => {
+                const now = new Date();
+                const reminderDate = new Date(r.dateTime);
+                const isPast = reminderDate < now;
+                const priorityColor = r.priority === 'high' ? '#ef4444' : r.priority === 'medium' ? '#fbbf24' : '#22c55e';
+                const status = r.completed ? '✅ Done' : isPast ? '🔴 Overdue' : '⏳ Pending';
+                return `
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:#0f172a;border-radius:4px;margin-top:2px;border-left:3px solid ${priorityColor};border:1px solid #334155;font-size:0.85rem;flex-wrap:wrap;gap:4px;">
+                        <span><strong>${r.title}</strong></span>
+                        <span style="font-size:0.75rem;color:#94a3b8;">${new Date(r.dateTime).toLocaleString()}</span>
+                        <span style="font-size:0.75rem;">${status}</span>
+                        <div style="display:flex;gap:4px;">
+                            <button onclick="completeReminder(${r.id})" class="secondary small-btn" style="padding:2px 8px;font-size:0.7rem;">✅</button>
+                            <button onclick="deleteReminder(${r.id})" class="danger small-btn" style="padding:2px 8px;font-size:0.7rem;">✕</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function completeReminder(id) {
+            const reminders = getReminders();
+            const r = reminders.find(r => r.id === id);
+            if (r) { r.completed = true; saveReminders(reminders); renderReminders(); showNotification('✅ Reminder completed!'); }
+        }
+
+        function deleteReminder(id) {
+            let reminders = getReminders();
+            reminders = reminders.filter(r => r.id !== id);
+            saveReminders(reminders);
+            renderReminders();
+            showNotification('🗑 Reminder deleted.');
+        }
+
+        function clearAllReminders() {
+            if (!confirm('Delete all reminders?')) return;
+            saveReminders([]);
+            renderReminders();
+            showNotification('🗑 All reminders cleared.');
+        }
+
+        function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                showNotification('⚠️ Notifications not supported.');
+                return;
+            }
+            if (Notification.permission === 'granted') {
+                showNotification('✅ Notifications already enabled.');
+                document.getElementById('notifStatus').innerText = '✅ Enabled';
+                return;
+            }
+            Notification.requestPermission().then(perm => {
+                if (perm === 'granted') {
+                    showNotification('🔔 Notifications enabled!');
+                    document.getElementById('notifStatus').innerText = '✅ Enabled';
+                } else {
+                    showNotification('⚠️ Permission denied.');
+                    document.getElementById('notifStatus').innerText = '❌ Blocked';
+                }
+            });
+        }
+
+        let reminderCheckerInterval = null;
+
+        function scheduleReminderCheck() {
+            if (reminderCheckerInterval) clearInterval(reminderCheckerInterval);
+            reminderCheckerInterval = setInterval(() => {
+                const reminders = getReminders();
+                const now = new Date();
+                reminders.forEach(r => {
+                    if (r.completed) return;
+                    const reminderTime = new Date(r.dateTime);
+                    const diff = reminderTime - now;
+                    if (diff <= 0 && diff > -5000) {
+                        if (Notification.permission === 'granted') {
+                            new Notification('🔔 GoatTutor Reminder', {
+                                body: r.title,
+                                icon: '🐐'
+                            });
+                        }
+                        showNotification('🔔 Reminder: ' + r.title);
+                        r.completed = true;
+                        saveReminders(reminders);
+                        renderReminders();
+                    }
+                });
+            }, 10000);
+        }
+
+        // ─── NEW: Study Streak UI Updates ───
+        function getStreakStats() {
+            const streak = parseInt(localStorage.getItem('streak')) || 0;
+            const bestStreak = parseInt(localStorage.getItem('bestStreak')) || 0;
+            const totalDays = parseInt(localStorage.getItem('totalStudyDays')) || 0;
+            return { streak, bestStreak, totalDays };
+        }
+
+        function updateStreakUI() {
+            const stats = getStreakStats();
+            document.getElementById('currentStreak').innerText = stats.streak;
+            document.getElementById('bestStreak').innerText = stats.bestStreak;
+            document.getElementById('totalStudyDays').innerText = stats.totalDays;
+            const badge = document.getElementById('streakBadge');
+            if (stats.streak >= 100) badge.innerText = '🏆 Legendary';
+            else if (stats.streak >= 30) badge.innerText = '🥇 Elite';
+            else if (stats.streak >= 14) badge.innerText = '🥈 Dedicated';
+            else if (stats.streak >= 7) badge.innerText = '🥉 Consistent';
+            else if (stats.streak >= 3) badge.innerText = '💪 Getting Started';
+            else badge.innerText = '📚 Start your streak!';
+        }
+
+        function logStudyDay() {
+            const today = new Date().toDateString();
+            const lastStudy = localStorage.getItem('lastStudyDay');
+            const streak = parseInt(localStorage.getItem('streak')) || 0;
+            const bestStreak = parseInt(localStorage.getItem('bestStreak')) || 0;
+            const totalDays = parseInt(localStorage.getItem('totalStudyDays')) || 0;
+            if (lastStudy === today) { showNotification('✅ Already logged today.'); return; }
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            let newStreak = 1;
+            if (lastStudy === yesterday.toDateString()) newStreak = streak + 1;
+            localStorage.setItem('streak', newStreak);
+            localStorage.setItem('lastStudyDay', today);
+            localStorage.setItem('totalStudyDays', totalDays + 1);
+            if (newStreak > bestStreak) {
+                localStorage.setItem('bestStreak', newStreak);
+                showNotification('🎉 New best streak: ' + newStreak + ' days!');
+            } else {
+                showNotification('🔥 Streak: ' + newStreak + ' days!');
+            }
+            document.getElementById('streakDisplay').innerText = newStreak;
+            updateStreakUI();
+            if (currentUser) syncLocalToCloud();
+        }
+
+        function resetStreakStats() {
+            if (!confirm('Reset all streak stats?')) return;
+            localStorage.removeItem('streak');
+            localStorage.removeItem('bestStreak');
+            localStorage.removeItem('totalStudyDays');
+            localStorage.removeItem('lastStudyDay');
+            updateStreakUI();
+            document.getElementById('streakDisplay').innerText = '0';
+            showNotification('🔄 Streak reset.');
+            if (currentUser) syncLocalToCloud();
+        }
+
+        // ─── NEW: Study Streak Card UI (added to HTML) ───
+        // The study streak card is already present in the HTML.
 
         // ─── INIT ───
         function init() {
@@ -2293,17 +2823,28 @@
                 semCounter = cgpaRows.length;
             }
 
-            // PDF Library init
             loadPdfList();
             setupDragDrop();
+            renderReminders();
+            scheduleReminderCheck();
+            updateStreakUI();
+
+            if (Notification.permission === 'granted') {
+                document.getElementById('notifStatus').innerText = '✅ Enabled';
+            } else if (Notification.permission === 'denied') {
+                document.getElementById('notifStatus').innerText = '❌ Blocked';
+            } else {
+                document.getElementById('notifStatus').innerText = 'Click to enable';
+            }
         }
 
         document.getElementById('sidebarOverlay').addEventListener('click', closeMenu);
         document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMenu(); });
 
         init();
-        console.log('🐐 GoatTutor NG v6 – PDF Library with Summarize & Quiz added.');
+        console.log('🐐 GoatTutor v6 – Secure & Responsive with full auth.');
     </script>
+    <!-- Clarity Tracking -->
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
