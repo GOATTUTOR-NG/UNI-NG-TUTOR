@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>GoatTutor NG 🐐</title>
+    <title>GoatTutor NG 🐐 – Gamified</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
     <!-- Firebase SDKs -->
@@ -16,7 +16,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js">
     </script>
     <style>
-        /* ─── RESET & BASE ─── */
+        /* ─── All existing styles (same as before) ─── */
         * {
             margin: 0;
             padding: 0;
@@ -29,7 +29,6 @@
             min-height: 100vh;
             overflow-x: hidden;
         }
-        /* ─── TOP BAR ─── */
         .topbar {
             display: flex;
             justify-content: space-between;
@@ -96,7 +95,6 @@
             color: #fbbf24;
             font-weight: 500;
         }
-        /* ─── SIDEBAR ─── */
         .sidebar-overlay {
             position: fixed;
             top: 0;
@@ -239,7 +237,6 @@
             background: #b91c1c !important;
             transform: none !important;
         }
-        /* ─── AUTH ─── */
         .auth-page {
             position: fixed;
             top: 0;
@@ -332,7 +329,6 @@
             font-size: 3rem;
             margin-bottom: 10px;
         }
-        /* ─── CONTAINER ─── */
         .container {
             padding: 12px 14px;
             max-width: 720px;
@@ -745,7 +741,6 @@
             align-items: center;
             justify-content: center;
         }
-        /* ─── THEMES ─── */
         body.theme-ocean {
             background: #0b3d4f;
         }
@@ -770,7 +765,6 @@
         body.theme-forest .sidebar {
             background: #2b5a3a;
         }
-        /* ─── GAMIFICATION STYLES ─── */
         .level-badge {
             display: inline-flex;
             align-items: center;
@@ -881,7 +875,6 @@
             border-radius: 12px;
             background: #1e293b;
         }
-        /* Confetti canvas */
         #confettiCanvas {
             position: fixed;
             top: 0;
@@ -919,7 +912,6 @@
             pointer-events: none;
             opacity: 0.7;
         }
-
         @media (max-width:600px) {
             .timer {
                 font-size: 32px;
@@ -1155,7 +1147,7 @@
                     <div class="small" style="text-align:center;color:#94a3b8;padding:4px;">(Opens in a new tab – no API key needed)</div>
                 </div>
 
-                <!-- DASHBOARD with Gamification -->
+                <!-- DASHBOARD -->
                 <div class="card">
                     <h3>📊 Academic Dashboard</h3>
                     <div class="dash-grid">
@@ -1242,7 +1234,6 @@
                         </div>
                     </div>
                 </div>
-
                 <button onclick="forceSyncGamification()" class="secondary small-btn" style="width:auto;">🔄 Sync Stats</button>
             </div>
 
@@ -1264,15 +1255,24 @@
             <!-- ========== DAILY CHALLENGE ========== -->
             <div class="page-section" id="sectionChallenge">
                 <div class="card">
-                    <h3>🎯 Daily Challenge</h3>
-                    <p class="small">5 random questions – earn bonus XP!</p>
+                    <h3>🎯 Daily Challenge – UNIOSUN Rain Semester</h3>
+                    <p class="small">5 questions from MTH 102, CHM 102, PHY 102, BIO 102, GNS 102, or GNS 104. Earn XP and badges!</p>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;">
+                        <button onclick="startDailyChallenge('random')" class="secondary small-btn" style="flex:1;">🎲 Random</button>
+                        <button onclick="startDailyChallenge('MTH 102')" class="secondary small-btn" style="flex:1;">📐 MTH 102</button>
+                        <button onclick="startDailyChallenge('CHM 102')" class="secondary small-btn" style="flex:1;">⚗️ CHM 102</button>
+                        <button onclick="startDailyChallenge('PHY 102')" class="secondary small-btn" style="flex:1;">🔭 PHY 102</button>
+                        <button onclick="startDailyChallenge('BIO 102')" class="secondary small-btn" style="flex:1;">🧬 BIO 102</button>
+                        <button onclick="startDailyChallenge('GNS 102')" class="secondary small-btn" style="flex:1;">📝 GNS 102</button>
+                        <button onclick="startDailyChallenge('GNS 104')" class="secondary small-btn" style="flex:1;">🇳🇬 GNS 104</button>
+                    </div>
                     <div id="challengeContainer">
-                        <button onclick="startDailyChallenge()" id="startChallengeBtn">🚀 Start Challenge</button>
+                        <button onclick="startDailyChallenge('random')" id="startChallengeBtn">🚀 Start Challenge</button>
                         <div id="challengeQuestions" style="margin-top:12px;display:none;"></div>
                         <div id="challengeResult" style="margin-top:12px;display:none;text-align:center;">
                             <div style="font-size:1.8rem;font-weight:700;color:#fbbf24;" id="challengeScore">0/5</div>
                             <div class="small">XP Earned: <span id="challengeXP">0</span></div>
-                            <button onclick="startDailyChallenge()" style="margin-top:8px;">🔄 Try Again</button>
+                            <button onclick="startDailyChallenge('random')" style="margin-top:8px;">🔄 Try Again</button>
                         </div>
                     </div>
                 </div>
@@ -1456,7 +1456,7 @@
             { id: 'xp_5000', name: 'XP Collector', icon: '💪', desc: 'Reach 5,000 XP' },
         ];
 
-        // ─── ACADEMIC EVENTS ───
+        // ─── ACADEMIC EVENTS (unchanged) ───
         const academicEvents = [
             { date: '2025-11-10', title: 'Resumption – Fresh Students' },
             { date: '2025-11-10', title: 'Orientation for Fresh Students' },
@@ -1480,7 +1480,7 @@
             { date: '2026-09-24', title: 'Convocation Ceremonies' }
         ];
 
-        // ─── CUT-OFF DATA ───
+        // ─── CUT-OFF DATA (unchanged) ───
         const cutoffData = [
             { course: 'B. Agric. Economics', faculty: 'Agriculture', merit: 57.0, indigene: 46.4 },
             { course: 'B. Agric. Extension', faculty: 'Agriculture', merit: 56.5, indigene: 44.5 },
@@ -1625,7 +1625,7 @@
             return Math.min((xpInLevel / xpNeeded) * 100, 100);
         }
 
-        // ─── AWARD XP (Server-like via Firestore) ───
+        // ─── AWARD XP ───
         async function awardXP(amount, activity) {
             if (!currentUser) return;
             try {
@@ -1642,7 +1642,6 @@
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                // Log transaction
                 await db.collection('xpTransactions').add({
                     userId: currentUser.uid,
                     amount: amount,
@@ -1650,14 +1649,13 @@
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                // Check level up
                 const oldLevel = data.level || 1;
                 if (newLevel > oldLevel) {
                     fireConfetti();
-                    showNotification(`🎉 LEVEL UP! You're now a ${getLevelData(newLevel).name} ${getLevelData(newLevel).icon}`, 5000);
+                    showNotification(`🎉 LEVEL UP! You're now a ${getLevelData(newLevel).name} ${getLevelData(newLevel).icon}`,
+                        5000);
                 }
 
-                // Check badges
                 await checkBadges();
                 updateGamificationUI();
                 updateDash();
@@ -1679,7 +1677,6 @@
                 const unlocked = data.badges || [];
                 let newBadges = [];
 
-                // Get stats
                 const quizAttempts = await db.collection('quizAttempts')
                     .where('userId', '==', currentUser.uid)
                     .get();
@@ -1691,13 +1688,11 @@
                 const streak = data.streak || 0;
                 const xp = data.xp || 0;
 
-                // Read notes count from XP transactions
                 const notesRead = await db.collection('xpTransactions')
                     .where('userId', '==', currentUser.uid)
                     .where('activity', '==', 'note_read')
                     .get();
 
-                // Check each badge condition
                 for (const badge of BADGE_DEFS) {
                     if (unlocked.includes(badge.id)) continue;
                     let conditionMet = false;
@@ -1722,7 +1717,6 @@
                             conditionMet = perfectScores >= 1;
                             break;
                         case 'top_10':
-                            // Check if user is in top 10 of all-time leaderboard
                             const lb = await db.collection('leaderboard')
                                 .where('period', '==', 'all_time')
                                 .orderBy('xp', 'desc')
@@ -1748,7 +1742,6 @@
                         badges: firebase.firestore.FieldValue.arrayUnion(...newBadges),
                         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    // Award XP for badges
                     for (const b of newBadges) {
                         await awardXP(50, 'badge_unlocked');
                     }
@@ -1775,10 +1768,7 @@
                 let currentStreak = data.streak || 0;
                 let bestStreak = data.bestStreak || 0;
 
-                if (lastActivity === today) {
-                    // Already logged today
-                    return;
-                }
+                if (lastActivity === today) return;
 
                 const yesterday = new Date();
                 yesterday.setDate(yesterday.getDate() - 1);
@@ -1801,7 +1791,6 @@
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                // Streak bonus every 7 days
                 if (currentStreak % 7 === 0) {
                     await awardXP(currentStreak * 10, 'streak_bonus');
                 }
@@ -1829,13 +1818,11 @@
                 const nextXP = getNextLevelXP(level);
                 const progress = getXPProgress(xp, level);
 
-                // Dashboard
                 document.getElementById('dashLevel').textContent = `${levelData.icon} ${levelData.name} (Lv.${level})`;
                 document.getElementById('dashXP').textContent = xp;
                 document.getElementById('dashXpBar').style.width = progress + '%';
                 document.getElementById('dashXpNext').textContent = nextXP === Infinity ? 'MAX' : (nextXP - xp);
 
-                // Gamification page
                 document.getElementById('gLevelIcon').textContent = levelData.icon;
                 document.getElementById('gLevelName').textContent = levelData.name;
                 document.getElementById('gLevelNum').textContent = level;
@@ -1846,7 +1833,6 @@
                 document.getElementById('gStreak').textContent = streak;
                 document.getElementById('gBadges').textContent = badges.length;
 
-                // Badge grid
                 const grid = document.getElementById('gBadgeGrid');
                 grid.innerHTML = '';
                 BADGE_DEFS.forEach(b => {
@@ -1861,14 +1847,12 @@
                     grid.appendChild(div);
                 });
 
-                // Achievement badges on main
                 const achContainer = document.getElementById('achievementBadges');
                 achContainer.innerHTML = badges.map(id => {
                     const b = BADGE_DEFS.find(bd => bd.id === id);
                     return b ? `<span class="badge">${b.icon} ${b.name}</span>` : '';
                 }).join('');
 
-                // Local storage sync
                 localStorage.setItem('gamification', JSON.stringify({ xp, level, streak, badges }));
                 gamificationData = { xp, level, streak, badges };
 
@@ -1933,69 +1917,523 @@
             }
         }
 
-        // ─── DAILY CHALLENGE ───
+        // ─── 🎯 DAILY CHALLENGE – UNIOSUN QUESTION BANK ───
+        // Complete question bank based on the course outlines
+        const QUESTION_BANK = {
+            'MTH 102': [
+                { question: 'What is the derivative of f(x) = x³?', options: ['3x²', 'x²', '3x', 'x³'], correctIndex: 0 },
+                { question: 'What is the limit of (x² - 1)/(x - 1) as x approaches 1?', options: ['0', '1', '2', 'undefined'],
+                    correctIndex: 2 },
+                { question: 'Which of the following is the integral of 2x dx?', options: ['x² + C', '2x² + C', 'x + C',
+                        'x³ + C'
+                    ], correctIndex: 0 },
+                { question: 'What is the derivative of sin(x)?', options: ['cos(x)', '-cos(x)', 'sin(x)', '-sin(x)'],
+                    correctIndex: 0 },
+                { question: 'What is the integral of cos(x) dx?', options: ['sin(x) + C', '-sin(x) + C', 'cos(x) + C',
+                        '-cos(x) + C'
+                    ], correctIndex: 0 },
+                { question: 'What is the derivative of e^x?', options: ['e^x', 'x e^x', 'e^x + x', 'ln(e^x)'],
+                correctIndex: 0 },
+                { question: 'What is the integral of 1/x dx?', options: ['ln|x| + C', 'x + C', 'ln(x) + C', '1/x + C'],
+                    correctIndex: 0 },
+                { question: 'What is the derivative of ln(x)?', options: ['1/x', 'x', 'ln(x)', '1/ln(x)'],
+                correctIndex: 0 },
+                { question: 'What is the second derivative of x⁴?', options: ['12x²', '4x³', '12x', '24x²'],
+                correctIndex: 0 },
+                { question: 'What is the area under the curve y = x from x=0 to x=2?', options: ['2', '4', '1', '3'],
+                    correctIndex: 0 },
+                { question: 'What is the derivative of tan(x)?', options: ['sec²(x)', 'csc²(x)', 'cot²(x)', 'sin²(x)'],
+                    correctIndex: 0 },
+                { question: 'What is the integral of sec²(x) dx?', options: ['tan(x) + C', 'sec(x) + C', 'cot(x) + C',
+                        '-cot(x) + C'
+                    ], correctIndex: 0 },
+                { question: 'What is the limit of sin(x)/x as x approaches 0?', options: ['0', '1', '∞', 'undefined'],
+                    correctIndex: 1 },
+                { question: 'What is the derivative of x² + 3x?', options: ['2x + 3', 'x + 3', '2x', 'x² + 3'],
+                    correctIndex: 0 },
+                { question: 'What is the integral of (2x + 1) dx?', options: ['x² + x + C', 'x² + 2x + C', 'x² + 1 + C',
+                        '2x + 1 + C'
+                    ], correctIndex: 0 },
+                { question: 'What is the mean of the data set: 2, 4, 6, 8, 10?', options: ['4', '6', '8', '5'],
+                    correctIndex: 1 },
+                { question: 'What is the probability of getting a head when tossing a fair coin?', options: ['1/2', '1/3',
+                        '1/4', '1'
+                    ], correctIndex: 0 },
+                { question: 'What is the derivative of cos(x)?', options: ['-sin(x)', 'sin(x)', 'cos(x)', '-cos(x)'],
+                    correctIndex: 0 },
+                { question: 'What is the integral of sin(x) dx?', options: ['-cos(x) + C', 'cos(x) + C', 'sin(x) + C',
+                        '-sin(x) + C'
+                    ], correctIndex: 0 },
+                { question: 'What is the derivative of x^5?', options: ['5x⁴', 'x⁴', '5x⁵', 'x⁵'], correctIndex: 0 },
+                { question: 'What is the integral of 5x⁴ dx?', options: ['x⁵ + C', '5x⁵ + C', 'x⁴ + C', '5x⁴ + C'],
+                    correctIndex: 0 },
+                { question: 'What is the area under the curve y = x² from x=0 to x=3?', options: ['9', '6', '3', '27'],
+                    correctIndex: 0 },
+                { question: 'What is the derivative of ln(2x)?', options: ['1/x', '2/x', '1/(2x)', 'ln(2)'],
+                correctIndex: 0 },
+                { question: 'What is the integral of e^(2x) dx?', options: ['(1/2)e^(2x) + C', 'e^(2x) + C',
+                        '2e^(2x) + C', 'e^(2x)/2 + C'
+                    ], correctIndex: 0 },
+                { question: 'What is the mode of the data set: 1, 2, 2, 3, 3, 3, 4?', options: ['2', '3', '4', '1'],
+                    correctIndex: 1 },
+                { question: 'What is the derivative of sec(x)?', options: ['sec(x)tan(x)', 'csc(x)cot(x)',
+                        'sec²(x)', 'tan²(x)'
+                    ], correctIndex: 0 },
+                { question: 'What is the integral of sec(x)tan(x) dx?', options: ['sec(x) + C', 'tan(x) + C',
+                        'csc(x) + C', 'cot(x) + C'
+                    ], correctIndex: 0 },
+                { question: 'What is the derivative of cot(x)?', options: ['-csc²(x)', 'csc²(x)', '-sec²(x)',
+                        'sec²(x)'
+                    ], correctIndex: 0 },
+                { question: 'What is the integral of csc²(x) dx?', options: ['-cot(x) + C', 'cot(x) + C',
+                        'tan(x) + C', '-tan(x) + C'
+                    ], correctIndex: 0 },
+                { question: 'What is the derivative of arcsin(x)?', options: ['1/√(1-x²)', '1/(1+x²)', '√(1-x²)',
+                        '1/x'
+                    ], correctIndex: 0 },
+                { question: 'What is the integral of 1/√(1-x²) dx?', options: ['arcsin(x) + C', 'arctan(x) + C',
+                        'arcsec(x) + C', 'ln(x) + C'
+                    ], correctIndex: 0 },
+            ],
+
+            'CHM 102': [
+                { question: 'What is the functional group of an alcohol?', options: ['-OH', '-COOH', '-CHO', '-NH₂'],
+                    correctIndex: 0 },
+                { question: 'Which of the following is an example of an alkane?', options: ['Methane', 'Ethene', 'Ethyne',
+                        'Benzene'
+                    ], correctIndex: 0 },
+                { question: 'What is the general formula for alkanes?', options: ['CₙH₂ₙ₊₂', 'CₙH₂ₙ', 'CₙH₂ₙ₋₂',
+                        'CₙH₂ₙ₊₁'
+                    ], correctIndex: 0 },
+                { question: 'What is isomerism?', options: ['Compounds with same formula but different structure',
+                        'Compounds with different formula', 'Compounds with same structure', 'Compounds with same mass'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is an aromatic compound?', options: ['Benzene', 'Cyclohexane',
+                        'Hexane', 'Pentane'
+                    ], correctIndex: 0 },
+                { question: 'What type of reaction is the addition of H₂ to an alkene?', options: ['Hydrogenation',
+                        'Hydration', 'Halogenation', 'Polymerization'
+                    ], correctIndex: 0 },
+                { question: 'What is the functional group of a carboxylic acid?', options: ['-COOH', '-OH', '-CHO',
+                        '-COOR'
+                    ], correctIndex: 0 },
+                { question: 'What is the functional group of an ester?', options: ['-COOR', '-COOH', '-OH', '-CHO'],
+                    correctIndex: 0 },
+                { question: 'What is the functional group of an aldehyde?', options: ['-CHO', '-COOH', '-OH', '-COOR'],
+                    correctIndex: 0 },
+                { question: 'What is the functional group of a ketone?', options: ['-CO-', '-CHO', '-OH', '-COOH'],
+                    correctIndex: 0 },
+                { question: 'What is polymerization?', options: ['Joining of monomers to form a polymer',
+                        'Breaking down of polymers', 'Changing structure of a polymer', 'None of the above'
+                    ], correctIndex: 0 },
+                { question: 'What is an example of a macromolecule?', options: ['Proteins', 'Water', 'Sodium chloride',
+                        'Methane'
+                    ], correctIndex: 0 },
+                { question: 'What is the pH of a strong acid?', options: ['0-3', '7', '8-14', '5-6'], correctIndex: 0 },
+                { question: 'What is the functional group of an amine?', options: ['-NH₂', '-OH', '-COOH', '-SH'],
+                    correctIndex: 0 },
+                { question: 'What is the process of isolating a pure organic compound called?', options: ['Purification',
+                        'Synthesis', 'Analysis', 'Decomposition'
+                    ], correctIndex: 0 },
+                { question: 'Which method is used to purify organic compounds based on boiling point?', options: [
+                        'Distillation', 'Crystallization', 'Sublimation', 'Extraction'
+                    ], correctIndex: 0 },
+                { question: 'What is the functional group of a thiol?', options: ['-SH', '-OH', '-NH₂', '-COOH'],
+                    correctIndex: 0 },
+                { question: 'What is the functional group of an ether?', options: ['-O-', '-OH', '-CO-', '-NH-'],
+                    correctIndex: 0 },
+                { question: 'What is the functional group of a haloalkane?', options: ['-X', '-OH', '-NH₂', '-COOH'],
+                    correctIndex: 0 },
+                { question: 'What is the type of reaction where an atom is replaced by another?', options: [
+                        'Substitution', 'Addition', 'Elimination', 'Rearrangement'
+                    ], correctIndex: 0 },
+                { question: 'What is the type of reaction where two molecules combine?', options: ['Addition',
+                        'Substitution', 'Elimination', 'Isomerization'
+                    ], correctIndex: 0 },
+                { question: 'What is the type of reaction where a molecule loses atoms?', options: ['Elimination',
+                        'Substitution', 'Addition', 'Polymerization'
+                    ], correctIndex: 0 },
+                { question: 'What is the functional group of an acyl halide?', options: ['-COX', '-COOH', '-COOR',
+                        '-CHO'
+                    ], correctIndex: 0 },
+                { question: 'What is the functional group of an amide?', options: ['-CONH₂', '-NH₂', '-COOH', '-OH'],
+                    correctIndex: 0 },
+                { question: 'What is the process of joining monomers to form a polymer called?', options: [
+                        'Polymerization', 'Depolymerization', 'Hydrolysis', 'Dehydration'
+                    ], correctIndex: 0 },
+                { question: 'What is the empirical formula of benzene?', options: ['CH', 'C₆H₆', 'C₆H₁₂', 'CH₂'],
+                    correctIndex: 0 },
+                { question: 'What is the functional group of a nitrile?', options: ['-CN', '-NH₂', '-OH', '-NO₂'],
+                    correctIndex: 0 },
+                { question: 'What is the functional group of a nitro compound?', options: ['-NO₂', '-NH₂', '-OH',
+                        '-CN'
+                    ], correctIndex: 0 },
+                { question: 'What is the functional group of a sulfonic acid?', options: ['-SO₃H', '-OH', '-COOH',
+                        '-SH'
+                    ], correctIndex: 0 },
+                { question: 'What is the functional group of a phosphate?', options: ['-PO₄', '-OH', '-COOH', '-NH₂'],
+                    correctIndex: 0 },
+            ],
+
+            'PHY 102': [
+                { question: 'What is the SI unit of electric charge?', options: ['Coulomb', 'Ampere', 'Volt', 'Ohm'],
+                    correctIndex: 0 },
+                { question: 'What is the electric field intensity at a point?', options: ['Force per unit charge',
+                        'Potential per unit charge', 'Energy per unit charge', 'Power per unit charge'
+                    ], correctIndex: 0 },
+                { question: 'What is the unit of magnetic flux density?', options: ['Tesla', 'Weber', 'Henry', 'Farad'],
+                    correctIndex: 0 },
+                { question: 'What is the phenomenon of emission of electrons from a metal surface when light shines?',
+                    options: ['Photoelectric effect', 'Thermionic emission', 'Field emission', 'Secondary emission'],
+                    correctIndex: 0 },
+                { question: 'What is the wave-particle duality?', options: ['Light behaves as both wave and particle',
+                        'Light only behaves as a wave', 'Light only behaves as a particle',
+                        'Light neither behaves as wave nor particle'
+                    ], correctIndex: 0 },
+                { question: 'What is the speed of light in vacuum?', options: ['3 × 10⁸ m/s', '3 × 10⁶ m/s',
+                        '3 × 10¹⁰ m/s', '3 × 10⁴ m/s'
+                    ], correctIndex: 0 },
+                { question: 'What is the focal length of a concave mirror?', options: ['Positive', 'Negative', 'Zero',
+                        'Infinite'
+                    ], correctIndex: 0 },
+                { question: 'What is the focal length of a convex mirror?', options: ['Negative', 'Positive', 'Zero',
+                        'Infinite'
+                    ], correctIndex: 0 },
+                { question: 'What is the unit of electric potential?', options: ['Volt', 'Joule', 'Coulomb', 'Watt'],
+                    correctIndex: 0 },
+                { question: 'What is the unit of electric current?', options: ['Ampere', 'Volt', 'Ohm', 'Watt'],
+                    correctIndex: 0 },
+                { question: 'What is the unit of resistance?', options: ['Ohm', 'Volt', 'Ampere', 'Watt'],
+                correctIndex: 0 },
+                { question: 'What is the unit of power?', options: ['Watt', 'Joule', 'Volt', 'Ampere'], correctIndex: 0 },
+                { question: 'What is the unit of energy?', options: ['Joule', 'Watt', 'Volt', 'Ampere'],
+                correctIndex: 0 },
+                { question: 'What is the law that states the force between two charges is proportional to the product of charges and inversely proportional to the square of distance?',
+                    options: ['Coulomb\'s law', 'Ohm\'s law', 'Faraday\'s law', 'Gauss\'s law'], correctIndex: 0 },
+                { question: 'What is the unit of capacitance?', options: ['Farad', 'Henry', 'Tesla', 'Weber'],
+                    correctIndex: 0 },
+                { question: 'What is the unit of inductance?', options: ['Henry', 'Farad', 'Tesla', 'Weber'],
+                    correctIndex: 0 },
+                { question: 'What is the SI unit of magnetic flux?', options: ['Weber', 'Tesla', 'Henry', 'Farad'],
+                    correctIndex: 0 },
+                { question: 'What is the phenomenon where a magnetic field induces an electromotive force?', options: [
+                        'Electromagnetic induction', 'Photoelectric effect', 'Radioactivity', 'Diffraction'
+                    ], correctIndex: 0 },
+                { question: 'What is the wavelength of visible light?', options: ['400-700 nm', '200-400 nm',
+                        '700-1000 nm', '100-200 nm'
+                    ], correctIndex: 0 },
+                { question: 'What is the frequency of visible light?', options: ['4×10¹⁴ - 7.5×10¹⁴ Hz',
+                        '10¹⁰ - 10¹² Hz', '10¹⁵ - 10¹⁶ Hz', '10⁶ - 10⁸ Hz'
+                    ], correctIndex: 0 },
+                { question: 'What is the law of reflection?', options: ['Angle of incidence equals angle of reflection',
+                        'Angle of incidence is less than angle of reflection',
+                        'Angle of incidence is greater than angle of reflection', 'None of the above'
+                    ], correctIndex: 0 },
+                { question: 'What is the refractive index of a medium?', options: ['Speed of light in vacuum / Speed of light in medium',
+                        'Speed of light in medium / Speed of light in vacuum', 'Frequency of light in vacuum / Frequency in medium',
+                        'Wavelength in vacuum / Wavelength in medium'
+                    ], correctIndex: 0 },
+                { question: 'What is the critical angle?', options: ['Angle of incidence that produces 90° refraction',
+                        'Angle of refraction that produces 90° incidence', 'Angle of total internal reflection',
+                        'Both A and C'
+                    ], correctIndex: 3 },
+                { question: 'What is the unit of radioactive decay constant?', options: ['s⁻¹', 's', 'J', 'kg'],
+                    correctIndex: 0 },
+                { question: 'What is the half-life of a radioactive substance?', options: ['Time for half of the atoms to decay',
+                        'Time for all atoms to decay', 'Time for half of the mass to decay', 'None of the above'
+                    ], correctIndex: 0 },
+                { question: 'What is the unit of gravitational field strength?', options: ['N/kg', 'N/m', 'J/kg',
+                        'W/kg'
+                    ], correctIndex: 0 },
+                { question: 'What is the value of acceleration due to gravity on Earth?', options: ['9.8 m/s²',
+                        '9.8 m/s', '9.8 N', '9.8 kg'
+                    ], correctIndex: 0 },
+                { question: 'What is the unit of gravitational potential?', options: ['J/kg', 'N/kg', 'J/m', 'N/m'],
+                    correctIndex: 0 },
+                { question: 'What is the nature of electromagnetic waves?', options: ['Transverse', 'Longitudinal',
+                        'Both', 'Neither'
+                    ], correctIndex: 0 },
+                { question: 'What is the speed of electromagnetic waves in vacuum?', options: ['3 × 10⁸ m/s',
+                        '3 × 10⁶ m/s', '3 × 10¹⁰ m/s', '3 × 10⁴ m/s'
+                    ], correctIndex: 0 },
+            ],
+
+            'BIO 102': [
+                { question: 'Which of the following is a characteristic of the Animal Kingdom?', options: ['Heterotrophic',
+                        'Autotrophic', 'Cell wall present', 'Chlorophyll present'
+                    ], correctIndex: 0 },
+                { question: 'Which phylum includes animals with a notochord?', options: ['Chordata', 'Arthropoda',
+                        'Mollusca', 'Annelida'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a class of the phylum Chordata?', options: ['Mammalia',
+                        'Insecta', 'Arachnida', 'Crustacea'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of the Plant Kingdom?', options: ['Autotrophic',
+                        'Heterotrophic', 'Motile', 'Heterotrophs'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a division of the Plant Kingdom?', options: ['Bryophyta',
+                        'Porifera', 'Cnidaria', 'Platyhelminthes'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the system used to name organisms?', options: ['Binomial nomenclature',
+                        'Trinomial nomenclature', 'Polynomial nomenclature', 'Uninomial nomenclature'
+                    ], correctIndex: 0 },
+                { question: 'What is the primary difference between plants and animals?', options: ['Mode of nutrition',
+                        'Mode of reproduction', 'Habitat', 'Size'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of algae?', options: ['Photosynthetic',
+                        'Non-photosynthetic', 'Multicellular only', 'Unicellular only'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of bryophytes?', options: ['Non-vascular',
+                        'Vascular', 'Seed-bearing', 'Fruit-bearing'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of pteridophytes?', options: ['Vascular',
+                        'Non-vascular', 'Seed-bearing', 'Flowering'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of gymnosperms?', options: ['Naked seeds',
+                        'Fruits', 'Flowers', 'Double fertilization'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of angiosperms?', options: ['Flowers and fruits',
+                        'Naked seeds', 'No flowers', 'No fruits'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of the phylum Arthropoda?', options: [
+                        'Exoskeleton', 'Endoskeleton', 'Segmented body', 'Both A and C'
+                    ], correctIndex: 3 },
+                { question: 'Which of the following is a class of the phylum Arthropoda?', options: ['Insecta',
+                        'Mammalia', 'Aves', 'Reptilia'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of the phylum Mollusca?', options: ['Soft body',
+                        'Hard exoskeleton', 'Jointed appendages', 'Notochord'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of the phylum Annelida?', options: ['Segmented body',
+                        'Non-segmented body', 'Jointed appendages', 'Exoskeleton'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of the phylum Cnidaria?', options: ['Radial symmetry',
+                        'Bilateral symmetry', 'Segmented body', 'Notochord'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of the phylum Platyhelminthes?', options: [
+                        'Flat body', 'Round body', 'Segmented body', 'Jointed appendages'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of the phylum Porifera?', options: ['Pores',
+                        'Jointed appendages', 'Notochord', 'Segmented body'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of the phylum Echinodermata?', options: [
+                        'Spiny skin', 'Soft body', 'Jointed appendages', 'Segmented body'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a class of the phylum Chordata?', options: ['Aves', 'Insecta',
+                        'Arachnida', 'Crustacea'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of the class Mammalia?', options: ['Mammary glands',
+                        'Feathers', 'Scales', 'Gills'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of the class Aves?', options: ['Feathers',
+                        'Mammary glands', 'Scales', 'Gills'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of the class Reptilia?', options: ['Scales',
+                        'Feathers', 'Mammary glands', 'Gills'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of the class Amphibia?', options: ['Moist skin',
+                        'Scales', 'Feathers', 'Mammary glands'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of the class Pisces?', options: ['Gills',
+                        'Lungs', 'Feathers', 'Mammary glands'
+                    ], correctIndex: 0 },
+                { question: 'What is the study of classification of organisms called?', options: ['Taxonomy',
+                        'Ecology', 'Genetics', 'Anatomy'
+                    ], correctIndex: 0 },
+                { question: 'Who is known as the father of taxonomy?', options: ['Carl Linnaeus', 'Charles Darwin',
+                        'Gregor Mendel', 'Louis Pasteur'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of prokaryotic cells?', options: ['No nucleus',
+                        'Nucleus present', 'Membrane-bound organelles', 'Complex structure'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of eukaryotic cells?', options: ['Nucleus present',
+                        'No nucleus', 'No membrane-bound organelles', 'Simple structure'
+                    ], correctIndex: 0 },
+            ],
+
+            'GNS 102': [
+                { question: 'What is the term for a group of words that functions as a single unit in a sentence?',
+                    options: ['Phrase', 'Clause', 'Sentence', 'Paragraph'], correctIndex: 0 },
+                { question: 'What is the term for a group of words that contains a subject and a verb?',
+                    options: ['Clause', 'Phrase', 'Sentence', 'Paragraph'], correctIndex: 0 },
+                { question: 'What is the term for a word that modifies a noun?', options: ['Adjective', 'Adverb',
+                        'Verb', 'Preposition'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for a word that modifies a verb?', options: ['Adverb', 'Adjective',
+                        'Noun', 'Preposition'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for a word that shows relationship between a noun and another word?',
+                    options: ['Preposition', 'Conjunction', 'Interjection', 'Adverb'], correctIndex: 0 },
+                { question: 'What is the term for a word that connects words, phrases, or clauses?', options: [
+                        'Conjunction', 'Preposition', 'Interjection', 'Adverb'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for a word that expresses strong emotion?', options: ['Interjection',
+                        'Conjunction', 'Preposition', 'Adverb'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for a word that takes the place of a noun?', options: ['Pronoun',
+                        'Adjective', 'Adverb', 'Preposition'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for a verb that is used with another verb to show tense?', options: [
+                        'Helping verb', 'Linking verb', 'Action verb', 'Transitive verb'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for a verb that connects the subject to a noun or adjective?',
+                    options: ['Linking verb', 'Action verb', 'Helping verb', 'Transitive verb'], correctIndex: 0 },
+                { question: 'What is the term for a noun that names a specific person, place, or thing?', options: [
+                        'Proper noun', 'Common noun', 'Abstract noun', 'Collective noun'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for a noun that names a general person, place, or thing?', options: [
+                        'Common noun', 'Proper noun', 'Abstract noun', 'Collective noun'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for a noun that names an idea or quality?', options: ['Abstract noun',
+                        'Concrete noun', 'Proper noun', 'Common noun'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for a noun that names a group of people or things?', options: [
+                        'Collective noun', 'Abstract noun', 'Proper noun', 'Common noun'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for a word that has the same or nearly the same meaning as another word?',
+                    options: ['Synonym', 'Antonym', 'Homonym', 'Homophone'], correctIndex: 0 },
+                { question: 'What is the term for a word that has the opposite meaning of another word?', options: [
+                        'Antonym', 'Synonym', 'Homonym', 'Homophone'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for a word that has the same spelling as another word but different meaning?',
+                    options: ['Homonym', 'Homophone', 'Synonym', 'Antonym'], correctIndex: 0 },
+                { question: 'What is the term for a word that has the same pronunciation as another word but different meaning and spelling?',
+                    options: ['Homophone', 'Homonym', 'Synonym', 'Antonym'], correctIndex: 0 },
+                { question: 'What is the term for a fixed expression whose meaning is not predictable from the usual meaning of its constituent words?',
+                    options: ['Idiom', 'Proverb', 'Collocation', 'Phrasal verb'], correctIndex: 0 },
+                { question: 'What is the term for a short, well-known pithy saying that expresses a general truth?',
+                    options: ['Proverb', 'Idiom', 'Collocation', 'Phrasal verb'], correctIndex: 0 },
+                { question: 'What is the term for a combination of words that frequently appear together?', options: [
+                        'Collocation', 'Idiom', 'Proverb', 'Phrasal verb'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for a verb that is followed by a preposition or adverb?', options: [
+                        'Phrasal verb', 'Idiom', 'Proverb', 'Collocation'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for the way in which words are arranged to form sentences?', options: [
+                        'Syntax', 'Morphology', 'Phonology', 'Semantics'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for the study of the structure of words?', options: ['Morphology',
+                        'Syntax', 'Phonology', 'Semantics'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for the study of the sounds of a language?', options: ['Phonology',
+                        'Morphology', 'Syntax', 'Semantics'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for the study of meaning in language?', options: ['Semantics',
+                        'Phonology', 'Morphology', 'Syntax'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for a word that is used to express a command or request?', options: [
+                        'Imperative', 'Interrogative', 'Declarative', 'Exclamatory'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for a word that is used to ask a question?', options: ['Interrogative',
+                        'Imperative', 'Declarative', 'Exclamatory'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for a word that is used to make a statement?', options: ['Declarative',
+                        'Interrogative', 'Imperative', 'Exclamatory'
+                    ], correctIndex: 0 },
+                { question: 'What is the term for a word that is used to express strong emotion?', options: [
+                        'Exclamatory', 'Declarative', 'Interrogative', 'Imperative'
+                    ], correctIndex: 0 },
+            ],
+
+            'GNS 104': [
+                { question: 'What is the name of the largest ethnic group in Nigeria?', options: ['Hausa', 'Yoruba',
+                        'Igbo', 'Fulani'
+                    ], correctIndex: 0 },
+                { question: 'What is the capital of Nigeria?', options: ['Abuja', 'Lagos', 'Kano', 'Ibadan'],
+                    correctIndex: 0 },
+                { question: 'What is the official language of Nigeria?', options: ['English', 'Hausa', 'Yoruba', 'Igbo'],
+                    correctIndex: 0 },
+                { question: 'What is the name of the Nigerian flag?', options: ['Green-White-Green', 'Red-White-Blue',
+                        'Black-White-Red', 'Green-Yellow-Red'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian national anthem?', options: ['Arise, O Compatriots',
+                        'Nigeria, We Hail Thee', 'God Bless Nigeria', 'Nigerian National Anthem'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian pledge?', options: ['I pledge to Nigeria my country',
+                        'I pledge allegiance to Nigeria', 'I pledge my loyalty to Nigeria',
+                        'I pledge my life to Nigeria'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian currency?', options: ['Naira', 'Cedi', 'Shilling',
+                        'Pound'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian parliament?', options: ['National Assembly', 'Congress',
+                        'Parliament', 'Senate'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian judiciary?', options: ['Supreme Court', 'High Court',
+                        'Appeal Court', 'Magistrate Court'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian president?', options: ['Bola Tinubu', 'Muhammadu Buhari',
+                        'Goodluck Jonathan', 'Olusegun Obasanjo'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian vice president?', options: ['Kashim Shettima',
+                        'Yemi Osinbajo', 'Atiku Abubakar', 'Peter Obi'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian Senate President?', options: ['Godswill Akpabio',
+                        'Ahmad Lawan', 'Bukola Saraki', 'David Mark'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian House of Representatives Speaker?', options: [
+                        'Tajudeen Abbas', 'Femi Gbajabiamila', 'Yakubu Dogara', 'Aminu Tambuwal'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian Chief Justice?', options: ['Olukayode Ariwoola',
+                        'Walter Onnoghen', 'Mahmud Mohammed', 'Aloma Mukhtar'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian Attorney General?', options: ['Lateef Fagbemi',
+                        'Abubakar Malami', 'Adoke Bello', 'Michael Aondoakaa'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian Inspector General of Police?', options: ['Kayode Egbetokun',
+                        'Usman Baba', 'Mohammed Adamu', 'Ibrahim Idris'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian Army Chief?', options: ['Taoreed Lagbaja',
+                        'Farouk Yahaya', 'Tukur Buratai', 'Kenneth Minimah'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian Navy Chief?', options: ['Emmanuel Ogalla',
+                        'Awwal Gambo', 'Ibok-Ete Ibas', 'Usman Jibrin'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian Air Force Chief?', options: ['Hassan Abubakar',
+                        'Oladayo Amao', 'Sadique Abubakar', 'Alex Badeh'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian Minister of Education?', options: ['Tahir Mamman',
+                        'Adamu Adamu', 'Mallam Ibrahim Shekarau', 'Rufai Ahmed'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian Minister of Health?', options: ['Ali Pate',
+                        'Osagie Ehanire', 'Isaac Adewole', 'Onyebuchi Chukwu'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian Minister of Finance?', options: ['Wale Edun',
+                        'Zainab Ahmed', 'Kemi Adeosun', 'Ngozi Okonjo-Iweala'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian Minister of Justice?', options: ['Lateef Fagbemi',
+                        'Abubakar Malami', 'Adoke Bello', 'Michael Aondoakaa'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian Minister of Agriculture?', options: ['Abubakar Kyari',
+                        'Mohammed Abubakar', 'Audu Ogbeh', 'Akinwumi Adesina'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian Minister of Petroleum?', options: ['Heineken Lokpobiri',
+                        'Timipre Sylva', 'Ibe Kachikwu', 'Diezani Alison-Madueke'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian Minister of Power?', options: ['Adebayo Adelabu',
+                        'Saleh Mamman', 'Abubakar Aliyu', 'Goddy Jedy-Agba'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian Minister of Transportation?', options: ['Saidu Alkali',
+                        'Rotimi Amaechi', 'Chibuike Amaechi', 'Abdulaziz Yari'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian Minister of Works?', options: ['David Umahi',
+                        'Babatunde Fashola', 'Mike Onolememen', 'Adedayo Adeyeye'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian Minister of Defence?', options: ['Abubakar Badaru',
+                        'Bashir Magashi', 'Mansur Dan-Ali', 'Aliyu Gusau'
+                    ], correctIndex: 0 },
+                { question: 'What is the name of the Nigerian Minister of Interior?', options: ['Olubunmi Tunji-Ojo',
+                        'Rauf Aregbesola', 'Abdulrahman Dambazau', 'Emmanuel Iheanacho'
+                    ], correctIndex: 0 },
+            ]
+        };
+
+        // ─── DAILY CHALLENGE ENGINE ───
         let challengeQuestions = [];
         let challengeIndex = 0;
         let challengeScore = 0;
         let challengeAnswered = false;
-
-        async function startDailyChallenge() {
-            const container = document.getElementById('challengeQuestions');
-            const resultDiv = document.getElementById('challengeResult');
-            const startBtn = document.getElementById('startChallengeBtn');
-
-            container.style.display = 'block';
-            resultDiv.style.display = 'none';
-            startBtn.style.display = 'none';
-            challengeIndex = 0;
-            challengeScore = 0;
-            challengeAnswered = false;
-
-            try {
-                // Fetch 5 random questions from the quizzes collection
-                const qSnap = await db.collection('quizzes').limit(30).get();
-                let allQs = [];
-                qSnap.forEach(doc => allQs.push({ id: doc.id, ...doc.data() }));
-
-                if (allQs.length === 0) {
-                    // Fallback: generate dummy questions
-                    allQs = generateDummyQuestions();
-                }
-
-                // Shuffle and pick 5
-                challengeQuestions = shuffleArray(allQs).slice(0, 5);
-                if (challengeQuestions.length < 5) {
-                    // Fill with dummies if not enough
-                    const dummies = generateDummyQuestions();
-                    while (challengeQuestions.length < 5) {
-                        challengeQuestions.push(dummies[challengeQuestions.length % dummies.length]);
-                    }
-                }
-
-                renderChallengeQuestion();
-
-            } catch (err) {
-                console.error('Challenge error:', err);
-                // Fallback to dummy questions
-                challengeQuestions = shuffleArray(generateDummyQuestions()).slice(0, 5);
-                renderChallengeQuestion();
-            }
-        }
-
-        function generateDummyQuestions() {
-            return [
-                { question: 'What is the capital of Nigeria?', options: ['Lagos', 'Abuja', 'Kano', 'Ibadan'], correctIndex: 1 },
-                { question: 'What is 2 + 2?', options: ['3', '4', '5', '6'], correctIndex: 1 },
-                { question: 'Which planet is known as the Red Planet?', options: ['Venus', 'Mars', 'Jupiter', 'Saturn'], correctIndex: 1 },
-                { question: 'What is the chemical symbol for water?', options: ['H2O', 'CO2', 'NaCl', 'HCl'], correctIndex: 0 },
-                { question: 'Who wrote "Things Fall Apart"?', options: ['Wole Soyinka', 'Chinua Achebe', 'Chimamanda Adichie', 'Ben Okri'], correctIndex: 1 },
-                { question: 'What is the largest ocean on Earth?', options: ['Atlantic', 'Indian', 'Arctic', 'Pacific'], correctIndex: 3 },
-                { question: 'What is the square root of 144?', options: ['10', '11', '12', '13'], correctIndex: 2 },
-                { question: 'Which gas do plants absorb from the atmosphere?', options: ['Oxygen', 'Carbon Dioxide', 'Nitrogen', 'Hydrogen'], correctIndex: 1 },
-                { question: 'What is the longest river in the world?', options: ['Amazon', 'Nile', 'Mississippi', 'Yangtze'], correctIndex: 1 },
-                { question: 'Which year did Nigeria gain independence?', options: ['1957', '1960', '1963', '1970'], correctIndex: 1 },
-            ];
-        }
+        let currentChallengeSubject = '';
 
         function shuffleArray(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
@@ -2003,6 +2441,58 @@
                 [arr[i], arr[j]] = [arr[j], arr[i]];
             }
             return arr;
+        }
+
+        function getRandomSubject() {
+            const subjects = Object.keys(QUESTION_BANK);
+            return subjects[Math.floor(Math.random() * subjects.length)];
+        }
+
+        function getQuestionsForSubject(subject) {
+            const qs = QUESTION_BANK[subject] || [];
+            // Shuffle and pick 5
+            return shuffleArray([...qs]).slice(0, 5);
+        }
+
+        function startDailyChallenge(subject) {
+            if (subject === 'random' || !subject) {
+                subject = getRandomSubject();
+            }
+
+            // Ensure we have at least 5 questions for the subject
+            let questions = getQuestionsForSubject(subject);
+            if (questions.length < 5) {
+                // Fallback to random subject
+                subject = getRandomSubject();
+                questions = getQuestionsForSubject(subject);
+            }
+
+            currentChallengeSubject = subject;
+            challengeQuestions = questions;
+            challengeIndex = 0;
+            challengeScore = 0;
+            challengeAnswered = false;
+
+            const container = document.getElementById('challengeQuestions');
+            const resultDiv = document.getElementById('challengeResult');
+            const startBtn = document.getElementById('startChallengeBtn');
+
+            container.style.display = 'block';
+            resultDiv.style.display = 'none';
+            startBtn.style.display = 'none';
+
+            // Show subject label
+            document.querySelector('#challengeContainer .small')?.remove();
+            const subjectLabel = document.createElement('p');
+            subjectLabel.className = 'small';
+            subjectLabel.style.margin = '4px 0';
+            subjectLabel.textContent = `📚 Subject: ${subject} • ${challengeQuestions.length} questions`;
+            const containerDiv = document.getElementById('challengeContainer');
+            const existing = containerDiv.querySelector('.small');
+            if (existing) existing.remove();
+            containerDiv.insertBefore(subjectLabel, containerDiv.firstChild);
+
+            renderChallengeQuestion();
         }
 
         function renderChallengeQuestion() {
@@ -2047,7 +2537,6 @@
                 document.getElementById('challengeLiveScore').textContent = challengeScore;
             }
 
-            // Auto advance after 1.5s
             setTimeout(() => {
                 challengeIndex++;
                 renderChallengeQuestion();
@@ -2083,15 +2572,17 @@
             if (lastChallenge !== today) {
                 localStorage.setItem('lastChallengeDate', today);
                 localStorage.setItem('challengeCompleted', 'false');
-                // Reset challenge state
                 document.getElementById('challengeResult').style.display = 'none';
                 document.getElementById('challengeQuestions').style.display = 'none';
                 document.getElementById('startChallengeBtn').style.display = 'inline-block';
                 document.getElementById('startChallengeBtn').textContent = '🚀 Start Challenge';
+                const container = document.getElementById('challengeContainer');
+                const existing = container.querySelector('.small');
+                if (existing) existing.remove();
             }
         }
 
-        // ─── STREAK (local fallback + Firestore) ───
+        // ─── STREAK (local + Firestore) ───
         function getStreakStats() {
             const streak = parseInt(localStorage.getItem('streak')) || 0;
             const bestStreak = parseInt(localStorage.getItem('bestStreak')) || 0;
@@ -2122,10 +2613,7 @@
             const bestStreak = parseInt(localStorage.getItem('bestStreak')) || 0;
             const totalDays = parseInt(localStorage.getItem('totalStudyDays')) || 0;
 
-            if (lastStudy === today) {
-                showNotification('✅ Already logged today.');
-                return;
-            }
+            if (lastStudy === today) { showNotification('✅ Already logged today.'); return; }
 
             const yesterday = new Date();
             yesterday.setDate(yesterday.getDate() - 1);
@@ -2144,11 +2632,8 @@
             }
 
             updateStreakUI();
-            // Also update Firestore
             updateStreak();
-            // Award XP for logging study
             awardXP(5, 'daily_login');
-
             if (currentUser) syncLocalToCloud();
         }
 
@@ -2204,13 +2689,10 @@
             ctx.fillStyle = '#94a3b8';
             ctx.font = '16px "Segoe UI", sans-serif';
             ctx.fillText('Study smarter with GoatTutor', 30, 300);
-
-            // Add XP & Level
             const levelData = getLevelData(gamificationData.level || 1);
             ctx.fillStyle = '#fbbf24';
             ctx.font = '18px "Segoe UI", sans-serif';
             ctx.fillText(`${levelData.icon} ${levelData.name} • ${gamificationData.xp || 0} XP`, 30, 340);
-
             const dataUrl = canvas.toDataURL('image/png');
             const link = document.createElement('a');
             link.download = 'goattutor-cgpa-card.png';
@@ -2249,7 +2731,6 @@
             showNotification('🚀 Opening ' + (service === 'chatgpt' ? 'ChatGPT' : service === 'gemini' ? 'Gemini' : 'DeepSeek') +
                 '...');
             logQuickAction('AI Query (' + service + '): ' + t);
-            // Award XP for using AI
             awardXP(3, 'ai_query');
         }
 
@@ -2337,7 +2818,6 @@
             loadPlan(true);
             updateDash();
             renderAchievements();
-            // Load gamification from localStorage
             const saved = localStorage.getItem('gamification');
             if (saved) {
                 try {
@@ -2488,7 +2968,6 @@
             if (navBtnId) document.getElementById(navBtnId).classList.add('active-nav');
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            // Load data on navigation
             if (section === 'planner') loadPlan(true);
             if (section === 'gpaHistory') renderSavedSemesters();
             if (section === 'calendar') renderAcademicCalendar();
@@ -2650,7 +3129,6 @@
             renderSavedSemesters();
             renderCGPATracker();
             updateDash();
-            // Award XP for saving a semester
             awardXP(10, 'semester_saved');
             showNotification('💾 Semester saved. +10 XP');
             if (currentUser) syncLocalToCloud();
@@ -2752,7 +3230,6 @@
             document.getElementById('cgpaOut').innerHTML = '✅ CGPA: <strong>' + cgpa + '</strong> | Class: ' + getDegreeClass(
                 cgpa);
             showNotification('📈 CGPA: ' + cgpa);
-            // Award XP
             awardXP(5, 'cgpa_calculated');
         }
 
@@ -2914,9 +3391,9 @@
             msg += 'Study: ' + (mins / 60).toFixed(1) + ' hrs<br>';
             msg += 'Sessions: ' + sessions + '<br>';
             msg += 'Semesters: ' + semesters.length + '<br><br>';
-            // Gamification stats
             msg += '🎮 Gamification:<br>';
-            msg += 'Level: ' + (gamificationData.level || 1) + ' (' + (getLevelData(gamificationData.level || 1).name) + ')<br>';
+            msg += 'Level: ' + (gamificationData.level || 1) + ' (' + (getLevelData(gamificationData.level || 1).name) +
+                ')<br>';
             msg += 'XP: ' + (gamificationData.xp || 0) + '<br>';
             msg += 'Badges: ' + ((gamificationData.badges || []).length) + '<br><br>';
             if (gpa >= 4.5) msg += '🌟 Excellent!';
@@ -2998,7 +3475,6 @@
                     document.getElementById('pomodoroCount').innerText = pomodoroCompleted;
                     addStudyMinutes(25);
                     logSession(25);
-                    // Award XP for completing a Pomodoro
                     awardXP(10, 'pomodoro_complete');
                     showNotification('🍅 Done! +10 XP');
                     document.getElementById('sessionTimerStatus').innerText = '✅ Completed';
@@ -3256,7 +3732,6 @@
                 viewer.style.display = 'block';
                 placeholder.style.display = 'none';
                 showNotification('📄 Loading: ' + file.name);
-                // Award XP for viewing a PDF
                 awardXP(2, 'pdf_view');
             } catch (err) { console.error(err);
                 showNotification('❌ Failed to load PDF.'); }
@@ -3462,7 +3937,7 @@
         document.getElementById('sidebarOverlay').addEventListener('click', closeMenu);
         document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMenu(); });
         init();
-        console.log('🐐 GoatTutor v7 – Gamification ready!');
+        console.log('🐐 GoatTutor v7 – Gamified with UNIOSUN question bank!');
     </script>
     <script type="text/javascript">
         (function(c, l, a, r, i, t, y) {
