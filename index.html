@@ -10,8 +10,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <!-- Load the hidden API key -->
-    <script src="config.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
         /* ─── RESET & BASE ─── */
@@ -81,6 +79,8 @@
         button.danger { background:#dc2626; }
         button.danger:hover { background:#b91c1c; }
         button.small-btn { width:auto; padding:8px 16px; font-size:0.8rem; margin-top:4px; min-height:34px; }
+        .ai-btn-row { display:flex; gap:8px; flex-wrap:wrap; }
+        .ai-btn-row button { flex:1; min-width:100px; }
         /* ─── ROW ─── */
         .row { display:flex; gap:8px; margin-top:6px; flex-wrap:wrap; }
         .row input, .row select { flex:1 1 0; min-width:80px; }
@@ -136,10 +136,6 @@
         body.theme-purple .card, body.theme-purple .topbar, body.theme-purple .sidebar { background:#3e2a5c; }
         body.theme-forest { background:#1a3a2a; }
         body.theme-forest .card, body.theme-forest .topbar, body.theme-forest .sidebar { background:#2b5a3a; }
-        /* ─── AI CHAT ─── */
-        #aiChatCard { display:none; }
-        #aiChatMessages { background:#0f172a; border-radius:10px; padding:10px; height:250px; overflow-y:auto; margin-bottom:8px; }
-        #aiChatMessages p { margin:4px 0; }
         /* ─── RESPONSIVE ─── */
         @media (max-width:600px){ .timer{font-size:32px;} .dash-grid{grid-template-columns:1fr 1fr; gap:6px;} .dash-card .value{font-size:1.3rem;} .container{padding:8px 10px; gap:10px;} .card{padding:12px 14px;} .row{flex-direction:column;} .row input, .row select, .row button{flex:1 1 100%; min-width:0;} .row button{min-height:48px;} .sidebar{width:260px; left:-260px; padding:16px 12px;} .sidebar button{font-size:0.9rem; padding:10px 12px; min-height:44px;} .topbar .logo{font-size:1rem;} .topbar .menuBtn{font-size:26px; min-width:40px; min-height:40px;} .notification-toast{max-width:90%; right:10px; top:10px;} .pdf-list-item .file-actions button{font-size:0.65rem; padding:4px 8px; min-height:28px;} .auth-page .auth-box{padding:20px 16px;} .auth-page .logo-big{font-size:2.5rem;} .topbar{flex-direction:row; flex-wrap:wrap; gap:6px;} .topbar .auth-status{order:1;} .topbar .menuBtn{order:2;} .quick-grid{grid-template-columns:1fr 1fr;} .streak-grid{grid-template-columns:1fr 1fr;} .dash-grid{grid-template-columns:1fr 1fr;} }
         @media (max-width:400px){ .dash-grid{grid-template-columns:1fr;} .quick-grid{grid-template-columns:1fr;} .streak-grid{grid-template-columns:1fr;} .card h3{font-size:0.9rem;} button{font-size:0.8rem; padding:10px 12px; min-height:44px;} .timer{font-size:26px;} .countdown-display{font-size:1.4rem;} .auth-page .auth-box h2{font-size:1.2rem;} }
@@ -236,18 +232,12 @@
                     <select id="mode">
                         <option value="tutorial">📖 Tutorial</option><option value="summary">📝 Summary</option><option value="mcq">❓ MCQ Quiz</option><option value="revision">🔄 Revision Notes</option><option value="flashcards">🃏 Flashcards</option>
                     </select>
-                    <button onclick="askAI()">🚀 Start AI Chat</button>
-                </div>
-
-                <!-- AI CHAT PANEL -->
-                <div class="card" id="aiChatCard">
-                    <h3>🤖 AI Chat <span style="font-size:0.7rem;color:#94a3b8;">(Gemini)</span></h3>
-                    <div id="aiChatMessages"></div>
-                    <div class="row">
-                        <textarea id="aiChatInput" placeholder="Ask a question about your topic..." style="flex:2;"></textarea>
-                        <button onclick="sendChatMessage()" style="flex:1;">Send</button>
+                    <div class="ai-btn-row">
+                        <button onclick="openAI('chatgpt')">🚀 ChatGPT</button>
+                        <button onclick="openAI('gemini')">🧠 Gemini</button>
+                        <button onclick="openAI('deepseek')">🌐 DeepSeek</button>
                     </div>
-                    <button onclick="closeChat()" class="secondary small-btn">Close Chat</button>
+                    <div class="small" style="text-align:center;color:#94a3b8;padding:4px;">(Opens in a new tab – no API key needed)</div>
                 </div>
 
                 <!-- DASHBOARD -->
@@ -449,10 +439,6 @@
         let currentUser = null;
         let userDocRef = null;
 
-        // AI chat context
-        let chatTopic = '';
-        let chatMode = 'tutorial';
-
         // ─── ACADEMIC EVENTS ───
         const academicEvents = [
             { date: '2025-11-10', title: 'Resumption – Fresh Students' },
@@ -611,77 +597,25 @@
             showNotification('📸 CGPA card downloaded!');
         }
 
-        // ─── AI CHAT ───
-        function askAI() {
+        // ─── MULTI-AI OPENER ───
+        function openAI(service) {
             const t = document.getElementById('topic').value.trim();
+            const m = document.getElementById('mode').value;
             if (!t) { showNotification('⚠️ Enter a topic.'); return; }
-            chatTopic = t;
-            chatMode = document.getElementById('mode').value;
-            document.getElementById('aiChatCard').style.display = 'block';
-            document.getElementById('aiChatMessages').innerHTML = `<p style="color:#94a3b8;">🧠 Tutor ready. Topic: <strong>${chatTopic}</strong> | Mode: ${chatMode}</p>`;
-            document.getElementById('aiChatInput').focus();
-            logQuickAction('AI Chat: ' + chatTopic);
-            checkAchievements();
-        }
-
-        async function sendChatMessage() {
-            const input = document.getElementById('aiChatInput').value.trim();
-            if (!input) return;
-            const messagesDiv = document.getElementById('aiChatMessages');
-
-            messagesDiv.innerHTML += `<p style="color:#e2e8f0;"><strong>You:</strong> ${input}</p>`;
-            document.getElementById('aiChatInput').value = '';
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-            const fullPrompt = `You are a helpful academic tutor. The student's topic is "${chatTopic}" and they want "${chatMode}" mode. Answer their question clearly and helpfully. If the mode is MCQ, provide a multiple-choice question with options and then reveal the correct answer. Question: ${input}`;
-
-            try {
-                const typingId = 'typing-' + Date.now();
-                messagesDiv.innerHTML += `<p id="${typingId}" style="color:#94a3b8;">🤔 Thinking...</p>`;
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-                // Check if the API key is loaded
-                if (typeof GEMINI_API_KEY === 'undefined') {
-                    throw new Error('API key not loaded. Check that config.js exists on the server.');
-                }
-
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: fullPrompt }] }]
-                    })
-                });
-
-                const typingEl = document.getElementById(typingId);
-                if (typingEl) typingEl.remove();
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error?.message || `HTTP ${response.status}`);
-                }
-
-                const data = await response.json();
-                const reply = data.candidates[0].content.parts[0].text;
-                messagesDiv.innerHTML += `<p style="color:#fbbf24;"><strong>AI:</strong> ${reply}</p>`;
-            } catch (err) {
-                console.error(err);
-                let userMsg = '❌ Error: ';
-                if (err.message.includes('API key not loaded')) {
-                    userMsg += 'API key is missing. Please contact the site owner.';
-                } else if (err.message.includes('Failed to fetch')) {
-                    userMsg += 'Could not reach the AI. Check your internet connection.';
-                } else {
-                    userMsg += 'Could not reach AI. Check your internet or API key.';
-                }
-                messagesDiv.innerHTML += `<p style="color:#ef4444;">${userMsg}</p>`;
+            const prompt = 'Act as GoatTutor AI, an expert academic tutor. Mode: ' + m + '. Topic: ' + t;
+            let url = '';
+            if (service === 'chatgpt') {
+                url = 'https://chatgpt.com/?q=' + encodeURIComponent(prompt);
+            } else if (service === 'gemini') {
+                url = 'https://gemini.google.com/chat?q=' + encodeURIComponent(prompt);
+            } else if (service === 'deepseek') {
+                // DeepSeek doesn't support query prompts, open main chat
+                url = 'https://chat.deepseek.com/';
             }
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-
-        function closeChat() {
-            document.getElementById('aiChatCard').style.display = 'none';
-            document.getElementById('aiChatMessages').innerHTML = '';
+            window.open(url, '_blank');
+            showNotification('🚀 Opening ' + (service === 'chatgpt' ? 'ChatGPT' : service === 'gemini' ? 'Gemini' : 'DeepSeek') + '...');
+            logQuickAction('AI Query (' + service + '): ' + t);
+            checkAchievements();
         }
 
         // ─── AUTH STATE ───
@@ -1484,12 +1418,12 @@
         async function summarizePdf(id) {
             const text = await extractPdfText(id); if (!text) return;
             document.getElementById('topic').value = text; document.getElementById('mode').value = 'summary';
-            askAI(); // this will launch the chat panel with the new topic
+            openAI('chatgpt'); // opens ChatGPT with the extracted text
         }
         async function quizPdf(id) {
             const text = await extractPdfText(id); if (!text) return;
             document.getElementById('topic').value = text; document.getElementById('mode').value = 'mcq';
-            askAI();
+            openAI('chatgpt');
         }
         function setupDragDrop() {
             const area = document.getElementById('uploadArea');
@@ -1595,7 +1529,7 @@
         document.getElementById('sidebarOverlay').addEventListener('click', closeMenu);
         document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMenu(); });
         init();
-        console.log('🐐 GoatTutor v7 – Secure & anonymous feedback enabled!');
+        console.log('🐐 GoatTutor v7 – Multi-AI support ready!');
     </script>
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){ c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)}; t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i; y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y); })(window, document, "clarity", "script", "xb50ly2ja2");
