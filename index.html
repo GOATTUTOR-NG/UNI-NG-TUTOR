@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>GoatTutor NG v6 🐐</title>
+    <title>GoatTutor NG v7 🐐</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
     <!-- Firebase SDKs -->
@@ -13,182 +13,139 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
         /* ─── RESET & BASE ─── */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-        body { background: #0f172a; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', system-ui, -apple-system, sans-serif; }
+        body { background:#0f172a; color:#e2e8f0; min-height:100vh; overflow-x:hidden; }
         /* ─── TOP BAR ─── */
-        .topbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: #1e293b; position: sticky; top: 0; z-index: 50; border-bottom: 1px solid #334155; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); flex-wrap: wrap; gap: 8px; }
-        .topbar .logo { font-weight: 700; font-size: 1.1rem; letter-spacing: -0.3px; }
-        .topbar .menuBtn { font-size: 28px; cursor: pointer; background: none; border: none; color: #e2e8f0; padding: 6px 12px; border-radius: 8px; transition: background 0.2s; width: auto; touch-action: manipulation; min-height: 44px; min-width: 44px; display: flex; align-items: center; justify-content: center; }
-        .topbar .menuBtn:hover { background: #334155; }
-        .topbar .auth-status { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: #94a3b8; flex-wrap: wrap; }
-        .topbar .auth-status button { width: auto; padding: 4px 12px; margin: 0; font-size: 0.7rem; min-height: 30px; background: #dc2626; border: none; border-radius: 6px; color: #fff; cursor: pointer; }
-        .topbar .auth-status button:hover { background: #b91c1c; }
-        .topbar .auth-status .user-email { color: #fbbf24; font-weight: 500; }
+        .topbar { display:flex; justify-content:space-between; align-items:center; padding:10px 16px; background:#1e293b; position:sticky; top:0; z-index:50; border-bottom:1px solid #334155; box-shadow:0 2px 8px rgba(0,0,0,0.3); flex-wrap:wrap; gap:8px; }
+        .topbar .logo { font-weight:700; font-size:1.1rem; letter-spacing:-0.3px; }
+        .topbar .menuBtn { font-size:28px; cursor:pointer; background:none; border:none; color:#e2e8f0; padding:6px 12px; border-radius:8px; transition:background 0.2s; width:auto; touch-action:manipulation; min-height:44px; min-width:44px; display:flex; align-items:center; justify-content:center; }
+        .topbar .menuBtn:hover { background:#334155; }
+        .topbar .auth-status { display:flex; align-items:center; gap:8px; font-size:0.8rem; color:#94a3b8; flex-wrap:wrap; }
+        .topbar .auth-status button { width:auto; padding:4px 12px; margin:0; font-size:0.7rem; min-height:30px; background:#dc2626; border:none; border-radius:6px; color:#fff; cursor:pointer; }
+        .topbar .auth-status button:hover { background:#b91c1c; }
+        .topbar .auth-status .user-email { color:#fbbf24; font-weight:500; }
         /* ─── SIDEBAR OVERLAY ─── */
-        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 90; display: none; transition: opacity 0.3s; }
-        .sidebar-overlay.show { display: block; }
+        .sidebar-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:90; display:none; transition:opacity 0.3s; }
+        .sidebar-overlay.show { display:block; }
         /* ─── SIDEBAR ─── */
-        .sidebar { position: fixed; top: 0; left: -280px; width: 270px; height: 100%; background: #0f172a; padding: 20px 14px; transition: left 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); border-right: 1px solid #334155; z-index: 100; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; }
-        .sidebar.open { left: 0; }
-        .sidebar h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 6px; letter-spacing: 0.5px; text-transform: uppercase; }
-        .sidebar-group { margin-top: 2px; }
-        .sidebar-group-btn { width: 100% !important; padding: 12px 14px !important; border: none !important; border-radius: 10px !important; background: #1e293b !important; color: #e2e8f0 !important; text-align: left !important; cursor: pointer !important; font-size: 0.95rem !important; transition: all 0.2s !important; display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 10px !important; min-height: 48px !important; }
-        .sidebar-group-btn:hover { background: #334155 !important; transform: translateX(3px) !important; }
-        .sidebar-group-btn .arrow { font-size: 0.7rem; transition: transform 0.3s; }
-        .sidebar-group-btn .arrow.open { transform: rotate(180deg); }
-        .sidebar-group-items { overflow: hidden; max-height: 0; transition: max-height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); padding-left: 8px; }
-        .sidebar-group-items.open { max-height: 600px; }
-        .sidebar-group-items button { width: 100% !important; padding: 10px 14px !important; border: none !important; border-radius: 8px !important; background: #0f172a !important; color: #94a3b8 !important; text-align: left !important; cursor: pointer !important; font-size: 0.85rem !important; transition: all 0.2s !important; display: flex !important; align-items: center !important; gap: 8px !important; min-height: 40px !important; margin-top: 2px !important; }
-        .sidebar-group-items button:hover { background: #1e293b !important; color: #e2e8f0 !important; transform: translateX(3px) !important; }
-        .sidebar-group-items button.active-nav { background: #3b82f6 !important; color: #fff !important; font-weight: 600 !important; }
-        .sidebar button:not(.sidebar-group-btn):not(.sidebar-group-items button) { width: 100%; padding: 12px 14px; border: none; border-radius: 10px; background: #1e293b; color: #e2e8f0; text-align: left; cursor: pointer; font-size: 0.95rem; transition: all 0.2s; display: flex; align-items: center; gap: 10px; min-height: 48px; }
-        .sidebar button:not(.sidebar-group-btn):not(.sidebar-group-items button):hover { background: #334155; transform: translateX(3px); }
-        .sidebar button:not(.sidebar-group-btn):not(.sidebar-group-items button).active-nav { background: #3b82f6; color: #fff; font-weight: 600; }
-        .sidebar .close-btn { background: #dc2626 !important; color: #fff !important; justify-content: center !important; font-weight: 600 !important; margin-top: auto !important; }
-        .sidebar .close-btn:hover { background: #b91c1c !important; transform: none !important; }
+        .sidebar { position:fixed; top:0; left:-280px; width:270px; height:100%; background:#0f172a; padding:20px 14px; transition:left 0.3s; border-right:1px solid #334155; z-index:100; display:flex; flex-direction:column; gap:4px; overflow-y:auto; }
+        .sidebar.open { left:0; }
+        .sidebar h3 { font-size:0.75rem; color:#94a3b8; margin-bottom:6px; text-transform:uppercase; }
+        .sidebar-group { margin-top:2px; }
+        .sidebar-group-btn { width:100% !important; padding:12px 14px !important; border:none !important; border-radius:10px !important; background:#1e293b !important; color:#e2e8f0 !important; text-align:left !important; cursor:pointer !important; font-size:0.95rem !important; transition:all 0.2s !important; display:flex !important; align-items:center !important; justify-content:space-between !important; gap:10px !important; min-height:48px !important; }
+        .sidebar-group-btn:hover { background:#334155 !important; transform:translateX(3px) !important; }
+        .sidebar-group-btn .arrow { font-size:0.7rem; transition:transform 0.3s; }
+        .sidebar-group-btn .arrow.open { transform:rotate(180deg); }
+        .sidebar-group-items { overflow:hidden; max-height:0; transition:max-height 0.3s; padding-left:8px; }
+        .sidebar-group-items.open { max-height:600px; }
+        .sidebar-group-items button { width:100% !important; padding:10px 14px !important; border:none !important; border-radius:8px !important; background:#0f172a !important; color:#94a3b8 !important; text-align:left !important; cursor:pointer !important; font-size:0.85rem !important; transition:all 0.2s !important; display:flex !important; align-items:center !important; gap:8px !important; min-height:40px !important; margin-top:2px !important; }
+        .sidebar-group-items button:hover { background:#1e293b !important; color:#e2e8f0 !important; transform:translateX(3px) !important; }
+        .sidebar-group-items button.active-nav { background:#3b82f6 !important; color:#fff !important; font-weight:600 !important; }
+        .sidebar button:not(.sidebar-group-btn):not(.sidebar-group-items button) { width:100%; padding:12px 14px; border:none; border-radius:10px; background:#1e293b; color:#e2e8f0; text-align:left; cursor:pointer; font-size:0.95rem; transition:all 0.2s; display:flex; align-items:center; gap:10px; min-height:48px; }
+        .sidebar button:not(.sidebar-group-btn):not(.sidebar-group-items button):hover { background:#334155; transform:translateX(3px); }
+        .sidebar button:not(.sidebar-group-btn):not(.sidebar-group-items button).active-nav { background:#3b82f6; color:#fff; font-weight:600; }
+        .sidebar .close-btn { background:#dc2626 !important; color:#fff !important; justify-content:center !important; font-weight:600 !important; margin-top:auto !important; }
+        .sidebar .close-btn:hover { background:#b91c1c !important; transform:none !important; }
         /* ─── AUTH PAGE ─── */
-        .auth-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 999; transition: opacity 0.5s ease; padding: 20px; }
-        .auth-page.hidden { opacity: 0; pointer-events: none; }
-        .auth-page .auth-box { background: #1e293b; padding: 30px 24px; border-radius: 16px; max-width: 400px; width: 100%; border: 1px solid #334155; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); }
-        .auth-page .auth-box h2 { color: #fbbf24; margin-bottom: 16px; text-align: center; font-size: 1.5rem; }
-        .auth-page .auth-box input { width: 100%; padding: 12px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #475569; background: #0f172a; color: #e2e8f0; font-size: 0.9rem; outline: none; min-height: 44px; }
-        .auth-page .auth-box input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
-        .auth-page .auth-box button { width: 100%; padding: 12px; margin-top: 8px; border: none; border-radius: 10px; background: #3b82f6; color: #fff; cursor: pointer; font-weight: 600; font-size: 0.9rem; min-height: 48px; transition: all 0.2s; }
-        .auth-page .auth-box button:hover { background: #2563eb; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35); }
-        .auth-page .auth-box .auth-toggle { font-size: 0.8rem; color: #94a3b8; text-align: center; margin-top: 12px; }
-        .auth-page .auth-box .auth-toggle span { color: #3b82f6; cursor: pointer; }
-        .auth-page .auth-box .auth-toggle span:hover { text-decoration: underline; }
-        .auth-page .auth-box .auth-error { color: #ef4444; font-size: 0.8rem; text-align: center; margin-top: 6px; }
-        .auth-page .logo-big { text-align: center; font-size: 3rem; margin-bottom: 10px; }
+        .auth-page { position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; display:flex; align-items:center; justify-content:center; z-index:999; transition:opacity 0.5s; padding:20px; }
+        .auth-page.hidden { opacity:0; pointer-events:none; }
+        .auth-page .auth-box { background:#1e293b; padding:30px 24px; border-radius:16px; max-width:400px; width:100%; border:1px solid #334155; box-shadow:0 8px 32px rgba(0,0,0,0.5); }
+        .auth-page .auth-box h2 { color:#fbbf24; margin-bottom:16px; text-align:center; font-size:1.5rem; }
+        .auth-page .auth-box input { width:100%; padding:12px; margin-bottom:8px; border-radius:10px; border:1px solid #475569; background:#0f172a; color:#e2e8f0; font-size:0.9rem; outline:none; min-height:44px; }
+        .auth-page .auth-box input:focus { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,0.15); }
+        .auth-page .auth-box button { width:100%; padding:12px; margin-top:8px; border:none; border-radius:10px; background:#3b82f6; color:#fff; cursor:pointer; font-weight:600; font-size:0.9rem; min-height:48px; transition:all 0.2s; }
+        .auth-page .auth-box button:hover { background:#2563eb; transform:translateY(-1px); box-shadow:0 4px 12px rgba(59,130,246,0.35); }
+        .auth-page .auth-box .auth-toggle { font-size:0.8rem; color:#94a3b8; text-align:center; margin-top:12px; }
+        .auth-page .auth-box .auth-toggle span { color:#3b82f6; cursor:pointer; }
+        .auth-page .auth-box .auth-toggle span:hover { text-decoration:underline; }
+        .auth-page .auth-box .auth-error { color:#ef4444; font-size:0.8rem; text-align:center; margin-top:6px; }
+        .auth-page .logo-big { text-align:center; font-size:3rem; margin-bottom:10px; }
         /* ─── MAIN CONTAINER ─── */
-        .container { padding: 12px 14px; max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 40px; }
+        .container { padding:12px 14px; max-width:720px; margin:0 auto; display:flex; flex-direction:column; gap:12px; padding-bottom:40px; }
         /* ─── CARDS ─── */
-        .card { background: #1e293b; padding: 14px 16px; border-radius: 14px; border: 1px solid #334155; transition: box-shadow 0.3s; }
-        .card:hover { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25); }
-        .card h3 { margin-bottom: 8px; font-size: 1rem; color: #f1f5f9; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .card { background:#1e293b; padding:14px 16px; border-radius:14px; border:1px solid #334155; transition:box-shadow 0.3s; }
+        .card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.25); }
+        .card h3 { margin-bottom:8px; font-size:1rem; color:#f1f5f9; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
         /* ─── INPUTS ─── */
-        input, textarea, select { width: 100%; padding: 10px 12px; margin-top: 6px; border-radius: 10px; border: 1px solid #475569; background: #0f172a; color: #e2e8f0; font-size: 0.9rem; transition: border 0.2s; outline: none; resize: vertical; min-height: 44px; }
-        input:focus, textarea:focus, select:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
-        textarea { min-height: 70px; }
+        input, textarea, select { width:100%; padding:10px 12px; margin-top:6px; border-radius:10px; border:1px solid #475569; background:#0f172a; color:#e2e8f0; font-size:0.9rem; transition:border 0.2s; outline:none; resize:vertical; min-height:44px; }
+        input:focus, textarea:focus, select:focus { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,0.15); }
+        textarea { min-height:70px; }
         /* ─── BUTTONS ─── */
-        button { width: 100%; padding: 12px 14px; margin-top: 8px; border: none; border-radius: 10px; background: #3b82f6; color: #fff; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; letter-spacing: 0.2px; touch-action: manipulation; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        button:hover { background: #2563eb; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35); }
-        button:active { transform: scale(0.97); }
-        button.secondary { background: #475569; }
-        button.secondary:hover { background: #64748b; }
-        button.danger { background: #dc2626; }
-        button.danger:hover { background: #b91c1c; }
-        button.small-btn { width: auto; padding: 8px 16px; font-size: 0.8rem; margin-top: 4px; min-height: 34px; }
+        button { width:100%; padding:12px 14px; margin-top:8px; border:none; border-radius:10px; background:#3b82f6; color:#fff; cursor:pointer; font-weight:600; font-size:0.9rem; transition:all 0.2s; letter-spacing:0.2px; touch-action:manipulation; min-height:48px; display:flex; align-items:center; justify-content:center; gap:6px; }
+        button:hover { background:#2563eb; transform:translateY(-1px); box-shadow:0 4px 12px rgba(59,130,246,0.35); }
+        button:active { transform:scale(0.97); }
+        button.secondary { background:#475569; }
+        button.secondary:hover { background:#64748b; }
+        button.danger { background:#dc2626; }
+        button.danger:hover { background:#b91c1c; }
+        button.small-btn { width:auto; padding:8px 16px; font-size:0.8rem; margin-top:4px; min-height:34px; }
         /* ─── ROW ─── */
-        .row { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
-        .row input, .row select { flex: 1 1 0; min-width: 80px; }
-        .row button { flex: 1 1 0; min-width: 70px; }
+        .row { display:flex; gap:8px; margin-top:6px; flex-wrap:wrap; }
+        .row input, .row select { flex:1 1 0; min-width:80px; }
+        .row button { flex:1 1 0; min-width:70px; }
         /* ─── TIMER ─── */
-        .timer { font-size: 44px; text-align: center; margin: 10px 0; font-weight: 700; letter-spacing: 2px; font-variant-numeric: tabular-nums; font-family: 'Courier New', monospace; color: #fbbf24; }
-        .timer-row { display: flex; gap: 6px; flex-wrap: wrap; }
-        .timer-row button { flex: 1; min-width: 70px; }
+        .timer { font-size:44px; text-align:center; margin:10px 0; font-weight:700; font-family:'Courier New', monospace; color:#fbbf24; }
+        .timer-row { display:flex; gap:6px; flex-wrap:wrap; }
+        .timer-row button { flex:1; min-width:70px; }
         /* ─── PAGE SECTIONS ─── */
-        .page-section { display: none; }
-        .page-section.active { display: block; }
-        /* ─── DASHBOARD CARDS GRID ─── */
-        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
-        @media (max-width: 400px) { .dash-grid { grid-template-columns: 1fr; } }
-        .dash-card { background: #0f172a; border-radius: 10px; padding: 12px; text-align: center; border: 1px solid #334155; }
-        .dash-card .value { font-size: 1.6rem; font-weight: 700; color: #fbbf24; }
-        .dash-card .label { font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
-        /* ─── NOTIFICATIONS ─── */
-        .notification-toast { position: fixed; top: 16px; right: 16px; background: #1e293b; border: 1px solid #3b82f6; color: #e2e8f0; padding: 14px 18px; border-radius: 12px; z-index: 200; opacity: 0; transform: translateX(120%); transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); pointer-events: none; max-width: 320px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); }
-        .notification-toast.show { opacity: 1; transform: translateX(0); pointer-events: auto; }
-        .notification-toast .close-toast { position: absolute; top: 4px; right: 10px; cursor: pointer; font-size: 1.2rem; color: #94a3b8; background: none; border: none; width: auto; padding: 0; margin: 0; }
-        /* ─── COUNTDOWN ─── */
-        .countdown-display { font-size: 1.8rem; font-weight: 700; text-align: center; color: #f87171; letter-spacing: 1px; font-family: 'Courier New', monospace; }
-        .countdown-label { text-align: center; font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
-        /* ─── HISTORY LIST ─── */
-        .history-list { max-height: 180px; overflow-y: auto; margin-top: 8px; font-size: 0.8rem; color: #cbd5e1; }
-        .history-list .history-item { background: #0f172a; padding: 8px 10px; border-radius: 8px; margin-top: 4px; display: flex; justify-content: space-between; border: 1px solid #334155; flex-wrap: wrap; gap: 4px; }
-        /* ─── SMALL TEXT ─── */
-        .small { font-size: 0.75rem; color: #a5b4fc; }
-        /* ─── PDF LIBRARY SPECIFIC ─── */
-        .pdf-list-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #0f172a; border-radius: 8px; margin-top: 4px; border: 1px solid #334155; flex-wrap: wrap; gap: 6px; }
-        .pdf-list-item:hover { border-color: #3b82f6; background: #1a2a4a; }
-        .pdf-list-item .file-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 120px; cursor: pointer; }
-        .pdf-list-item .file-info .name { font-weight: 500; color: #e2e8f0; word-break: break-word; }
-        .pdf-list-item .file-info .meta { font-size: 0.7rem; color: #94a3b8; }
-        .pdf-list-item .file-actions { display: flex; gap: 4px; flex-wrap: wrap; }
-        .pdf-viewer-container { margin-top: 10px; background: #0f172a; border-radius: 10px; overflow: hidden; border: 1px solid #334155; min-height: 300px; height: 60vh; max-height: 700px; width: 100%; position: relative; }
-        .pdf-viewer-container iframe { width: 100%; height: 100%; border: none; display: block; }
-        .pdf-viewer-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #94a3b8; padding: 20px; text-align: center; }
-        .pdf-viewer-placeholder .icon { font-size: 4rem; margin-bottom: 10px; opacity: 0.5; }
-        .upload-area { border: 2px dashed #334155; border-radius: 10px; padding: 20px; text-align: center; transition: all 0.3s; cursor: pointer; margin-top: 6px; background: #0f172a; }
-        .upload-area:hover { border-color: #3b82f6; background: #1a2a4a; }
-        .upload-area.dragover { border-color: #3b82f6; background: #1a2a4a; transform: scale(1.02); }
-        .upload-area .icon { font-size: 2.5rem; margin-bottom: 6px; }
-        /* ─── QUICK ACTIONS ─── */
-        .quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
-        .quick-card { background: #0f172a; border-radius: 10px; padding: 12px; text-align: center; border: 1px solid #334155; cursor: pointer; transition: all 0.2s; }
-        .quick-card:hover { border-color: #3b82f6; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15); }
-        .quick-card .icon { font-size: 1.8rem; margin-bottom: 4px; }
-        .quick-card .label { font-size: 0.7rem; color: #94a3b8; }
-        /* ─── STUDY STREAK ─── */
-        .streak-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 6px 0; }
-        .streak-grid .stat { background: #0f172a; border-radius: 8px; padding: 10px; text-align: center; border: 1px solid #334155; }
-        .streak-grid .stat .number { font-size: 1.8rem; font-weight: 700; color: #fbbf24; }
-        .streak-grid .stat .label { font-size: 0.65rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.3px; }
-        .badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.75rem; background: #1e293b; color: #fbbf24; margin-top: 4px; }
-        /* ─── BACK TO TOP ─── */
-        #backToTopBtn { position: fixed; bottom: 20px; right: 20px; width: 44px; height: 44px; border-radius: 50%; background: #3b82f6; color: #fff; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 200; display: none; font-size: 1.2rem; cursor: pointer; align-items: center; justify-content: center; }
+        .page-section { display:none; }
+        .page-section.active { display:block; }
+        .dash-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px; }
+        .dash-card { background:#0f172a; border-radius:10px; padding:12px; text-align:center; border:1px solid #334155; }
+        .dash-card .value { font-size:1.6rem; font-weight:700; color:#fbbf24; }
+        .dash-card .label { font-size:0.7rem; color:#94a3b8; text-transform:uppercase; margin-top:2px; }
+        .notification-toast { position:fixed; top:16px; right:16px; background:#1e293b; border:1px solid #3b82f6; color:#e2e8f0; padding:14px 18px; border-radius:12px; z-index:200; opacity:0; transform:translateX(120%); transition:all 0.4s; pointer-events:none; max-width:320px; box-shadow:0 8px 24px rgba(0,0,0,0.4); }
+        .notification-toast.show { opacity:1; transform:translateX(0); pointer-events:auto; }
+        .notification-toast .close-toast { position:absolute; top:4px; right:10px; cursor:pointer; font-size:1.2rem; color:#94a3b8; background:none; border:none; width:auto; padding:0; margin:0; }
+        .countdown-display { font-size:1.8rem; font-weight:700; text-align:center; color:#f87171; font-family:'Courier New', monospace; }
+        .countdown-label { text-align:center; font-size:0.75rem; color:#94a3b8; margin-top:2px; }
+        .history-list { max-height:180px; overflow-y:auto; margin-top:8px; font-size:0.8rem; color:#cbd5e1; }
+        .history-item { background:#0f172a; padding:8px 10px; border-radius:8px; margin-top:4px; display:flex; justify-content:space-between; border:1px solid #334155; flex-wrap:wrap; gap:4px; }
+        .small { font-size:0.75rem; color:#a5b4fc; }
+        .pdf-list-item { display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:#0f172a; border-radius:8px; margin-top:4px; border:1px solid #334155; flex-wrap:wrap; gap:6px; }
+        .pdf-list-item:hover { border-color:#3b82f6; background:#1a2a4a; }
+        .pdf-list-item .file-info { display:flex; align-items:center; gap:10px; flex:1; min-width:120px; cursor:pointer; }
+        .pdf-list-item .file-info .name { font-weight:500; color:#e2e8f0; word-break:break-word; }
+        .pdf-list-item .file-info .meta { font-size:0.7rem; color:#94a3b8; }
+        .pdf-list-item .file-actions { display:flex; gap:4px; flex-wrap:wrap; }
+        .pdf-viewer-container { margin-top:10px; background:#0f172a; border-radius:10px; overflow:hidden; border:1px solid #334155; min-height:300px; height:60vh; max-height:700px; width:100%; }
+        .pdf-viewer-container iframe { width:100%; height:100%; border:none; display:block; }
+        .pdf-viewer-placeholder { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:#94a3b8; padding:20px; text-align:center; }
+        .pdf-viewer-placeholder .icon { font-size:4rem; margin-bottom:10px; opacity:0.5; }
+        .upload-area { border:2px dashed #334155; border-radius:10px; padding:20px; text-align:center; transition:all 0.3s; cursor:pointer; margin-top:6px; background:#0f172a; }
+        .upload-area:hover { border-color:#3b82f6; background:#1a2a4a; }
+        .upload-area.dragover { border-color:#3b82f6; background:#1a2a4a; transform:scale(1.02); }
+        .upload-area .icon { font-size:2.5rem; margin-bottom:6px; }
+        .quick-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:6px; }
+        .quick-card { background:#0f172a; border-radius:10px; padding:12px; text-align:center; border:1px solid #334155; cursor:pointer; transition:all 0.2s; }
+        .quick-card:hover { border-color:#3b82f6; transform:translateY(-2px); box-shadow:0 4px 12px rgba(59,130,246,0.15); }
+        .quick-card .icon { font-size:1.8rem; margin-bottom:4px; }
+        .quick-card .label { font-size:0.7rem; color:#94a3b8; }
+        .streak-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:6px 0; }
+        .streak-grid .stat { background:#0f172a; border-radius:8px; padding:10px; text-align:center; border:1px solid #334155; }
+        .streak-grid .stat .number { font-size:1.8rem; font-weight:700; color:#fbbf24; }
+        .streak-grid .stat .label { font-size:0.65rem; color:#94a3b8; text-transform:uppercase; }
+        .badge { display:inline-block; padding:4px 14px; border-radius:20px; font-size:0.75rem; background:#1e293b; color:#fbbf24; margin-top:4px; }
+        #backToTopBtn { position:fixed; bottom:20px; right:20px; width:44px; height:44px; border-radius:50%; background:#3b82f6; color:#fff; border:none; box-shadow:0 2px 8px rgba(0,0,0,0.3); z-index:200; display:none; font-size:1.2rem; cursor:pointer; align-items:center; justify-content:center; }
         /* ─── THEMES ─── */
-        body.theme-ocean { background: #0b3d4f; }
-        body.theme-ocean .card, body.theme-ocean .topbar, body.theme-ocean .sidebar { background: #14566b; }
-        body.theme-purple { background: #2d1b4e; }
-        body.theme-purple .card, body.theme-purple .topbar, body.theme-purple .sidebar { background: #3e2a5c; }
-        body.theme-forest { background: #1a3a2a; }
-        body.theme-forest .card, body.theme-forest .topbar, body.theme-forest .sidebar { background: #2b5a3a; }
-        /* ─── RESPONSIVE TWEAKS ─── */
-        @media (max-width: 600px) {
-            .timer { font-size: 32px; }
-            .dash-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
-            .dash-card .value { font-size: 1.3rem; }
-            .container { padding: 8px 10px; gap: 10px; }
-            .card { padding: 12px 14px; }
-            .row { flex-direction: column; }
-            .row input, .row select, .row button { flex: 1 1 100%; min-width: 0; }
-            .row button { min-height: 48px; }
-            .sidebar { width: 260px; left: -260px; padding: 16px 12px; }
-            .sidebar button { font-size: 0.9rem; padding: 10px 12px; min-height: 44px; }
-            .topbar .logo { font-size: 1rem; }
-            .topbar .menuBtn { font-size: 26px; min-width: 40px; min-height: 40px; }
-            .notification-toast { max-width: 90%; right: 10px; top: 10px; }
-            .pdf-list-item .file-actions button { font-size: 0.65rem; padding: 4px 8px; min-height: 28px; }
-            .auth-page .auth-box { padding: 20px 16px; }
-            .auth-page .logo-big { font-size: 2.5rem; }
-            .topbar { flex-direction: row; flex-wrap: wrap; gap: 6px; }
-            .topbar .auth-status { order: 1; }
-            .topbar .menuBtn { order: 2; }
-            .quick-grid { grid-template-columns: 1fr 1fr; }
-            .streak-grid { grid-template-columns: 1fr 1fr; }
-            .dash-grid { grid-template-columns: 1fr 1fr; }
-        }
-        @media (max-width: 400px) {
-            .dash-grid { grid-template-columns: 1fr; }
-            .quick-grid { grid-template-columns: 1fr; }
-            .streak-grid { grid-template-columns: 1fr; }
-            .card h3 { font-size: 0.9rem; }
-            button { font-size: 0.8rem; padding: 10px 12px; min-height: 44px; }
-            .timer { font-size: 26px; }
-            .countdown-display { font-size: 1.4rem; }
-            .auth-page .auth-box h2 { font-size: 1.2rem; }
-        }
-        /* ─── SCROLLBAR ─── */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: #1e293b; }
-        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        body.theme-ocean { background:#0b3d4f; }
+        body.theme-ocean .card, body.theme-ocean .topbar, body.theme-ocean .sidebar { background:#14566b; }
+        body.theme-purple { background:#2d1b4e; }
+        body.theme-purple .card, body.theme-purple .topbar, body.theme-purple .sidebar { background:#3e2a5c; }
+        body.theme-forest { background:#1a3a2a; }
+        body.theme-forest .card, body.theme-forest .topbar, body.theme-forest .sidebar { background:#2b5a3a; }
+        /* ─── AI CHAT ─── */
+        #aiChatCard { display:none; }
+        #aiChatMessages { background:#0f172a; border-radius:10px; padding:10px; height:250px; overflow-y:auto; margin-bottom:8px; }
+        #aiChatMessages p { margin:4px 0; }
+        /* ─── RESPONSIVE ─── */
+        @media (max-width:600px){ .timer{font-size:32px;} .dash-grid{grid-template-columns:1fr 1fr; gap:6px;} .dash-card .value{font-size:1.3rem;} .container{padding:8px 10px; gap:10px;} .card{padding:12px 14px;} .row{flex-direction:column;} .row input, .row select, .row button{flex:1 1 100%; min-width:0;} .row button{min-height:48px;} .sidebar{width:260px; left:-260px; padding:16px 12px;} .sidebar button{font-size:0.9rem; padding:10px 12px; min-height:44px;} .topbar .logo{font-size:1rem;} .topbar .menuBtn{font-size:26px; min-width:40px; min-height:40px;} .notification-toast{max-width:90%; right:10px; top:10px;} .pdf-list-item .file-actions button{font-size:0.65rem; padding:4px 8px; min-height:28px;} .auth-page .auth-box{padding:20px 16px;} .auth-page .logo-big{font-size:2.5rem;} .topbar{flex-direction:row; flex-wrap:wrap; gap:6px;} .topbar .auth-status{order:1;} .topbar .menuBtn{order:2;} .quick-grid{grid-template-columns:1fr 1fr;} .streak-grid{grid-template-columns:1fr 1fr;} .dash-grid{grid-template-columns:1fr 1fr;} }
+        @media (max-width:400px){ .dash-grid{grid-template-columns:1fr;} .quick-grid{grid-template-columns:1fr;} .streak-grid{grid-template-columns:1fr;} .card h3{font-size:0.9rem;} button{font-size:0.8rem; padding:10px 12px; min-height:44px;} .timer{font-size:26px;} .countdown-display{font-size:1.4rem;} .auth-page .auth-box h2{font-size:1.2rem;} }
     </style>
 </head>
 <body>
 
-    <!-- ─── AUTH PAGE ─── -->
+    <!-- AUTH PAGE -->
     <div class="auth-page" id="authPage">
         <div class="auth-box">
             <div class="logo-big">🐐</div>
@@ -203,10 +160,10 @@
         </div>
     </div>
 
-    <!-- ─── SIDEBAR OVERLAY ─── -->
+    <!-- SIDEBAR OVERLAY -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMenu()"></div>
 
-    <!-- ─── SIDEBAR (GROUPED) ─── -->
+    <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
         <h3>📋 Navigation</h3>
         <button class="active-nav" onclick="navigateTo('main')" id="navMain">🏠 Dashboard</button>
@@ -243,15 +200,15 @@
         <button class="close-btn" onclick="closeMenu()">✕ Close Menu</button>
     </div>
 
-    <!-- ─── NOTIFICATION TOAST ─── -->
+    <!-- TOAST -->
     <div class="notification-toast" id="notificationToast">
         <span class="close-toast" onclick="hideNotification()">✕</span>
         <span id="notificationText">Notification</span>
     </div>
 
-    <!-- ─── TOP BAR ─── -->
+    <!-- TOP BAR -->
     <div class="topbar">
-        <div class="logo">🐐 GoatTutor NG v6</div>
+        <div class="logo">🐐 GoatTutor NG v7</div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <div class="auth-status" id="authStatus">
                 <span id="userDisplay">👤 Guest</span>
@@ -262,21 +219,32 @@
         </div>
     </div>
 
-    <!-- ─── MAIN APP CONTENT ─── -->
+    <!-- MAIN APP -->
     <div id="appContainer" style="display:none;">
         <div class="container">
 
             <!-- ========== MAIN SECTION ========== -->
             <div class="page-section active" id="sectionMain">
+
                 <!-- AI CORE -->
                 <div class="card">
                     <h3>🧠 AI Study Interface</h3>
-                    <textarea id="topic" placeholder="Enter topic (e.g., Calculus, Organic Chemistry, Python loops)..."></textarea>
+                    <textarea id="topic" placeholder="Enter topic (e.g., Calculus, Organic Chemistry)..."></textarea>
                     <select id="mode">
                         <option value="tutorial">📖 Tutorial</option><option value="summary">📝 Summary</option><option value="mcq">❓ MCQ Quiz</option><option value="revision">🔄 Revision Notes</option><option value="flashcards">🃏 Flashcards</option>
                     </select>
-                    <button onclick="askAI()" style="background:#3b82f6;">🚀 Ask AI (ChatGPT)</button>
-                    <div class="small" style="text-align:center;color:#94a3b8;padding:8px;margin-top:6px;">ChatGPT will open in a new tab.</div>
+                    <button onclick="askAI()">🚀 Start AI Chat</button>
+                </div>
+
+                <!-- AI CHAT PANEL -->
+                <div class="card" id="aiChatCard">
+                    <h3>🤖 AI Chat <span style="font-size:0.7rem;color:#94a3b8;">(Gemini)</span></h3>
+                    <div id="aiChatMessages"></div>
+                    <div class="row">
+                        <textarea id="aiChatInput" placeholder="Ask a question about your topic..." style="flex:2;"></textarea>
+                        <button onclick="sendChatMessage()" style="flex:1;">Send</button>
+                    </div>
+                    <button onclick="closeChat()" class="secondary small-btn">Close Chat</button>
                 </div>
 
                 <!-- DASHBOARD -->
@@ -299,11 +267,11 @@
                     <div id="achievementBadges" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
                 </div>
 
-                <!-- SHARE CGPA CARD -->
+                <!-- SHARE CGPA -->
                 <button onclick="shareCGPACard()" class="secondary small-btn" style="width:auto;">📸 Share CGPA Card</button>
                 <canvas id="cgpaCanvas" style="display:none;" width="600" height="400"></canvas>
 
-                <!-- STUDY STREAK -->
+                <!-- STREAK -->
                 <div class="card">
                     <h3>🔥 Study Streak</h3>
                     <div class="streak-grid">
@@ -312,8 +280,8 @@
                         <div class="stat"><div class="number" id="totalStudyDays">0</div><div class="label">Total Days</div></div>
                     </div>
                     <div style="text-align:center;"><span class="badge" id="streakBadge">💪 Getting Started</span></div>
-                    <button onclick="logStudyDay()" class="secondary small-btn" style="width:auto;margin-top:6px;">✅ Log Today's Study</button>
-                    <button onclick="resetStreakStats()" class="danger small-btn" style="width:auto;margin-top:4px;">🔄 Reset Stats</button>
+                    <button onclick="logStudyDay()" class="secondary small-btn" style="width:auto;">✅ Log Today's Study</button>
+                    <button onclick="resetStreakStats()" class="danger small-btn" style="width:auto;">🔄 Reset Stats</button>
                 </div>
 
                 <!-- QUICK ACTIONS -->
@@ -461,6 +429,10 @@
         let currentUser = null;
         let userDocRef = null;
 
+        // AI chat context
+        let chatTopic = '';
+        let chatMode = 'tutorial';
+
         // ─── ACADEMIC EVENTS ───
         const academicEvents = [
             { date: '2025-11-10', title: 'Resumption – Fresh Students' },
@@ -561,7 +533,7 @@
             { id: 'streak_7',   name: '7-Day Streak',         icon: '🔥', condition: () => getStreakStats().streak >= 7 },
             { id: 'streak_30',  name: '30-Day Streak',        icon: '🔥🔥', condition: () => getStreakStats().streak >= 30 },
             { id: 'hours_50',   name: '50 Study Hours',       icon: '⏰', condition: () => (parseInt(localStorage.getItem('studyMinutes')||0)/60) >= 50 },
-            { id: 'pdf_quiz',   name: 'PDF Quizzed',          icon: '📄', condition: () => false } // unlocked manually after quiz
+            { id: 'pdf_quiz',   name: 'PDF Quizzed',          icon: '📄', condition: () => false }
         ];
 
         function checkAchievements() {
@@ -619,6 +591,72 @@
             showNotification('📸 CGPA card downloaded!');
         }
 
+        // ─── AI CHAT ───
+        function askAI() {
+            const t = document.getElementById('topic').value.trim();
+            if (!t) { showNotification('⚠️ Enter a topic.'); return; }
+            chatTopic = t;
+            chatMode = document.getElementById('mode').value;
+            // Show chat panel
+            document.getElementById('aiChatCard').style.display = 'block';
+            document.getElementById('aiChatMessages').innerHTML = `<p style="color:#94a3b8;">🧠 Tutor ready. Topic: <strong>${chatTopic}</strong> | Mode: ${chatMode}</p>`;
+            document.getElementById('aiChatInput').focus();
+            logQuickAction('AI Chat: ' + chatTopic);
+            checkAchievements(); // "First AI Query" will unlock
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('aiChatInput').value.trim();
+            if (!input) return;
+            const messagesDiv = document.getElementById('aiChatMessages');
+
+            // Add user message
+            messagesDiv.innerHTML += `<p style="color:#e2e8f0;"><strong>You:</strong> ${input}</p>`;
+            document.getElementById('aiChatInput').value = '';
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            // Build prompt with context
+            const fullPrompt = `You are a helpful academic tutor. The student's topic is "${chatTopic}" and they want "${chatMode}" mode. Answer their question clearly and helpfully. If the mode is MCQ, provide a multiple-choice question with options and then reveal the correct answer. Question: ${input}`;
+
+            try {
+                // Show typing indicator
+                const typingId = 'typing-' + Date.now();
+                messagesDiv.innerHTML += `<p id="${typingId}" style="color:#94a3b8;">🤔 Thinking...</p>`;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AQ.Ab8RN6JtCIa0Rh4L4avPgKEadIcJ08adik0bb0sfK-CJ5LiO2w`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: fullPrompt }] }]
+                    })
+                });
+
+                // Remove typing indicator
+                const typingEl = document.getElementById(typingId);
+                if (typingEl) typingEl.remove();
+
+                const data = await response.json();
+                if (data.error) {
+                    throw new Error(data.error.message || 'API error');
+                }
+                const reply = data.candidates[0].content.parts[0].text;
+                messagesDiv.innerHTML += `<p style="color:#fbbf24;"><strong>AI:</strong> ${reply}</p>`;
+            } catch (err) {
+                console.error(err);
+                messagesDiv.innerHTML += `<p style="color:#ef4444;">❌ Error: Could not reach AI. Check your internet or API key.</p>`;
+            }
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function closeChat() {
+            document.getElementById('aiChatCard').style.display = 'none';
+            document.getElementById('aiChatMessages').innerHTML = '';
+        }
+
+        // Override the old askAI that opened ChatGPT – now it's handled above.
+        // PDF summarise/quiz will also launch the chat with the extracted text.
+
         // ─── AUTH STATE ───
         auth.onAuthStateChanged(async user => {
             if (user) {
@@ -651,7 +689,6 @@
 
         // ─── AUTH FUNCTIONS ───
         let isLoginMode = false;
-
         function toggleAuthMode() {
             isLoginMode = !isLoginMode;
             document.getElementById('authTitle').innerText = isLoginMode ? '🔐 Login' : '🔐 Sign Up';
@@ -661,27 +698,17 @@
                 'Already have an account? <span onclick="toggleAuthMode()">Login</span>';
             document.getElementById('authError').innerText = '';
         }
-
         async function handleAuth() {
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value;
             const errorEl = document.getElementById('authError');
             if (!email || !password) { errorEl.innerText = 'Please fill in all fields.'; return; }
             try {
-                if (isLoginMode) {
-                    await auth.signInWithEmailAndPassword(email, password);
-                } else {
-                    await auth.createUserWithEmailAndPassword(email, password);
-                }
-            } catch (err) {
-                errorEl.innerText = err.message;
-            }
+                if (isLoginMode) { await auth.signInWithEmailAndPassword(email, password); }
+                else { await auth.createUserWithEmailAndPassword(email, password); }
+            } catch (err) { errorEl.innerText = err.message; }
         }
-
-        function handleLogout() {
-            auth.signOut();
-            showNotification('👋 Logged out.');
-        }
+        function handleLogout() { auth.signOut(); showNotification('👋 Logged out.'); }
 
         // ─── DATA SYNC ───
         function loadLocalData() {
@@ -695,7 +722,6 @@
             updateDash();
             renderAchievements();
         }
-
         function loadUserData(data) {
             if (data.streak) localStorage.setItem('streak', data.streak);
             if (data.bestStreak) localStorage.setItem('bestStreak', data.bestStreak);
@@ -722,7 +748,6 @@
             renderAchievements();
             showNotification('📥 Data synced from cloud.');
         }
-
         async function syncLocalToCloud() {
             if (!currentUser) return;
             try {
@@ -743,42 +768,32 @@
                     achievements: JSON.parse(localStorage.getItem('achievements') || '[]')
                 };
                 await userDocRef.set(data, { merge: true });
-                console.log('✅ Data synced.');
             } catch (err) {
                 console.error('Sync error:', err);
                 showNotification('⚠️ Cloud sync failed. Data saved locally.', 4000);
             }
         }
-
-        setInterval(() => {
-            if (currentUser) syncLocalToCloud();
-        }, 30000);
+        setInterval(() => { if (currentUser) syncLocalToCloud(); }, 30000);
 
         // ─── MENU & NAVIGATION ───
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('sidebarOverlay').classList.toggle('show');
         }
-
         function closeMenu() {
             document.getElementById('sidebar').classList.remove('open');
             document.getElementById('sidebarOverlay').classList.remove('show');
         }
-
         function toggleGroup(groupId) {
             const items = document.getElementById(groupId + 'Items');
             const btn = document.getElementById('group' + groupId.charAt(0).toUpperCase() + groupId.slice(1));
             if (!items) return;
             items.classList.toggle('open');
-            if (btn) {
-                const arrow = btn.querySelector('.arrow');
-                if (arrow) arrow.classList.toggle('open');
-            }
+            if (btn) { const arrow = btn.querySelector('.arrow'); if (arrow) arrow.classList.toggle('open'); }
             const states = JSON.parse(localStorage.getItem('sidebarGroups') || '{}');
             states[groupId] = items.classList.contains('open');
             localStorage.setItem('sidebarGroups', JSON.stringify(states));
         }
-
         function loadGroupStates() {
             const states = JSON.parse(localStorage.getItem('sidebarGroups') || '{}');
             ['academics', 'uniosun', 'study', 'analytics'].forEach(g => {
@@ -786,45 +801,23 @@
                 const btn = document.getElementById('group' + g.charAt(0).toUpperCase() + g.slice(1));
                 if (items && states[g]) {
                     items.classList.add('open');
-                    if (btn) {
-                        const arrow = btn.querySelector('.arrow');
-                        if (arrow) arrow.classList.add('open');
-                    }
+                    if (btn) { const arrow = btn.querySelector('.arrow'); if (arrow) arrow.classList.add('open'); }
                 }
             });
         }
-
         const sectionMap = {
-            'main': 'sectionMain',
-            'gpaCalculator': 'sectionGPACalculator',
-            'cgpaCalculator': 'sectionCGPACalculator',
-            'timer': 'sectionTimer',
-            'gpaHistory': 'sectionGPAHistory',
-            'cgpaTracker': 'sectionCGPA',
-            'planner': 'sectionPlanner',
-            'analyzer': 'sectionAnalyzer',
-            'sessionLog': 'sectionSessionLog',
-            'calendar': 'sectionCalendar',
-            'cutoff': 'sectionCutoff',
-            'screening': 'sectionScreening',
-            'countdown': 'sectionCountdown',
-            'pdfLibrary': 'sectionPdfLibrary'
+            'main': 'sectionMain', 'gpaCalculator': 'sectionGPACalculator', 'cgpaCalculator': 'sectionCGPACalculator',
+            'timer': 'sectionTimer', 'gpaHistory': 'sectionGPAHistory', 'cgpaTracker': 'sectionCGPA',
+            'planner': 'sectionPlanner', 'analyzer': 'sectionAnalyzer', 'sessionLog': 'sectionSessionLog',
+            'calendar': 'sectionCalendar', 'cutoff': 'sectionCutoff', 'screening': 'sectionScreening',
+            'countdown': 'sectionCountdown', 'pdfLibrary': 'sectionPdfLibrary'
         };
-
         const navMap = {
-            'main': 'navMain',
-            'gpaHistory': 'navGPAHistory',
-            'cgpaTracker': 'navCGPA',
-            'planner': 'navPlanner',
-            'analyzer': 'navAnalyzer',
-            'sessionLog': 'navSessionLog',
-            'calendar': 'navCalendar',
-            'cutoff': 'navCutoff',
-            'screening': 'navScreening',
-            'countdown': 'navCountdown',
-            'pdfLibrary': 'navPdfLibrary'
+            'main': 'navMain', 'gpaHistory': 'navGPAHistory', 'cgpaTracker': 'navCGPA',
+            'planner': 'navPlanner', 'analyzer': 'navAnalyzer', 'sessionLog': 'navSessionLog',
+            'calendar': 'navCalendar', 'cutoff': 'navCutoff', 'screening': 'navScreening',
+            'countdown': 'navCountdown', 'pdfLibrary': 'navPdfLibrary'
         };
-
         function navigateTo(section) {
             closeMenu();
             currentSection = section;
@@ -855,22 +848,7 @@
             clearTimeout(toast._timeout);
             toast._timeout = setTimeout(() => toast.classList.remove('show'), duration);
         }
-
-        function hideNotification() {
-            document.getElementById('notificationToast').classList.remove('show');
-        }
-
-        // ─── AI ───
-        function askAI() {
-            const t = document.getElementById('topic').value.trim();
-            const m = document.getElementById('mode').value;
-            if (!t) { showNotification('⚠️ Enter a topic.'); return; }
-            const prompt = 'Act as GoatTutor AI, an expert academic tutor. Mode: ' + m + '. Topic: ' + t;
-            window.open('https://chatgpt.com/?q=' + encodeURIComponent(prompt), '_blank');
-            showNotification('🚀 Opening ChatGPT...');
-            logQuickAction('AI Query: ' + t);
-            checkAchievements();
-        }
+        function hideNotification() { document.getElementById('notificationToast').classList.remove('show'); }
 
         // ─── DEGREE CLASS ───
         function getDegreeClass(cgpa) {
@@ -883,7 +861,6 @@
             if (cgpa >= 1.00) return '📗 Pass';
             return '⚠️ Below Pass';
         }
-
         function getStanding(cgpa) {
             cgpa = parseFloat(cgpa);
             if (isNaN(cgpa)) return 'N/A';
@@ -898,24 +875,20 @@
             const lastVisit = localStorage.getItem('lastVisit');
             let streak = parseInt(localStorage.getItem('streak')) || 0;
             if (lastVisit !== today) {
-                const yesterday = new Date();
-                yesterday.setDate(yesterday.getDate() - 1);
-                if (lastVisit === yesterday.toDateString()) streak++;
-                else streak = 1;
+                const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+                if (lastVisit === yesterday.toDateString()) streak++; else streak = 1;
                 localStorage.setItem('streak', streak);
                 localStorage.setItem('lastVisit', today);
                 if (streak > 1) showNotification('🔥 Streak: ' + streak + ' days!');
             }
             document.getElementById('streakDisplay').innerText = localStorage.getItem('streak') || 1;
         }
-
         function getStreakStats() {
             const streak = parseInt(localStorage.getItem('streak')) || 0;
             const bestStreak = parseInt(localStorage.getItem('bestStreak')) || 0;
             const totalDays = parseInt(localStorage.getItem('totalStudyDays')) || 0;
             return { streak, bestStreak, totalDays };
         }
-
         function updateStreakUI() {
             const stats = getStreakStats();
             document.getElementById('currentStreak').innerText = stats.streak;
@@ -929,7 +902,6 @@
             else if (stats.streak >= 3) badge.innerText = '💪 Getting Started';
             else badge.innerText = '📚 Start your streak!';
         }
-
         function logStudyDay() {
             const today = new Date().toDateString();
             const lastStudy = localStorage.getItem('lastStudyDay');
@@ -937,8 +909,7 @@
             const bestStreak = parseInt(localStorage.getItem('bestStreak')) || 0;
             const totalDays = parseInt(localStorage.getItem('totalStudyDays')) || 0;
             if (lastStudy === today) { showNotification('✅ Already logged today.'); return; }
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
             let newStreak = 1;
             if (lastStudy === yesterday.toDateString()) newStreak = streak + 1;
             localStorage.setItem('streak', newStreak);
@@ -947,32 +918,24 @@
             if (newStreak > bestStreak) {
                 localStorage.setItem('bestStreak', newStreak);
                 showNotification('🎉 New best streak: ' + newStreak + ' days!');
-            } else {
-                showNotification('🔥 Streak: ' + newStreak + ' days!');
-            }
+            } else { showNotification('🔥 Streak: ' + newStreak + ' days!'); }
             document.getElementById('streakDisplay').innerText = newStreak;
             updateStreakUI();
             checkAchievements();
             if (currentUser) syncLocalToCloud();
         }
-
         function resetStreakStats() {
             if (!confirm('Reset all streak stats?')) return;
-            localStorage.removeItem('streak');
-            localStorage.removeItem('bestStreak');
-            localStorage.removeItem('totalStudyDays');
-            localStorage.removeItem('lastStudyDay');
-            updateStreakUI();
-            document.getElementById('streakDisplay').innerText = '0';
+            localStorage.removeItem('streak'); localStorage.removeItem('bestStreak');
+            localStorage.removeItem('totalStudyDays'); localStorage.removeItem('lastStudyDay');
+            updateStreakUI(); document.getElementById('streakDisplay').innerText = '0';
             showNotification('🔄 Streak reset.');
             if (currentUser) syncLocalToCloud();
         }
-
         function updateStudyHours() {
             const minutes = parseInt(localStorage.getItem('studyMinutes')) || 0;
             document.getElementById('hoursDisplay').innerText = (minutes / 60).toFixed(1);
         }
-
         function addStudyMinutes(minutes) {
             const current = parseInt(localStorage.getItem('studyMinutes')) || 0;
             localStorage.setItem('studyMinutes', current + minutes);
@@ -980,16 +943,13 @@
             checkAchievements();
             if (currentUser) syncLocalToCloud();
         }
-
         function getSessionCount() {
             const log = JSON.parse(localStorage.getItem('sessionLog') || '[]');
             return log.length;
         }
-
         function updateSessionCountDisplay() {
             document.getElementById('sessionCountDisplay').innerText = getSessionCount();
         }
-
         function updateDash() {
             const gpa = localStorage.getItem('gpa') || '--';
             const cgpa = localStorage.getItem('cgpa') || '--';
@@ -997,22 +957,16 @@
             document.getElementById('dashCGPA').innerText = cgpa === '--' ? '--' : parseFloat(cgpa).toFixed(2);
             document.getElementById('dashDegree').innerText = getDegreeClass(cgpa);
             document.getElementById('dashStanding').innerText = getStanding(cgpa);
-            updateStreak();
-            updateStudyHours();
-            updateSessionCountDisplay();
-            updateStreakUI();
+            updateStreak(); updateStudyHours(); updateSessionCountDisplay(); updateStreakUI();
         }
 
-        // ─── SEMESTER SYSTEM ───
+        // ─── SEMESTER SYSTEM ─── (unchanged, but I kept it)
         function getSavedSemesters() { try { return JSON.parse(localStorage.getItem('semesters')) || []; } catch { return []; } }
         function saveSemestersToStorage(s) { localStorage.setItem('semesters', JSON.stringify(s)); }
-
         function addCourseRow() {
             courseRowCounter++;
             const container = document.getElementById('semesterCourseBox');
-            const row = document.createElement('div');
-            row.className = 'row course-row';
-            row.id = 'courseRow' + courseRowCounter;
+            const row = document.createElement('div'); row.className = 'row course-row'; row.id = 'courseRow' + courseRowCounter;
             row.innerHTML = `
                 <input type="text" id="cname${courseRowCounter}" placeholder="Course Name" style="flex:2;">
                 <input type="number" id="cunit${courseRowCounter}" placeholder="Units" min="0" step="0.5" style="flex:1;">
@@ -1023,7 +977,6 @@
             `;
             container.appendChild(row);
         }
-
         function removeCourseRow(id) {
             const row = document.getElementById('courseRow' + id);
             if (!row) return;
@@ -1031,12 +984,10 @@
             if (rows.length <= 1) { showNotification('⚠️ You need at least one course.'); return; }
             row.remove();
         }
-
         function getCurrentSemesterData() {
             const title = document.getElementById('semesterTitle').value.trim() || 'Unnamed';
             const rows = document.querySelectorAll('#semesterCourseBox .course-row');
-            const courses = [];
-            let valid = false;
+            const courses = []; let valid = false;
             rows.forEach(row => {
                 const id = row.id.replace('courseRow', '');
                 const nameEl = document.getElementById('cname' + id);
@@ -1054,7 +1005,6 @@
             });
             return { title, courses, valid };
         }
-
         function calcSemesterGPA() {
             const data = getCurrentSemesterData();
             if (!data.valid) { document.getElementById('semesterGpaOut').innerHTML = '⚠️ Add valid courses.'; return; }
@@ -1064,7 +1014,6 @@
             document.getElementById('semesterGpaOut').innerHTML = '📊 GPA: <strong>' + gpa + '</strong> / 5.0';
             return { gpa: parseFloat(gpa), totalUnits: units };
         }
-
         function saveSemester() {
             const data = getCurrentSemesterData();
             if (!data.valid) { showNotification('⚠️ Add valid courses.'); return; }
@@ -1072,103 +1021,69 @@
             data.courses.forEach(c => { total += c.units * c.gradePoint; units += c.units; });
             const gpa = parseFloat((total / units).toFixed(2));
             const semester = { id: Date.now(), title: data.title, courses: data.courses, gpa, totalUnits: units, date: new Date().toLocaleString() };
-            const semesters = getSavedSemesters();
-            semesters.push(semester);
-            saveSemestersToStorage(semesters);
-            document.getElementById('semesterTitle').value = '';
-            document.getElementById('semesterCourseBox').innerHTML = '';
-            courseRowCounter = 0;
-            addCourseRow();
+            const semesters = getSavedSemesters(); semesters.push(semester); saveSemestersToStorage(semesters);
+            document.getElementById('semesterTitle').value = ''; document.getElementById('semesterCourseBox').innerHTML = '';
+            courseRowCounter = 0; addCourseRow();
             document.getElementById('semesterGpaOut').innerHTML = '✅ Saved! GPA: ' + gpa.toFixed(2);
-            renderSavedSemesters();
-            updateDashFromSemesters();
-            renderCGPATracker();
-            checkAchievements();
-            showNotification('💾 Semester saved.');
+            renderSavedSemesters(); updateDashFromSemesters(); renderCGPATracker();
+            checkAchievements(); showNotification('💾 Semester saved.');
             if (currentUser) syncLocalToCloud();
         }
-
         function deleteSemester(id) {
             let semesters = getSavedSemesters();
             if (!semesters.length) { showNotification('⚠️ No semesters.'); return; }
             let target = id;
-            if (!target) { const last = semesters[semesters.length - 1]; if (!confirm('Delete "' + last.title + '"?')) return; target = last.id; }
-            semesters = semesters.filter(s => s.id !== target);
-            saveSemestersToStorage(semesters);
-            renderSavedSemesters();
-            updateDashFromSemesters();
-            renderCGPATracker();
-            showNotification('🗑 Deleted.');
-            if (currentUser) syncLocalToCloud();
+            if (!target) { const last = semesters[semesters.length-1]; if (!confirm('Delete "' + last.title + '"?')) return; target = last.id; }
+            semesters = semesters.filter(s => s.id !== target); saveSemestersToStorage(semesters);
+            renderSavedSemesters(); updateDashFromSemesters(); renderCGPATracker();
+            showNotification('🗑 Deleted.'); if (currentUser) syncLocalToCloud();
         }
-
         function clearAllSemesters() {
             if (!confirm('Delete all semesters?')) return;
-            saveSemestersToStorage([]);
-            renderSavedSemesters();
-            updateDashFromSemesters();
-            renderCGPATracker();
-            showNotification('🗑 All cleared.');
-            if (currentUser) syncLocalToCloud();
+            saveSemestersToStorage([]); renderSavedSemesters(); updateDashFromSemesters(); renderCGPATracker();
+            showNotification('🗑 All cleared.'); if (currentUser) syncLocalToCloud();
         }
-
         function renderSavedSemesters() {
             const semesters = getSavedSemesters();
             const container = document.getElementById('savedSemestersList');
             const historyContainer = document.getElementById('gpaHistoryList');
             if (!semesters.length) {
                 const msg = '<span class="small">No semesters saved.</span>';
-                container.innerHTML = msg;
-                if (historyContainer) historyContainer.innerHTML = msg;
+                container.innerHTML = msg; if (historyContainer) historyContainer.innerHTML = msg;
                 return;
             }
             const sorted = [...semesters].reverse();
             const html = sorted.map(s => `
                 <div class="history-item" style="display:flex;flex-direction:column;gap:4px;background:#0f172a;padding:10px;border-radius:8px;margin-top:6px;border:1px solid #334155;">
                     <div style="display:flex;justify-content:space-between;font-weight:600;color:#fbbf24;">
-                        <span>📘 ${s.title}</span>
-                        <span>GPA: ${s.gpa.toFixed(2)}</span>
+                        <span>📘 ${s.title}</span><span>GPA: ${s.gpa.toFixed(2)}</span>
                     </div>
                     <div style="font-size:0.75rem;color:#94a3b8;">${s.courses.map(c => c.name + ' (' + c.units + 'u)').join(', ')}</div>
                     <div style="font-size:0.7rem;color:#64748b;">${s.date} <button onclick="deleteSemester(${s.id})" class="danger small-btn" style="padding:2px 8px;font-size:0.65rem;">✕</button></div>
                 </div>
             `).join('');
-            container.innerHTML = html;
-            if (historyContainer) historyContainer.innerHTML = html;
+            container.innerHTML = html; if (historyContainer) historyContainer.innerHTML = html;
         }
-
         function updateDashFromSemesters() {
             const semesters = getSavedSemesters();
-            if (!semesters.length) {
-                localStorage.removeItem('gpa');
-                localStorage.removeItem('cgpa');
-                updateDash();
-                return;
-            }
+            if (!semesters.length) { localStorage.removeItem('gpa'); localStorage.removeItem('cgpa'); updateDash(); return; }
             let total = 0, units = 0;
             semesters.forEach(s => { total += s.gpa * s.totalUnits; units += s.totalUnits; });
             const cgpa = units > 0 ? (total / units) : 0;
-            const last = semesters[semesters.length - 1];
-            localStorage.setItem('gpa', last.gpa.toFixed(2));
-            localStorage.setItem('cgpa', cgpa.toFixed(2));
-            updateDash();
+            const last = semesters[semesters.length-1];
+            localStorage.setItem('gpa', last.gpa.toFixed(2)); localStorage.setItem('cgpa', cgpa.toFixed(2)); updateDash();
         }
-
         function initGPASection() {
             const rows = document.querySelectorAll('#semesterCourseBox .course-row');
             if (rows.length === 0) { courseRowCounter = 0; addCourseRow(); } else { courseRowCounter = rows.length; }
-            renderSavedSemesters();
-            updateDashFromSemesters();
-            renderCGPATracker();
+            renderSavedSemesters(); updateDashFromSemesters(); renderCGPATracker();
         }
 
         // ─── CGPA CALCULATOR (manual) ───
         function addCGPARow() {
             semCounter++;
             const container = document.getElementById('cgpaBox');
-            const row = document.createElement('div');
-            row.className = 'row';
-            row.id = 'cgpaRow' + semCounter;
+            const row = document.createElement('div'); row.className = 'row'; row.id = 'cgpaRow' + semCounter;
             row.innerHTML = `
                 <input type="number" id="cunit${semCounter}_cgpa" placeholder="Units" min="0" step="0.5" style="flex:1;">
                 <input type="number" id="cgpa${semCounter}_cgpa" placeholder="GPA" min="0" max="5" step="0.01" style="flex:1;">
@@ -1176,16 +1091,10 @@
             `;
             container.appendChild(row);
         }
-
         function removeCGPARow(id) {
             const row = document.getElementById('cgpaRow' + id);
-            if (row) {
-                const rows = document.querySelectorAll('#cgpaBox .row');
-                if (rows.length <= 1) { showNotification('⚠️ You need at least one semester.'); return; }
-                row.remove();
-            }
+            if (row) { const rows = document.querySelectorAll('#cgpaBox .row'); if (rows.length <= 1) { showNotification('⚠️ You need at least one semester.'); return; } row.remove(); }
         }
-
         function calcCGPA() {
             let total = 0, units = 0;
             const rows = document.querySelectorAll('#cgpaBox .row');
@@ -1194,12 +1103,8 @@
                 const uEl = document.getElementById('cunit' + id + '_cgpa');
                 const gEl = document.getElementById('cgpa' + id + '_cgpa');
                 if (uEl && gEl) {
-                    const u = parseFloat(uEl.value);
-                    const g = parseFloat(gEl.value);
-                    if (!isNaN(u) && !isNaN(g) && u > 0) {
-                        total += u * g;
-                        units += u;
-                    }
+                    const u = parseFloat(uEl.value); const g = parseFloat(gEl.value);
+                    if (!isNaN(u) && !isNaN(g) && u > 0) { total += u * g; units += u; }
                 }
             });
             if (units === 0) { showNotification('⚠️ Enter valid semesters.'); return; }
@@ -1215,19 +1120,16 @@
             const upcoming = academicEvents.filter(e => new Date(e.date + 'T00:00:00') >= now);
             if (!upcoming.length) {
                 container.innerHTML = '<span class="small" style="display:block;text-align:center;padding:10px;">No upcoming events.</span>';
-                document.getElementById('calendarCountdown').innerText = '--';
-                return;
+                document.getElementById('calendarCountdown').innerText = '--'; return;
             }
-            const next = upcoming[0];
-            const nextFive = upcoming.slice(0,5);
+            const next = upcoming[0]; const nextFive = upcoming.slice(0,5);
             let html = '';
             nextFive.forEach((e, i) => {
                 const isNext = i === 0;
                 const dateStr = new Date(e.date).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
                 html += `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #334155;${isNext ? 'background:#1a2a4a;padding:8px 10px;border-radius:6px;margin-bottom:4px;' : ''}">
                     <span style="${isNext ? 'font-weight:600;color:#fbbf24;' : ''}">${isNext ? '🔴 ' : ''}${e.title}</span>
-                    <span style="color:#94a3b8;font-size:0.8rem;">${dateStr}</span>
-                </div>`;
+                    <span style="color:#94a3b8;font-size:0.8rem;">${dateStr}</span></div>`;
             });
             if (upcoming.length > 5) html += `<div class="small" style="text-align:center;">+ ${upcoming.length-5} more</div>`;
             container.innerHTML = html;
@@ -1235,29 +1137,18 @@
             if (diff <= 0) document.getElementById('calendarCountdown').innerText = '🎉 Today!';
             else {
                 const d = Math.floor(diff/(1000*60*60*24));
-                const h = Math.floor((diff/(1000*60*60))%24);
-                const m = Math.floor((diff/(1000*60))%60);
+                const h = Math.floor((diff/(1000*60*60))%24); const m = Math.floor((diff/(1000*60))%60);
                 document.getElementById('calendarCountdown').innerHTML = d+'d '+h+'h '+m+'m';
             }
         }
-
-        function viewFullCalendar() {
-            window.open('https://uniosun.edu.ng/index.php/admissions-general-info/ad-academic-calender.html', '_blank');
-        }
-
-        setInterval(() => {
-            if (currentSection === 'calendar' || document.getElementById('sectionCalendar').classList.contains('active'))
-                renderAcademicCalendar();
-        }, 60000);
+        function viewFullCalendar() { window.open('https://uniosun.edu.ng/index.php/admissions-general-info/ad-academic-calender.html', '_blank'); }
+        setInterval(() => { if (currentSection === 'calendar' || document.getElementById('sectionCalendar').classList.contains('active')) renderAcademicCalendar(); }, 60000);
 
         // ─── CGPA TRACKER ───
         function renderCGPATracker() {
             const container = document.getElementById('cgpaTrackerContent');
             const semesters = getSavedSemesters();
-            if (!semesters.length) {
-                container.innerHTML = '<span class="small">No data yet.</span>';
-                return;
-            }
+            if (!semesters.length) { container.innerHTML = '<span class="small">No data yet.</span>'; return; }
             const sorted = [...semesters].sort((a,b) => new Date(a.date) - new Date(b.date));
             let total = 0, units = 0;
             sorted.forEach(s => { total += s.gpa * s.totalUnits; units += s.totalUnits; });
@@ -1265,21 +1156,16 @@
             let html = `<div style="background:#0f172a;padding:10px;border-radius:8px;text-align:center;">
                 <div style="font-size:0.75rem;color:#94a3b8;">Overall CGPA</div>
                 <div style="font-size:2rem;font-weight:700;color:#fbbf24;">${overall.toFixed(2)}</div>
-                <div style="font-size:0.7rem;color:#94a3b8;">${getDegreeClass(overall)}</div>
-            </div><div style="display:flex;flex-direction:column;gap:4px;">`;
+                <div style="font-size:0.7rem;color:#94a3b8;">${getDegreeClass(overall)}</div></div><div style="display:flex;flex-direction:column;gap:4px;">`;
             sorted.forEach(s => {
                 const pct = (s.gpa/5)*100;
                 const color = pct>=80 ? '#22c55e' : pct>=60 ? '#fbbf24' : '#ef4444';
                 html += `<div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;">
                     <span style="min-width:80px;color:#94a3b8;">${s.title}</span>
-                    <div style="flex:1;background:#1e293b;border-radius:4px;height:8px;overflow:hidden;">
-                        <div style="width:${pct}%;height:100%;background:${color};border-radius:4px;"></div>
-                    </div>
-                    <span style="min-width:40px;color:#fbbf24;font-weight:600;">${s.gpa.toFixed(2)}</span>
-                </div>`;
+                    <div style="flex:1;background:#1e293b;border-radius:4px;height:8px;overflow:hidden;"><div style="width:${pct}%;height:100%;background:${color};border-radius:4px;"></div></div>
+                    <span style="min-width:40px;color:#fbbf24;font-weight:600;">${s.gpa.toFixed(2)}</span></div>`;
             });
-            html += '</div>';
-            container.innerHTML = html;
+            html += '</div>'; container.innerHTML = html;
         }
 
         // ─── CUT-OFF MARKS ───
@@ -1288,34 +1174,19 @@
             const searchTerm = (filter || '').toLowerCase().trim();
             const facultyFilter = faculty || document.getElementById('cutoffFaculty').value || 'all';
             let filtered = cutoffData;
-            if (searchTerm) {
-                filtered = filtered.filter(item => item.course.toLowerCase().includes(searchTerm) || item.faculty.toLowerCase().includes(searchTerm));
-            }
-            if (facultyFilter !== 'all') {
-                filtered = filtered.filter(item => item.faculty === facultyFilter);
-            }
-            if (filtered.length === 0) {
-                container.innerHTML = '<span class="small">No courses found. Try a different search.</span>';
-                return;
-            }
-            filtered.sort((a, b) => a.course.localeCompare(b.course));
+            if (searchTerm) filtered = filtered.filter(item => item.course.toLowerCase().includes(searchTerm) || item.faculty.toLowerCase().includes(searchTerm));
+            if (facultyFilter !== 'all') filtered = filtered.filter(item => item.faculty === facultyFilter);
+            if (filtered.length === 0) { container.innerHTML = '<span class="small">No courses found.</span>'; return; }
+            filtered.sort((a,b) => a.course.localeCompare(b.course));
             let html = '<div style="display:flex;flex-direction:column;gap:4px;">';
             filtered.forEach(item => {
                 const isCompetitive = item.merit >= 70;
-                html += `
-                    <div style="display:flex;justify-content:space-between;padding:6px 8px;background:#0f172a;border-radius:6px;border:1px solid #334155;${isCompetitive ? 'border-color:#fbbf24;' : ''}">
-                        <span style="font-size:0.85rem;${isCompetitive ? 'font-weight:600;' : ''}">${item.course}</span>
-                        <span style="font-size:0.8rem;color:#94a3b8;white-space:nowrap;">
-                            GM: <span style="color:#fbbf24;font-weight:600;">${item.merit}</span>
-                            IC: <span style="color:#94a3b8;">${item.indigene}</span>
-                        </span>
-                    </div>
-                `;
+                html += `<div style="display:flex;justify-content:space-between;padding:6px 8px;background:#0f172a;border-radius:6px;border:1px solid #334155;${isCompetitive ? 'border-color:#fbbf24;' : ''}">
+                    <span style="font-size:0.85rem;${isCompetitive ? 'font-weight:600;' : ''}">${item.course}</span>
+                    <span style="font-size:0.8rem;color:#94a3b8;white-space:nowrap;">GM: <span style="color:#fbbf24;font-weight:600;">${item.merit}</span> IC: <span style="color:#94a3b8;">${item.indigene}</span></span></div>`;
             });
-            html += '</div>';
-            container.innerHTML = html;
+            html += '</div>'; container.innerHTML = html;
         }
-
         function filterCutoffMarks() {
             const search = document.getElementById('cutoffSearch').value;
             const faculty = document.getElementById('cutoffFaculty').value;
@@ -1327,43 +1198,24 @@
             const jamb = parseInt(document.getElementById('jambScore').value);
             if (isNaN(jamb) || jamb < 0 || jamb > 400) {
                 document.getElementById('uniosunResult').innerHTML = '⚠️ Please enter a valid JAMB score (0–400).';
-                showNotification('⚠️ Invalid JAMB score.');
-                return;
+                showNotification('⚠️ Invalid JAMB score.'); return;
             }
-            const subjectNames = [
-                document.getElementById('subject1').value.trim(),
-                document.getElementById('subject2').value.trim(),
-                document.getElementById('subject3').value.trim(),
-                document.getElementById('subject4').value.trim(),
-                document.getElementById('subject5').value.trim()
-            ];
-            const gradeEls = [
-                document.getElementById('grade1'), document.getElementById('grade2'),
-                document.getElementById('grade3'), document.getElementById('grade4'),
-                document.getElementById('grade5')
-            ];
+            const subjectNames = ['subject1','subject2','subject3','subject4','subject5'].map(id => document.getElementById(id).value.trim());
+            const gradeEls = ['grade1','grade2','grade3','grade4','grade5'].map(id => document.getElementById(id));
             if (subjectNames.filter(n => n === '').length > 0) {
                 document.getElementById('uniosunResult').innerHTML = '⚠️ Please enter all 5 subject names.';
-                showNotification('⚠️ All subject fields must be filled.');
-                return;
+                showNotification('⚠️ All subject fields must be filled.'); return;
             }
             let totalOlevelPoints = 0;
-            gradeEls.forEach(select => { totalOlevelPoints += parseInt(select.value); });
+            gradeEls.forEach(select => totalOlevelPoints += parseInt(select.value));
             const jambContribution = (jamb * 60) / 400;
             const aggregate = jambContribution + totalOlevelPoints;
-            const resultDiv = document.getElementById('uniosunResult');
-            resultDiv.innerHTML = `
+            document.getElementById('uniosunResult').innerHTML = `
                 <div style="background:#0f172a;padding:10px;border-radius:8px;text-align:left;font-size:0.9rem;">
                     <div><strong>📊 Aggregate Score:</strong> ${aggregate.toFixed(2)}%</div>
-                    <div style="font-size:0.8rem;color:#94a3b8;margin-top:4px;">
-                        JAMB Contribution: ${jambContribution.toFixed(2)}% (${jamb} × 60/400)<br>
-                        O'level Points: ${totalOlevelPoints} / 40
-                    </div>
-                    <div style="margin-top:6px;font-size:0.85rem;color:#fbbf24;">
-                        ${aggregate >= 68 ? '✅ Competitive score – likely admission' : '🔍 Average – check course cut-off'}
-                    </div>
-                </div>
-            `;
+                    <div style="font-size:0.8rem;color:#94a3b8;margin-top:4px;">JAMB Contribution: ${jambContribution.toFixed(2)}% (${jamb} × 60/400)<br>O'level Points: ${totalOlevelPoints} / 40</div>
+                    <div style="margin-top:6px;font-size:0.85rem;color:#fbbf24;">${aggregate >= 68 ? '✅ Competitive score – likely admission' : '🔍 Average – check course cut-off'}</div>
+                </div>`;
             showNotification('📊 Screening score: ' + aggregate.toFixed(2) + '%');
         }
 
@@ -1374,100 +1226,59 @@
 
         // ─── ANALYZER ───
         function analyze() {
-            const semesters = getSavedSemesters();
-            const gpa = parseFloat(localStorage.getItem('gpa')) || 0;
-            const cgpa = parseFloat(localStorage.getItem('cgpa')) || 0;
-            const streak = parseInt(localStorage.getItem('streak')) || 0;
-            const mins = parseInt(localStorage.getItem('studyMinutes')) || 0;
-            const sessions = getSessionCount();
+            const semesters = getSavedSemesters(); const gpa = parseFloat(localStorage.getItem('gpa')) || 0;
+            const cgpa = parseFloat(localStorage.getItem('cgpa')) || 0; const streak = parseInt(localStorage.getItem('streak')) || 0;
+            const mins = parseInt(localStorage.getItem('studyMinutes')) || 0; const sessions = getSessionCount();
             let msg = '<strong>📊 Analysis</strong><br><br>';
-            msg += 'GPA: ' + (gpa || 'N/A') + '<br>';
-            msg += 'CGPA: ' + (cgpa || 'N/A') + '<br>';
-            msg += 'Degree: ' + getDegreeClass(cgpa) + '<br>';
-            msg += 'Streak: ' + streak + ' days<br>';
-            msg += 'Study: ' + (mins/60).toFixed(1) + ' hrs<br>';
-            msg += 'Sessions: ' + sessions + '<br>';
+            msg += 'GPA: ' + (gpa || 'N/A') + '<br>'; msg += 'CGPA: ' + (cgpa || 'N/A') + '<br>';
+            msg += 'Degree: ' + getDegreeClass(cgpa) + '<br>'; msg += 'Streak: ' + streak + ' days<br>';
+            msg += 'Study: ' + (mins/60).toFixed(1) + ' hrs<br>'; msg += 'Sessions: ' + sessions + '<br>';
             msg += 'Semesters: ' + semesters.length + '<br><br>';
-            if (gpa >= 4.5) msg += '🌟 Excellent!';
-            else if (gpa >= 3.5) msg += '👍 Good!';
-            else if (gpa >= 2.4) msg += '⚠️ Average.';
-            else if (gpa > 0) msg += '🔴 Needs work.';
-            else msg += '📌 No GPA data.';
-            document.getElementById('analysisBox').innerHTML = msg;
-            showNotification('🔍 Analysis done.');
+            if (gpa >= 4.5) msg += '🌟 Excellent!'; else if (gpa >= 3.5) msg += '👍 Good!'; else if (gpa >= 2.4) msg += '⚠️ Average.'; else if (gpa > 0) msg += '🔴 Needs work.'; else msg += '📌 No GPA data.';
+            document.getElementById('analysisBox').innerHTML = msg; showNotification('🔍 Analysis done.');
         }
         function resetAnalysis() { document.getElementById('analysisBox').innerHTML = '<span class="small">No analysis.</span>'; showNotification('🔄 Reset.'); }
 
         // ─── COUNTDOWN ───
         function setCountdown() {
-            const date = document.getElementById('examDate').value;
-            const label = document.getElementById('examLabel').value.trim() || 'Exam';
+            const date = document.getElementById('examDate').value; const label = document.getElementById('examLabel').value.trim() || 'Exam';
             if (!date) { showNotification('⚠️ Select date.'); return; }
-            const d = new Date(date + 'T00:00:00');
-            if (d <= new Date()) { showNotification('⚠️ Future date needed.'); return; }
-            localStorage.setItem('examDate', d.toISOString());
-            localStorage.setItem('examLabel', label);
-            updateCountdownDisplay();
-            showNotification('🎯 Countdown set.');
-            if (currentUser) syncLocalToCloud();
+            const d = new Date(date + 'T00:00:00'); if (d <= new Date()) { showNotification('⚠️ Future date needed.'); return; }
+            localStorage.setItem('examDate', d.toISOString()); localStorage.setItem('examLabel', label);
+            updateCountdownDisplay(); showNotification('🎯 Countdown set.'); if (currentUser) syncLocalToCloud();
         }
         function updateCountdownDisplay() {
-            const stored = localStorage.getItem('examDate');
-            const label = localStorage.getItem('examLabel') || 'Exam';
-            const display = document.getElementById('countdownDisplay');
-            const labelEl = document.getElementById('countdownLabel');
+            const stored = localStorage.getItem('examDate'); const label = localStorage.getItem('examLabel') || 'Exam';
+            const display = document.getElementById('countdownDisplay'); const labelEl = document.getElementById('countdownLabel');
             if (!stored) { display.innerText = '--:--:--:--'; labelEl.innerText = 'No exam set'; return; }
             const diff = new Date(stored) - new Date();
             if (diff <= 0) { display.innerText = '🎉 TIME!'; labelEl.innerText = label + ' is here!'; return; }
-            const days = Math.floor(diff/(1000*60*60*24));
-            const hours = Math.floor((diff/(1000*60*60))%24);
-            const minutes = Math.floor((diff/(1000*60))%60);
-            const seconds = Math.floor((diff/1000)%60);
+            const days = Math.floor(diff/(1000*60*60*24)); const hours = Math.floor((diff/(1000*60*60))%24);
+            const minutes = Math.floor((diff/(1000*60))%60); const seconds = Math.floor((diff/1000)%60);
             display.innerText = String(days).padStart(2,'0') + ':' + String(hours).padStart(2,'0') + ':' + String(minutes).padStart(2,'0') + ':' + String(seconds).padStart(2,'0');
             labelEl.innerText = label + ' — ' + days + ' days';
         }
         function clearCountdown() {
-            localStorage.removeItem('examDate');
-            localStorage.removeItem('examLabel');
-            document.getElementById('examDate').value = '';
-            document.getElementById('examLabel').value = '';
-            updateCountdownDisplay();
-            showNotification('🔄 Cleared.');
-            if (currentUser) syncLocalToCloud();
+            localStorage.removeItem('examDate'); localStorage.removeItem('examLabel');
+            document.getElementById('examDate').value = ''; document.getElementById('examLabel').value = '';
+            updateCountdownDisplay(); showNotification('🔄 Cleared.'); if (currentUser) syncLocalToCloud();
         }
-        setInterval(() => {
-            if (currentSection === 'countdown' || document.getElementById('sectionCountdown').classList.contains('active'))
-                updateCountdownDisplay();
-        }, 1000);
+        setInterval(() => { if (currentSection === 'countdown' || document.getElementById('sectionCountdown').classList.contains('active')) updateCountdownDisplay(); }, 1000);
 
         // ─── TIMER ───
-        function updateTimerDisplay() {
-            const m = Math.floor(timerSeconds/60);
-            const s = timerSeconds%60;
-            document.getElementById('time').innerText = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
-        }
+        function updateTimerDisplay() { const m = Math.floor(timerSeconds/60); const s = timerSeconds%60; document.getElementById('time').innerText = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0'); }
         function startTimer() {
             if (timerInterval) return;
-            if (!sessionActive) {
-                sessionActive = true;
-                document.getElementById('sessionTimerStatus').innerText = '🔴 Active';
-                showNotification('⏱ Started.');
-            }
+            if (!sessionActive) { sessionActive = true; document.getElementById('sessionTimerStatus').innerText = '🔴 Active'; showNotification('⏱ Started.'); }
             timerInterval = setInterval(() => {
-                timerSeconds--;
-                updateTimerDisplay();
+                timerSeconds--; updateTimerDisplay();
                 if (timerSeconds <= 0) {
                     clearInterval(timerInterval); timerInterval = null;
-                    pomodoroCompleted++;
-                    localStorage.setItem('pomodoroCount', pomodoroCompleted);
+                    pomodoroCompleted++; localStorage.setItem('pomodoroCount', pomodoroCompleted);
                     document.getElementById('pomodoroCount').innerText = pomodoroCompleted;
-                    addStudyMinutes(25);
-                    logSession(25);
-                    checkAchievements();
-                    showNotification('🍅 Done!');
-                    document.getElementById('sessionTimerStatus').innerText = '✅ Completed';
-                    sessionActive = false;
-                    updateDash();
+                    addStudyMinutes(25); logSession(25); checkAchievements();
+                    showNotification('🍅 Done!'); document.getElementById('sessionTimerStatus').innerText = '✅ Completed';
+                    sessionActive = false; updateDash();
                 }
             }, 1000);
         }
@@ -1475,23 +1286,14 @@
             clearInterval(timerInterval); timerInterval = null;
             if (sessionActive) {
                 document.getElementById('sessionTimerStatus').innerText = '⏸ Paused';
-                const elapsed = Math.floor((1500 - timerSeconds)/60);
-                if (elapsed > 0) { addStudyMinutes(elapsed); logSession(elapsed); }
-                sessionActive = false;
-                showNotification('⏸ Paused.');
+                const elapsed = Math.floor((1500 - timerSeconds)/60); if (elapsed > 0) { addStudyMinutes(elapsed); logSession(elapsed); }
+                sessionActive = false; showNotification('⏸ Paused.');
             }
         }
         function resetTimer() {
             clearInterval(timerInterval); timerInterval = null;
-            if (sessionActive) {
-                const elapsed = Math.floor((1500 - timerSeconds)/60);
-                if (elapsed > 0) { addStudyMinutes(elapsed); logSession(elapsed); }
-                sessionActive = false;
-            }
-            timerSeconds = 1500;
-            document.getElementById('sessionTimerStatus').innerText = 'Idle';
-            updateTimerDisplay();
-            showNotification('↺ Reset.');
+            if (sessionActive) { const elapsed = Math.floor((1500 - timerSeconds)/60); if (elapsed > 0) { addStudyMinutes(elapsed); logSession(elapsed); } sessionActive = false; }
+            timerSeconds = 1500; document.getElementById('sessionTimerStatus').innerText = 'Idle'; updateTimerDisplay(); showNotification('↺ Reset.');
         }
 
         // ─── SESSION LOG ───
@@ -1499,14 +1301,12 @@
             if (minutes <= 0) return;
             const log = JSON.parse(localStorage.getItem('sessionLog') || '[]');
             log.push({ duration: minutes, date: new Date().toLocaleString(), type: 'Study' });
-            localStorage.setItem('sessionLog', JSON.stringify(log));
-            if (currentUser) syncLocalToCloud();
+            localStorage.setItem('sessionLog', JSON.stringify(log)); if (currentUser) syncLocalToCloud();
         }
         function logQuickAction(action) {
             const log = JSON.parse(localStorage.getItem('sessionLog') || '[]');
             log.push({ duration: 0, date: new Date().toLocaleString(), type: action });
-            localStorage.setItem('sessionLog', JSON.stringify(log));
-            if (currentUser) syncLocalToCloud();
+            localStorage.setItem('sessionLog', JSON.stringify(log)); if (currentUser) syncLocalToCloud();
         }
         function renderSessionLog() {
             const log = JSON.parse(localStorage.getItem('sessionLog') || '[]');
@@ -1514,9 +1314,7 @@
             if (!log.length) { container.innerHTML = '<span class="small">No sessions.</span>'; return; }
             container.innerHTML = log.reverse().map(s => `<div class="history-item">📅 ${s.date} — <strong>${s.type}</strong> ${s.duration > 0 ? '| ' + s.duration + ' min' : ''}</div>`).join('');
         }
-        function clearSessionLog() {
-            if (confirm('Clear log?')) { localStorage.removeItem('sessionLog'); renderSessionLog(); showNotification('🗑 Cleared.'); if (currentUser) syncLocalToCloud(); }
-        }
+        function clearSessionLog() { if (confirm('Clear log?')) { localStorage.removeItem('sessionLog'); renderSessionLog(); showNotification('🗑 Cleared.'); if (currentUser) syncLocalToCloud(); } }
         function exportSessionLog() {
             const log = JSON.parse(localStorage.getItem('sessionLog') || '[]');
             if (!log.length) { showNotification('⚠️ No sessions.'); return; }
@@ -1524,22 +1322,18 @@
             navigator.clipboard.writeText(text).then(() => showNotification('📋 Copied!'));
         }
 
-        // ─── PDF LIBRARY ───
-        let dbPdf = null;
-        const DB_NAME = 'GoatTutorDB';
-        const STORE_NAME = 'pdfs';
+        // ─── PDF LIBRARY (unchanged, but PDF summarise/quiz now use chat) ───
+        let dbPdf = null; const DB_NAME = 'GoatTutorDB'; const STORE_NAME = 'pdfs';
         function openDB() {
             return new Promise((resolve, reject) => {
                 if (dbPdf) { resolve(dbPdf); return; }
                 const request = indexedDB.open(DB_NAME, 1);
                 request.onupgradeneeded = (event) => {
                     const database = event.target.result;
-                    if (!database.objectStoreNames.contains(STORE_NAME)) {
-                        database.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
-                    }
+                    if (!database.objectStoreNames.contains(STORE_NAME)) database.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
                 };
                 request.onsuccess = (event) => { dbPdf = event.target.result; resolve(dbPdf); };
-                request.onerror = (event) => { reject(event.target.error); };
+                request.onerror = (event) => reject(event.target.error);
             });
         }
         function saveFileToIndexedDB(file) {
@@ -1547,277 +1341,145 @@
                 const reader = new FileReader();
                 reader.onload = async function(e) {
                     try {
-                        const database = await openDB();
-                        const transaction = database.transaction([STORE_NAME], 'readwrite');
+                        const database = await openDB(); const transaction = database.transaction([STORE_NAME], 'readwrite');
                         const store = transaction.objectStore(STORE_NAME);
                         const data = { name: file.name, size: file.size, type: file.type, blob: e.target.result, uploadedAt: new Date().toISOString() };
-                        const request = store.add(data);
-                        request.onsuccess = () => { resolve(request.result); };
-                        request.onerror = () => { reject(request.error); };
+                        const request = store.add(data); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error);
                     } catch (err) { reject(err); }
                 };
-                reader.onerror = () => { reject(reader.error); };
-                reader.readAsArrayBuffer(file);
+                reader.onerror = () => reject(reader.error); reader.readAsArrayBuffer(file);
             });
         }
-        function getAllFiles() {
-            return new Promise(async (resolve, reject) => {
-                try {
-                    const database = await openDB();
-                    const transaction = database.transaction([STORE_NAME], 'readonly');
-                    const store = transaction.objectStore(STORE_NAME);
-                    const request = store.getAll();
-                    request.onsuccess = () => { resolve(request.result); };
-                    request.onerror = () => { reject(request.error); };
-                } catch (err) { reject(err); }
-            });
-        }
-        function getFileById(id) {
-            return new Promise(async (resolve, reject) => {
-                try {
-                    const database = await openDB();
-                    const transaction = database.transaction([STORE_NAME], 'readonly');
-                    const store = transaction.objectStore(STORE_NAME);
-                    const request = store.get(id);
-                    request.onsuccess = () => { resolve(request.result); };
-                    request.onerror = () => { reject(request.error); };
-                } catch (err) { reject(err); }
-            });
-        }
-        function deleteFileFromDB(id) {
-            return new Promise(async (resolve, reject) => {
-                try {
-                    const database = await openDB();
-                    const transaction = database.transaction([STORE_NAME], 'readwrite');
-                    const store = transaction.objectStore(STORE_NAME);
-                    const request = store.delete(id);
-                    request.onsuccess = () => { resolve(); };
-                    request.onerror = () => { reject(request.error); };
-                } catch (err) { reject(err); }
-            });
-        }
+        function getAllFiles() { return new Promise(async (resolve, reject) => { try { const database = await openDB(); const tx = database.transaction([STORE_NAME], 'readonly'); const store = tx.objectStore(STORE_NAME); const req = store.getAll(); req.onsuccess = () => resolve(req.result); req.onerror = () => reject(req.error); } catch(err) { reject(err); } }); }
+        function getFileById(id) { return new Promise(async (resolve, reject) => { try { const database = await openDB(); const tx = database.transaction([STORE_NAME], 'readonly'); const store = tx.objectStore(STORE_NAME); const req = store.get(id); req.onsuccess = () => resolve(req.result); req.onerror = () => reject(req.error); } catch(err) { reject(err); } }); }
+        function deleteFileFromDB(id) { return new Promise(async (resolve, reject) => { try { const database = await openDB(); const tx = database.transaction([STORE_NAME], 'readwrite'); const store = tx.objectStore(STORE_NAME); const req = store.delete(id); req.onsuccess = () => resolve(); req.onerror = () => reject(req.error); } catch(err) { reject(err); } }); }
         async function handleFileUpload(event) {
-            const files = event.target.files;
-            if (!files.length) return;
-            let uploaded = 0;
+            const files = event.target.files; if (!files.length) return; let uploaded = 0;
             for (let file of files) {
                 if (file.type !== 'application/pdf') { showNotification('⚠️ "' + file.name + '" is not a PDF.'); continue; }
                 if (file.size > 50 * 1024 * 1024) { showNotification('⚠️ "' + file.name + '" exceeds 50MB limit.'); continue; }
-                try {
-                    await saveFileToIndexedDB(file);
-                    uploaded++;
-                } catch (err) { console.error(err); showNotification('❌ Failed to upload "' + file.name + '".'); }
+                try { await saveFileToIndexedDB(file); uploaded++; } catch (err) { console.error(err); showNotification('❌ Failed to upload "' + file.name + '".'); }
             }
             if (uploaded > 0) showNotification('✅ ' + uploaded + ' PDF(s) uploaded successfully!');
-            event.target.value = '';
-            loadPdfList();
+            event.target.value = ''; loadPdfList();
         }
         async function displayStorageInfo() {
-            const storageEl = document.getElementById('storageInfo');
-            if (!storageEl) return;
+            const storageEl = document.getElementById('storageInfo'); if (!storageEl) return;
             try {
-                const files = await getAllFiles();
-                let totalSize = 0;
-                files.forEach(f => totalSize += f.size);
-                const totalMB = (totalSize / (1024*1024)).toFixed(2);
-                let quotaInfo = '';
+                const files = await getAllFiles(); let totalSize = 0; files.forEach(f => totalSize += f.size);
+                const totalMB = (totalSize / (1024*1024)).toFixed(2); let quotaInfo = '';
                 if (navigator.storage && navigator.storage.estimate) {
-                    const estimate = await navigator.storage.estimate();
-                    const used = estimate.usage || totalSize;
-                    const quota = estimate.quota || 'unknown';
-                    const usedMB = (used / (1024*1024)).toFixed(2);
-                    const quotaMB = quota === 'unknown' ? 'unknown' : (quota / (1024*1024)).toFixed(2);
+                    const estimate = await navigator.storage.estimate(); const used = estimate.usage || totalSize; const quota = estimate.quota || 'unknown';
+                    const usedMB = (used / (1024*1024)).toFixed(2); const quotaMB = quota === 'unknown' ? 'unknown' : (quota / (1024*1024)).toFixed(2);
                     quotaInfo = `Used: ${usedMB} MB ${quota !== 'unknown' ? '/ Quota: ' + quotaMB + ' MB' : ''}`;
                 } else { quotaInfo = `Total: ${totalMB} MB`; }
                 storageEl.textContent = quotaInfo;
-            } catch (err) { console.error('Storage info error:', err); storageEl.textContent = ''; }
+            } catch (err) { console.error(err); storageEl.textContent = ''; }
         }
         async function loadPdfList() {
-            const container = document.getElementById('pdfList');
-            const countEl = document.getElementById('pdfCount');
+            const container = document.getElementById('pdfList'); const countEl = document.getElementById('pdfCount');
             try {
                 const files = await getAllFiles();
-                if (!files.length) {
-                    container.innerHTML = '<span class="small">No PDFs uploaded yet.</span>';
-                    countEl.innerText = '0 files';
-                    displayStorageInfo();
-                    return;
-                }
+                if (!files.length) { container.innerHTML = '<span class="small">No PDFs uploaded yet.</span>'; countEl.innerText = '0 files'; displayStorageInfo(); return; }
                 countEl.innerText = files.length + ' file' + (files.length > 1 ? 's' : '');
-                container.innerHTML = files.map((file, index) => {
-                    const sizeKB = (file.size / 1024).toFixed(1);
-                    const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+                container.innerHTML = files.map((file) => {
+                    const sizeKB = (file.size / 1024).toFixed(1); const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
                     const sizeStr = file.size > 1024 * 1024 ? sizeMB + ' MB' : sizeKB + ' KB';
-                    const dateStr = new Date(file.uploadedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-                    return `
-                        <div class="pdf-list-item">
-                            <div class="file-info" onclick="viewPdf(${file.id})">
-                                <span style="font-size:1.2rem;">📄</span>
-                                <div><div class="name">${file.name}</div><div class="meta">${sizeStr} • ${dateStr}</div></div>
-                            </div>
-                            <div class="file-actions">
-                                <button onclick="event.stopPropagation();summarizePdf(${file.id})" class="ai-btn small-btn" style="padding:4px 10px;font-size:0.7rem;">🤖 Summarize</button>
-                                <button onclick="event.stopPropagation();quizPdf(${file.id})" class="ai-btn small-btn" style="padding:4px 10px;font-size:0.7rem;">📝 Quiz Me</button>
-                                <button onclick="event.stopPropagation();viewPdf(${file.id})" class="secondary small-btn" style="padding:4px 10px;font-size:0.7rem;">👁 View</button>
-                                <button onclick="event.stopPropagation();renamePdf(${file.id})" class="secondary small-btn" style="padding:4px 8px;">✏️</button>
-                                <button onclick="event.stopPropagation();deletePdf(${file.id})" class="danger small-btn" style="padding:4px 10px;font-size:0.7rem;">🗑</button>
-                            </div>
-                        </div>
-                    `;
+                    const dateStr = new Date(file.uploadedAt).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+                    return `<div class="pdf-list-item">
+                        <div class="file-info" onclick="viewPdf(${file.id})">
+                            <span style="font-size:1.2rem;">📄</span><div><div class="name">${file.name}</div><div class="meta">${sizeStr} • ${dateStr}</div></div></div>
+                        <div class="file-actions">
+                            <button onclick="event.stopPropagation();summarizePdf(${file.id})" class="small-btn" style="padding:4px 10px;font-size:0.7rem;">🤖 Summarize</button>
+                            <button onclick="event.stopPropagation();quizPdf(${file.id})" class="small-btn" style="padding:4px 10px;font-size:0.7rem;">📝 Quiz Me</button>
+                            <button onclick="event.stopPropagation();viewPdf(${file.id})" class="secondary small-btn" style="padding:4px 10px;font-size:0.7rem;">👁 View</button>
+                            <button onclick="event.stopPropagation();renamePdf(${file.id})" class="secondary small-btn" style="padding:4px 8px;">✏️</button>
+                            <button onclick="event.stopPropagation();deletePdf(${file.id})" class="danger small-btn" style="padding:4px 10px;font-size:0.7rem;">🗑</button>
+                        </div></div>`;
                 }).join('');
                 displayStorageInfo();
-            } catch (err) {
-                console.error(err);
-                container.innerHTML = '<span class="small">Error loading PDFs. Check storage permissions.</span>';
-                showNotification('❌ Could not load PDF library.');
-            }
+            } catch (err) { container.innerHTML = '<span class="small">Error loading PDFs.</span>'; showNotification('❌ Could not load PDF library.'); }
         }
         async function renamePdf(id) {
-            const newName = prompt('Enter new name for this PDF:');
-            if (!newName || !newName.trim()) return;
+            const newName = prompt('Enter new name for this PDF:'); if (!newName || !newName.trim()) return;
             try {
-                const database = await openDB();
-                const transaction = database.transaction([STORE_NAME], 'readwrite');
-                const store = transaction.objectStore(STORE_NAME);
+                const database = await openDB(); const transaction = database.transaction([STORE_NAME], 'readwrite'); const store = transaction.objectStore(STORE_NAME);
                 const file = await new Promise((resolve, reject) => { const req = store.get(id); req.onsuccess = () => resolve(req.result); req.onerror = () => reject(req.error); });
                 if (!file) { showNotification('⚠️ PDF not found.'); return; }
-                file.name = newName.trim();
-                await new Promise((resolve, reject) => { const req = store.put(file); req.onsuccess = () => resolve(); req.onerror = () => reject(req.error); });
-                loadPdfList();
-                showNotification('✏️ Renamed to ' + file.name);
+                file.name = newName.trim(); await new Promise((resolve, reject) => { const req = store.put(file); req.onsuccess = () => resolve(); req.onerror = () => reject(req.error); });
+                loadPdfList(); showNotification('✏️ Renamed to ' + file.name);
             } catch (err) { console.error(err); showNotification('❌ Failed to rename PDF.'); }
         }
         async function viewPdf(id) {
-            const viewer = document.getElementById('pdfViewer');
-            const placeholder = document.getElementById('pdfViewerPlaceholder');
+            const viewer = document.getElementById('pdfViewer'); const placeholder = document.getElementById('pdfViewerPlaceholder');
             try {
-                const file = await getFileById(id);
-                if (!file) { showNotification('⚠️ PDF not found.'); return; }
-                const blob = new Blob([file.blob], { type: 'application/pdf' });
-                const url = URL.createObjectURL(blob);
-                viewer.src = url;
-                viewer.style.display = 'block';
-                placeholder.style.display = 'none';
-                showNotification('📄 Loading: ' + file.name);
+                const file = await getFileById(id); if (!file) { showNotification('⚠️ PDF not found.'); return; }
+                const blob = new Blob([file.blob], { type: 'application/pdf' }); const url = URL.createObjectURL(blob);
+                viewer.src = url; viewer.style.display = 'block'; placeholder.style.display = 'none'; showNotification('📄 Loading: ' + file.name);
             } catch (err) { console.error(err); showNotification('❌ Failed to load PDF.'); }
         }
         async function deletePdf(id) {
             if (!confirm('Delete this PDF?')) return;
             try {
-                await deleteFileFromDB(id);
-                loadPdfList();
-                const viewer = document.getElementById('pdfViewer');
-                const placeholder = document.getElementById('pdfViewerPlaceholder');
-                viewer.src = ''; viewer.style.display = 'none'; placeholder.style.display = 'flex';
-                showNotification('🗑 PDF deleted.');
+                await deleteFileFromDB(id); loadPdfList(); const viewer = document.getElementById('pdfViewer'); const placeholder = document.getElementById('pdfViewerPlaceholder');
+                viewer.src = ''; viewer.style.display = 'none'; placeholder.style.display = 'flex'; showNotification('🗑 PDF deleted.');
             } catch (err) { console.error(err); showNotification('❌ Failed to delete PDF.'); }
         }
         async function extractPdfText(id) {
             try {
-                const file = await getFileById(id);
-                if (!file) { showNotification('⚠️ PDF not found.'); return null; }
-                const pdfjsLib = window['pdfjs-dist/build/pdf'];
-                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-                const arrayBuffer = file.blob;
-                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                let fullText = '';
-                for (let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const textContent = await page.getTextContent();
-                    fullText += textContent.items.map(item => item.str).join(' ') + '\n\n';
-                }
-                if (!fullText.trim()) { showNotification('⚠️ No text extracted from PDF.'); return null; }
+                const file = await getFileById(id); if (!file) { showNotification('⚠️ PDF not found.'); return null; }
+                const pdfjsLib = window['pdfjs-dist/build/pdf']; pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+                const arrayBuffer = file.blob; const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                let fullText = ''; for (let i = 1; i <= pdf.numPages; i++) { const page = await pdf.getPage(i); const textContent = await page.getTextContent(); fullText += textContent.items.map(item => item.str).join(' ') + '\n\n'; }
+                if (!fullText.trim()) { showNotification('⚠️ No text extracted.'); return null; }
                 return fullText.length > 6000 ? fullText.substring(0,6000) + '... [truncated]' : fullText;
-            } catch (err) { console.error('PDF extraction error:', err); showNotification('❌ Failed to extract text from PDF.'); return null; }
+            } catch (err) { showNotification('❌ Failed to extract text.'); return null; }
         }
         async function summarizePdf(id) {
-            const text = await extractPdfText(id);
-            if (!text) return;
-            document.getElementById('topic').value = text;
-            document.getElementById('mode').value = 'summary';
-            navigateTo('main');
-            setTimeout(() => { if (document.getElementById('topic').value.trim()) askAI(); }, 300);
+            const text = await extractPdfText(id); if (!text) return;
+            document.getElementById('topic').value = text; document.getElementById('mode').value = 'summary';
+            askAI(); // this will launch the chat panel with the new topic
         }
         async function quizPdf(id) {
-            const text = await extractPdfText(id);
-            if (!text) return;
-            document.getElementById('topic').value = text;
-            document.getElementById('mode').value = 'mcq';
-            navigateTo('main');
-            setTimeout(() => { if (document.getElementById('topic').value.trim()) askAI(); }, 300);
+            const text = await extractPdfText(id); if (!text) return;
+            document.getElementById('topic').value = text; document.getElementById('mode').value = 'mcq';
+            askAI();
         }
         function setupDragDrop() {
             const area = document.getElementById('uploadArea');
             area.addEventListener('dragover', (e) => { e.preventDefault(); area.classList.add('dragover'); });
             area.addEventListener('dragleave', () => area.classList.remove('dragover'));
-            area.addEventListener('drop', (e) => {
-                e.preventDefault(); area.classList.remove('dragover');
-                const files = e.dataTransfer.files;
-                if (files.length) { document.getElementById('pdfUploadInput').files = files; handleFileUpload({ target: { files: files } }); }
-            });
+            area.addEventListener('drop', (e) => { e.preventDefault(); area.classList.remove('dragover'); const files = e.dataTransfer.files; if (files.length) { document.getElementById('pdfUploadInput').files = files; handleFileUpload({ target: { files: files } }); } });
         }
 
         // ─── REMINDERS ───
         function getReminders() { try { return JSON.parse(localStorage.getItem('reminders')) || []; } catch { return []; } }
         function saveReminders(r) { localStorage.setItem('reminders', JSON.stringify(r)); if (currentUser) syncLocalToCloud(); }
         function addReminder() {
-            const title = document.getElementById('reminderTitle').value.trim();
-            const dateTime = document.getElementById('reminderDateTime').value;
-            const priority = document.getElementById('reminderPriority').value;
-            if (!title) { showNotification('⚠️ Please enter a reminder title.'); return; }
-            if (!dateTime) { showNotification('⚠️ Please select a date and time.'); return; }
-            const reminders = getReminders();
-            reminders.push({ id: Date.now(), title, dateTime, priority, completed: false, createdAt: new Date().toISOString() });
-            saveReminders(reminders);
-            renderReminders();
-            document.getElementById('reminderTitle').value = '';
-            document.getElementById('reminderDateTime').value = '';
+            const title = document.getElementById('reminderTitle').value.trim(); const dateTime = document.getElementById('reminderDateTime').value; const priority = document.getElementById('reminderPriority').value;
+            if (!title) { showNotification('⚠️ Please enter a reminder title.'); return; } if (!dateTime) { showNotification('⚠️ Please select a date and time.'); return; }
+            const reminders = getReminders(); reminders.push({ id: Date.now(), title, dateTime, priority, completed: false, createdAt: new Date().toISOString() });
+            saveReminders(reminders); renderReminders(); document.getElementById('reminderTitle').value = ''; document.getElementById('reminderDateTime').value = '';
             showNotification('🔔 Reminder set: "' + title + '"');
-            if (Notification.permission === 'default') {
-                Notification.requestPermission().then(perm => { document.getElementById('notifStatus').innerText = perm === 'granted' ? '✅ Enabled' : '❌ Blocked'; });
-            }
+            if (Notification.permission === 'default') { Notification.requestPermission().then(perm => { document.getElementById('notifStatus').innerText = perm === 'granted' ? '✅ Enabled' : '❌ Blocked'; }); }
             if (currentUser) syncLocalToCloud();
         }
         function renderReminders() {
-            const reminders = getReminders();
-            const container = document.getElementById('reminderList');
+            const reminders = getReminders(); const container = document.getElementById('reminderList');
             if (reminders.length === 0) { container.innerHTML = '<span class="small">No reminders set.</span>'; return; }
             const sorted = [...reminders].sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime));
             container.innerHTML = sorted.map(r => {
-                const now = new Date();
-                const reminderDate = new Date(r.dateTime);
-                const isPast = reminderDate < now;
+                const now = new Date(); const reminderDate = new Date(r.dateTime); const isPast = reminderDate < now;
                 const priorityColor = r.priority === 'high' ? '#ef4444' : r.priority === 'medium' ? '#fbbf24' : '#22c55e';
                 const status = r.completed ? '✅ Done' : isPast ? '🔴 Overdue' : '⏳ Pending';
-                return `
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:#0f172a;border-radius:4px;margin-top:2px;border-left:3px solid ${priorityColor};border:1px solid #334155;font-size:0.85rem;flex-wrap:wrap;gap:4px;">
-                        <span><strong>${r.title}</strong></span>
-                        <span style="font-size:0.75rem;color:#94a3b8;">${new Date(r.dateTime).toLocaleString()}</span>
-                        <span style="font-size:0.75rem;">${status}</span>
-                        <div style="display:flex;gap:4px;">
-                            <button onclick="completeReminder(${r.id})" class="secondary small-btn" style="padding:2px 8px;font-size:0.7rem;">✅</button>
-                            <button onclick="deleteReminder(${r.id})" class="danger small-btn" style="padding:2px 8px;font-size:0.7rem;">✕</button>
-                        </div>
-                    </div>
-                `;
+                return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:#0f172a;border-radius:4px;margin-top:2px;border-left:3px solid ${priorityColor};border:1px solid #334155;font-size:0.85rem;flex-wrap:wrap;gap:4px;">
+                    <span><strong>${r.title}</strong></span><span style="font-size:0.75rem;color:#94a3b8;">${new Date(r.dateTime).toLocaleString()}</span><span style="font-size:0.75rem;">${status}</span>
+                    <div style="display:flex;gap:4px;"><button onclick="completeReminder(${r.id})" class="secondary small-btn" style="padding:2px 8px;font-size:0.7rem;">✅</button><button onclick="deleteReminder(${r.id})" class="danger small-btn" style="padding:2px 8px;font-size:0.7rem;">✕</button></div></div>`;
             }).join('');
         }
-        function completeReminder(id) {
-            const reminders = getReminders();
-            const r = reminders.find(r => r.id === id);
-            if (r) { r.completed = true; saveReminders(reminders); renderReminders(); showNotification('✅ Reminder completed!'); }
-        }
-        function deleteReminder(id) {
-            let reminders = getReminders();
-            reminders = reminders.filter(r => r.id !== id);
-            saveReminders(reminders);
-            renderReminders();
-            showNotification('🗑 Reminder deleted.');
-        }
-        function clearAllReminders() {
-            if (!confirm('Delete all reminders?')) return;
-            saveReminders([]); renderReminders(); showNotification('🗑 All reminders cleared.');
-        }
+        function completeReminder(id) { const reminders = getReminders(); const r = reminders.find(r => r.id === id); if (r) { r.completed = true; saveReminders(reminders); renderReminders(); showNotification('✅ Reminder completed!'); } }
+        function deleteReminder(id) { let reminders = getReminders(); reminders = reminders.filter(r => r.id !== id); saveReminders(reminders); renderReminders(); showNotification('🗑 Reminder deleted.'); }
+        function clearAllReminders() { if (!confirm('Delete all reminders?')) return; saveReminders([]); renderReminders(); showNotification('🗑 All reminders cleared.'); }
         function requestNotificationPermission() {
             if (!('Notification' in window)) { showNotification('⚠️ Notifications not supported.'); return; }
             if (Notification.permission === 'granted') { showNotification('✅ Notifications already enabled.'); document.getElementById('notifStatus').innerText = '✅ Enabled'; return; }
@@ -1830,83 +1492,40 @@
         function scheduleReminderCheck() {
             if (reminderCheckerInterval) clearInterval(reminderCheckerInterval);
             reminderCheckerInterval = setInterval(() => {
-                const reminders = getReminders();
-                const now = new Date();
+                const reminders = getReminders(); const now = new Date();
                 reminders.forEach(r => {
-                    if (r.completed) return;
-                    const reminderTime = new Date(r.dateTime);
-                    const diff = reminderTime - now;
+                    if (r.completed) return; const reminderTime = new Date(r.dateTime); const diff = reminderTime - now;
                     if (diff <= 0 && diff > -5000) {
-                        if (Notification.permission === 'granted') {
-                            new Notification('🔔 GoatTutor Reminder', { body: r.title, icon: '🐐' });
-                        }
-                        showNotification('🔔 Reminder: ' + r.title);
-                        r.completed = true;
-                        saveReminders(reminders);
-                        renderReminders();
+                        if (Notification.permission === 'granted') { new Notification('🔔 GoatTutor Reminder', { body: r.title, icon: '🐐' }); }
+                        showNotification('🔔 Reminder: ' + r.title); r.completed = true; saveReminders(reminders); renderReminders();
                     }
                 });
             }, 10000);
         }
 
         // ─── BACK TO TOP ───
-        window.addEventListener('scroll', () => {
-            const btn = document.getElementById('backToTopBtn');
-            if (window.scrollY > 300) { btn.style.display = 'flex'; }
-            else { btn.style.display = 'none'; }
-        });
+        window.addEventListener('scroll', () => { const btn = document.getElementById('backToTopBtn'); if (window.scrollY > 300) btn.style.display = 'flex'; else btn.style.display = 'none'; });
 
         // ─── INIT ───
         function init() {
-            updateTimerDisplay();
-            updateStreak();
-            updateStudyHours();
-            updateDash();
-            updateCountdownDisplay();
-            updateSessionCountDisplay();
-            document.getElementById('pomodoroCount').innerText = pomodoroCompleted;
-            loadPlan(true);
-            renderSessionLog();
-            initGPASection();
-            renderAcademicCalendar();
-            renderCutoffMarks();
-            const cgpaRows = document.querySelectorAll('#cgpaBox .row');
-            if (cgpaRows.length === 0) { semCounter = 0; addCGPARow(); } else { semCounter = cgpaRows.length; }
-            loadPdfList();
-            setupDragDrop();
-            renderReminders();
-            scheduleReminderCheck();
-            loadGroupStates();
-            updateStreakUI();
-            renderAchievements();
-            if (Notification.permission === 'granted') {
-                document.getElementById('notifStatus').innerText = '✅ Enabled';
-            } else if (Notification.permission === 'denied') {
-                document.getElementById('notifStatus').innerText = '❌ Blocked';
-            } else {
-                document.getElementById('notifStatus').innerText = 'Click to enable';
-            }
+            updateTimerDisplay(); updateStreak(); updateStudyHours(); updateDash(); updateCountdownDisplay(); updateSessionCountDisplay();
+            document.getElementById('pomodoroCount').innerText = pomodoroCompleted; loadPlan(true); renderSessionLog(); initGPASection(); renderAcademicCalendar(); renderCutoffMarks();
+            const cgpaRows = document.querySelectorAll('#cgpaBox .row'); if (cgpaRows.length === 0) { semCounter = 0; addCGPARow(); } else { semCounter = cgpaRows.length; }
+            loadPdfList(); setupDragDrop(); renderReminders(); scheduleReminderCheck(); loadGroupStates(); updateStreakUI(); renderAchievements();
+            if (Notification.permission === 'granted') { document.getElementById('notifStatus').innerText = '✅ Enabled'; } else if (Notification.permission === 'denied') { document.getElementById('notifStatus').innerText = '❌ Blocked'; } else { document.getElementById('notifStatus').innerText = 'Click to enable'; }
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('service-worker.js')
-                        .then(reg => console.log('SW registered', reg))
-                        .catch(err => console.error('SW registration failed', err));
+                    navigator.serviceWorker.register('service-worker.js').then(reg => console.log('SW registered', reg)).catch(err => console.error('SW registration failed', err));
                 });
             }
         }
-
         document.getElementById('sidebarOverlay').addEventListener('click', closeMenu);
         document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMenu(); });
-
         init();
-        console.log('🐐 GoatTutor v6 – Now with themes, achievements & shareable CGPA!');
+        console.log('🐐 GoatTutor v7 – AI chat inside!');
     </script>
     <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "xb50ly2ja2");
+        (function(c,l,a,r,i,t,y){ c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)}; t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i; y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y); })(window, document, "clarity", "script", "xb50ly2ja2");
     </script>
 </body>
 </html>
