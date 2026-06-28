@@ -13,910 +13,177 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
         /* ─── RESET & BASE ─── */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
-
-        body {
-            background: #0f172a;
-            color: #e2e8f0;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        body { background: #0f172a; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; }
         /* ─── TOP BAR ─── */
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 16px;
-            background: #1e293b;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            border-bottom: 1px solid #334155;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .topbar .logo {
-            font-weight: 700;
-            font-size: 1.1rem;
-            letter-spacing: -0.3px;
-        }
-        .topbar .menuBtn {
-            font-size: 28px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            color: #e2e8f0;
-            padding: 6px 12px;
-            border-radius: 8px;
-            transition: background 0.2s;
-            width: auto;
-            touch-action: manipulation;
-            min-height: 44px;
-            min-width: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .topbar .menuBtn:hover {
-            background: #334155;
-        }
-
-        .topbar .auth-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.8rem;
-            color: #94a3b8;
-            flex-wrap: wrap;
-        }
-        .topbar .auth-status button {
-            width: auto;
-            padding: 4px 12px;
-            margin: 0;
-            font-size: 0.7rem;
-            min-height: 30px;
-            background: #dc2626;
-            border: none;
-            border-radius: 6px;
-            color: #fff;
-            cursor: pointer;
-        }
-        .topbar .auth-status button:hover {
-            background: #b91c1c;
-        }
-        .topbar .auth-status .user-email {
-            color: #fbbf24;
-            font-weight: 500;
-        }
-
+        .topbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: #1e293b; position: sticky; top: 0; z-index: 50; border-bottom: 1px solid #334155; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); flex-wrap: wrap; gap: 8px; }
+        .topbar .logo { font-weight: 700; font-size: 1.1rem; letter-spacing: -0.3px; }
+        .topbar .menuBtn { font-size: 28px; cursor: pointer; background: none; border: none; color: #e2e8f0; padding: 6px 12px; border-radius: 8px; transition: background 0.2s; width: auto; touch-action: manipulation; min-height: 44px; min-width: 44px; display: flex; align-items: center; justify-content: center; }
+        .topbar .menuBtn:hover { background: #334155; }
+        .topbar .auth-status { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: #94a3b8; flex-wrap: wrap; }
+        .topbar .auth-status button { width: auto; padding: 4px 12px; margin: 0; font-size: 0.7rem; min-height: 30px; background: #dc2626; border: none; border-radius: 6px; color: #fff; cursor: pointer; }
+        .topbar .auth-status button:hover { background: #b91c1c; }
+        .topbar .auth-status .user-email { color: #fbbf24; font-weight: 500; }
         /* ─── SIDEBAR OVERLAY ─── */
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 90;
-            display: none;
-            transition: opacity 0.3s;
-        }
-        .sidebar-overlay.show {
-            display: block;
-        }
-
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 90; display: none; transition: opacity 0.3s; }
+        .sidebar-overlay.show { display: block; }
         /* ─── SIDEBAR ─── */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 270px;
-            height: 100%;
-            background: #0f172a;
-            padding: 20px 14px;
-            transition: left 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            border-right: 1px solid #334155;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            overflow-y: auto;
-        }
-        .sidebar.open {
-            left: 0;
-        }
-        .sidebar h3 {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            margin-bottom: 6px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        /* ─── SIDEBAR GROUP STYLES ─── */
-        .sidebar-group {
-            margin-top: 2px;
-        }
-        .sidebar-group-btn {
-            width: 100% !important;
-            padding: 12px 14px !important;
-            border: none !important;
-            border-radius: 10px !important;
-            background: #1e293b !important;
-            color: #e2e8f0 !important;
-            text-align: left !important;
-            cursor: pointer !important;
-            font-size: 0.95rem !important;
-            transition: all 0.2s !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: space-between !important;
-            gap: 10px !important;
-            min-height: 48px !important;
-        }
-        .sidebar-group-btn:hover {
-            background: #334155 !important;
-            transform: translateX(3px) !important;
-        }
-        .sidebar-group-btn .arrow {
-            font-size: 0.7rem;
-            transition: transform 0.3s;
-        }
-        .sidebar-group-btn .arrow.open {
-            transform: rotate(180deg);
-        }
-        .sidebar-group-items {
-            overflow: hidden;
-            max-height: 0;
-            transition: max-height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            padding-left: 8px;
-        }
-        .sidebar-group-items.open {
-            max-height: 600px;
-        }
-        .sidebar-group-items button {
-            width: 100% !important;
-            padding: 10px 14px !important;
-            border: none !important;
-            border-radius: 8px !important;
-            background: #0f172a !important;
-            color: #94a3b8 !important;
-            text-align: left !important;
-            cursor: pointer !important;
-            font-size: 0.85rem !important;
-            transition: all 0.2s !important;
-            display: flex !important;
-            align-items: center !important;
-            gap: 8px !important;
-            min-height: 40px !important;
-            margin-top: 2px !important;
-        }
-        .sidebar-group-items button:hover {
-            background: #1e293b !important;
-            color: #e2e8f0 !important;
-            transform: translateX(3px) !important;
-        }
-        .sidebar-group-items button.active-nav {
-            background: #3b82f6 !important;
-            color: #fff !important;
-            font-weight: 600 !important;
-        }
-
-        /* ─── SIDEBAR REGULAR BUTTONS ─── */
-        .sidebar button:not(.sidebar-group-btn):not(.sidebar-group-items button) {
-            width: 100%;
-            padding: 12px 14px;
-            border: none;
-            border-radius: 10px;
-            background: #1e293b;
-            color: #e2e8f0;
-            text-align: left;
-            cursor: pointer;
-            font-size: 0.95rem;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            min-height: 48px;
-        }
-        .sidebar button:not(.sidebar-group-btn):not(.sidebar-group-items button):hover {
-            background: #334155;
-            transform: translateX(3px);
-        }
-        .sidebar button:not(.sidebar-group-btn):not(.sidebar-group-items button).active-nav {
-            background: #3b82f6;
-            color: #fff;
-            font-weight: 600;
-        }
-        .sidebar .close-btn {
-            background: #dc2626 !important;
-            color: #fff !important;
-            justify-content: center !important;
-            font-weight: 600 !important;
-            margin-top: auto !important;
-        }
-        .sidebar .close-btn:hover {
-            background: #b91c1c !important;
-            transform: none !important;
-        }
-
+        .sidebar { position: fixed; top: 0; left: -280px; width: 270px; height: 100%; background: #0f172a; padding: 20px 14px; transition: left 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); border-right: 1px solid #334155; z-index: 100; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; }
+        .sidebar.open { left: 0; }
+        .sidebar h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 6px; letter-spacing: 0.5px; text-transform: uppercase; }
+        .sidebar-group { margin-top: 2px; }
+        .sidebar-group-btn { width: 100% !important; padding: 12px 14px !important; border: none !important; border-radius: 10px !important; background: #1e293b !important; color: #e2e8f0 !important; text-align: left !important; cursor: pointer !important; font-size: 0.95rem !important; transition: all 0.2s !important; display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 10px !important; min-height: 48px !important; }
+        .sidebar-group-btn:hover { background: #334155 !important; transform: translateX(3px) !important; }
+        .sidebar-group-btn .arrow { font-size: 0.7rem; transition: transform 0.3s; }
+        .sidebar-group-btn .arrow.open { transform: rotate(180deg); }
+        .sidebar-group-items { overflow: hidden; max-height: 0; transition: max-height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); padding-left: 8px; }
+        .sidebar-group-items.open { max-height: 600px; }
+        .sidebar-group-items button { width: 100% !important; padding: 10px 14px !important; border: none !important; border-radius: 8px !important; background: #0f172a !important; color: #94a3b8 !important; text-align: left !important; cursor: pointer !important; font-size: 0.85rem !important; transition: all 0.2s !important; display: flex !important; align-items: center !important; gap: 8px !important; min-height: 40px !important; margin-top: 2px !important; }
+        .sidebar-group-items button:hover { background: #1e293b !important; color: #e2e8f0 !important; transform: translateX(3px) !important; }
+        .sidebar-group-items button.active-nav { background: #3b82f6 !important; color: #fff !important; font-weight: 600 !important; }
+        .sidebar button:not(.sidebar-group-btn):not(.sidebar-group-items button) { width: 100%; padding: 12px 14px; border: none; border-radius: 10px; background: #1e293b; color: #e2e8f0; text-align: left; cursor: pointer; font-size: 0.95rem; transition: all 0.2s; display: flex; align-items: center; gap: 10px; min-height: 48px; }
+        .sidebar button:not(.sidebar-group-btn):not(.sidebar-group-items button):hover { background: #334155; transform: translateX(3px); }
+        .sidebar button:not(.sidebar-group-btn):not(.sidebar-group-items button).active-nav { background: #3b82f6; color: #fff; font-weight: 600; }
+        .sidebar .close-btn { background: #dc2626 !important; color: #fff !important; justify-content: center !important; font-weight: 600 !important; margin-top: auto !important; }
+        .sidebar .close-btn:hover { background: #b91c1c !important; transform: none !important; }
         /* ─── AUTH PAGE ─── */
-        .auth-page {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0f172a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 999;
-            transition: opacity 0.5s ease;
-            padding: 20px;
-        }
-        .auth-page.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        .auth-page .auth-box {
-            background: #1e293b;
-            padding: 30px 24px;
-            border-radius: 16px;
-            max-width: 400px;
-            width: 100%;
-            border: 1px solid #334155;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-        }
-        .auth-page .auth-box h2 {
-            color: #fbbf24;
-            margin-bottom: 16px;
-            text-align: center;
-            font-size: 1.5rem;
-        }
-        .auth-page .auth-box input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 10px;
-            border: 1px solid #475569;
-            background: #0f172a;
-            color: #e2e8f0;
-            font-size: 0.9rem;
-            outline: none;
-            min-height: 44px;
-        }
-        .auth-page .auth-box input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-        .auth-page .auth-box button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 8px;
-            border: none;
-            border-radius: 10px;
-            background: #3b82f6;
-            color: #fff;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-            min-height: 48px;
-            transition: all 0.2s;
-        }
-        .auth-page .auth-box button:hover {
-            background: #2563eb;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
-        }
-        .auth-page .auth-box .auth-toggle {
-            font-size: 0.8rem;
-            color: #94a3b8;
-            text-align: center;
-            margin-top: 12px;
-        }
-        .auth-page .auth-box .auth-toggle span {
-            color: #3b82f6;
-            cursor: pointer;
-        }
-        .auth-page .auth-box .auth-toggle span:hover {
-            text-decoration: underline;
-        }
-        .auth-page .auth-box .auth-error {
-            color: #ef4444;
-            font-size: 0.8rem;
-            text-align: center;
-            margin-top: 6px;
-        }
-        .auth-page .logo-big {
-            text-align: center;
-            font-size: 3rem;
-            margin-bottom: 10px;
-        }
-
+        .auth-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 999; transition: opacity 0.5s ease; padding: 20px; }
+        .auth-page.hidden { opacity: 0; pointer-events: none; }
+        .auth-page .auth-box { background: #1e293b; padding: 30px 24px; border-radius: 16px; max-width: 400px; width: 100%; border: 1px solid #334155; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); }
+        .auth-page .auth-box h2 { color: #fbbf24; margin-bottom: 16px; text-align: center; font-size: 1.5rem; }
+        .auth-page .auth-box input { width: 100%; padding: 12px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #475569; background: #0f172a; color: #e2e8f0; font-size: 0.9rem; outline: none; min-height: 44px; }
+        .auth-page .auth-box input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+        .auth-page .auth-box button { width: 100%; padding: 12px; margin-top: 8px; border: none; border-radius: 10px; background: #3b82f6; color: #fff; cursor: pointer; font-weight: 600; font-size: 0.9rem; min-height: 48px; transition: all 0.2s; }
+        .auth-page .auth-box button:hover { background: #2563eb; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35); }
+        .auth-page .auth-box .auth-toggle { font-size: 0.8rem; color: #94a3b8; text-align: center; margin-top: 12px; }
+        .auth-page .auth-box .auth-toggle span { color: #3b82f6; cursor: pointer; }
+        .auth-page .auth-box .auth-toggle span:hover { text-decoration: underline; }
+        .auth-page .auth-box .auth-error { color: #ef4444; font-size: 0.8rem; text-align: center; margin-top: 6px; }
+        .auth-page .logo-big { text-align: center; font-size: 3rem; margin-bottom: 10px; }
         /* ─── MAIN CONTAINER ─── */
-        .container {
-            padding: 12px 14px;
-            max-width: 720px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            padding-bottom: 40px;
-        }
-
+        .container { padding: 12px 14px; max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 40px; }
         /* ─── CARDS ─── */
-        .card {
-            background: #1e293b;
-            padding: 14px 16px;
-            border-radius: 14px;
-            border: 1px solid #334155;
-            transition: box-shadow 0.3s;
-        }
-        .card:hover {
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-        }
-        .card h3 {
-            margin-bottom: 8px;
-            font-size: 1rem;
-            color: #f1f5f9;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-
+        .card { background: #1e293b; padding: 14px 16px; border-radius: 14px; border: 1px solid #334155; transition: box-shadow 0.3s; }
+        .card:hover { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25); }
+        .card h3 { margin-bottom: 8px; font-size: 1rem; color: #f1f5f9; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
         /* ─── INPUTS ─── */
-        input,
-        textarea,
-        select {
-            width: 100%;
-            padding: 10px 12px;
-            margin-top: 6px;
-            border-radius: 10px;
-            border: 1px solid #475569;
-            background: #0f172a;
-            color: #e2e8f0;
-            font-size: 0.9rem;
-            transition: border 0.2s;
-            outline: none;
-            resize: vertical;
-            min-height: 44px;
-        }
-        input:focus,
-        textarea:focus,
-        select:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-        textarea {
-            min-height: 70px;
-        }
-
+        input, textarea, select { width: 100%; padding: 10px 12px; margin-top: 6px; border-radius: 10px; border: 1px solid #475569; background: #0f172a; color: #e2e8f0; font-size: 0.9rem; transition: border 0.2s; outline: none; resize: vertical; min-height: 44px; }
+        input:focus, textarea:focus, select:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+        textarea { min-height: 70px; }
         /* ─── BUTTONS ─── */
-        button {
-            width: 100%;
-            padding: 12px 14px;
-            margin-top: 8px;
-            border: none;
-            border-radius: 10px;
-            background: #3b82f6;
-            color: #fff;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            letter-spacing: 0.2px;
-            touch-action: manipulation;
-            min-height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-        button:hover {
-            background: #2563eb;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
-        }
-        button:active {
-            transform: scale(0.97);
-        }
-        button.secondary {
-            background: #475569;
-        }
-        button.secondary:hover {
-            background: #64748b;
-        }
-        button.danger {
-            background: #dc2626;
-        }
-        button.danger:hover {
-            background: #b91c1c;
-        }
-        button.small-btn {
-            width: auto;
-            padding: 8px 16px;
-            font-size: 0.8rem;
-            margin-top: 4px;
-            min-height: 34px;
-        }
-
+        button { width: 100%; padding: 12px 14px; margin-top: 8px; border: none; border-radius: 10px; background: #3b82f6; color: #fff; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; letter-spacing: 0.2px; touch-action: manipulation; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        button:hover { background: #2563eb; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35); }
+        button:active { transform: scale(0.97); }
+        button.secondary { background: #475569; }
+        button.secondary:hover { background: #64748b; }
+        button.danger { background: #dc2626; }
+        button.danger:hover { background: #b91c1c; }
+        button.small-btn { width: auto; padding: 8px 16px; font-size: 0.8rem; margin-top: 4px; min-height: 34px; }
         /* ─── ROW ─── */
-        .row {
-            display: flex;
-            gap: 8px;
-            margin-top: 6px;
-            flex-wrap: wrap;
-        }
-        .row input,
-        .row select {
-            flex: 1 1 0;
-            min-width: 80px;
-        }
-        .row button {
-            flex: 1 1 0;
-            min-width: 70px;
-        }
-
+        .row { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+        .row input, .row select { flex: 1 1 0; min-width: 80px; }
+        .row button { flex: 1 1 0; min-width: 70px; }
         /* ─── TIMER ─── */
-        .timer {
-            font-size: 44px;
-            text-align: center;
-            margin: 10px 0;
-            font-weight: 700;
-            letter-spacing: 2px;
-            font-variant-numeric: tabular-nums;
-            font-family: 'Courier New', monospace;
-            color: #fbbf24;
-        }
-        .timer-row {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        .timer-row button {
-            flex: 1;
-            min-width: 70px;
-        }
-
+        .timer { font-size: 44px; text-align: center; margin: 10px 0; font-weight: 700; letter-spacing: 2px; font-variant-numeric: tabular-nums; font-family: 'Courier New', monospace; color: #fbbf24; }
+        .timer-row { display: flex; gap: 6px; flex-wrap: wrap; }
+        .timer-row button { flex: 1; min-width: 70px; }
         /* ─── PAGE SECTIONS ─── */
-        .page-section {
-            display: none;
-        }
-        .page-section.active {
-            display: block;
-        }
-
+        .page-section { display: none; }
+        .page-section.active { display: block; }
         /* ─── DASHBOARD CARDS GRID ─── */
-        .dash-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 6px;
-        }
-        @media (max-width: 400px) {
-            .dash-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        .dash-card {
-            background: #0f172a;
-            border-radius: 10px;
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #334155;
-        }
-        .dash-card .value {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #fbbf24;
-        }
-        .dash-card .label {
-            font-size: 0.7rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 2px;
-        }
-
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+        @media (max-width: 400px) { .dash-grid { grid-template-columns: 1fr; } }
+        .dash-card { background: #0f172a; border-radius: 10px; padding: 12px; text-align: center; border: 1px solid #334155; }
+        .dash-card .value { font-size: 1.6rem; font-weight: 700; color: #fbbf24; }
+        .dash-card .label { font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
         /* ─── NOTIFICATIONS ─── */
-        .notification-toast {
-            position: fixed;
-            top: 16px;
-            right: 16px;
-            background: #1e293b;
-            border: 1px solid #3b82f6;
-            color: #e2e8f0;
-            padding: 14px 18px;
-            border-radius: 12px;
-            z-index: 200;
-            opacity: 0;
-            transform: translateX(120%);
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            pointer-events: none;
-            max-width: 320px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-        }
-        .notification-toast.show {
-            opacity: 1;
-            transform: translateX(0);
-            pointer-events: auto;
-        }
-        .notification-toast .close-toast {
-            position: absolute;
-            top: 4px;
-            right: 10px;
-            cursor: pointer;
-            font-size: 1.2rem;
-            color: #94a3b8;
-            background: none;
-            border: none;
-            width: auto;
-            padding: 0;
-            margin: 0;
-        }
-
+        .notification-toast { position: fixed; top: 16px; right: 16px; background: #1e293b; border: 1px solid #3b82f6; color: #e2e8f0; padding: 14px 18px; border-radius: 12px; z-index: 200; opacity: 0; transform: translateX(120%); transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); pointer-events: none; max-width: 320px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); }
+        .notification-toast.show { opacity: 1; transform: translateX(0); pointer-events: auto; }
+        .notification-toast .close-toast { position: absolute; top: 4px; right: 10px; cursor: pointer; font-size: 1.2rem; color: #94a3b8; background: none; border: none; width: auto; padding: 0; margin: 0; }
         /* ─── COUNTDOWN ─── */
-        .countdown-display {
-            font-size: 1.8rem;
-            font-weight: 700;
-            text-align: center;
-            color: #f87171;
-            letter-spacing: 1px;
-            font-family: 'Courier New', monospace;
-        }
-        .countdown-label {
-            text-align: center;
-            font-size: 0.75rem;
-            color: #94a3b8;
-            margin-top: 2px;
-        }
-
+        .countdown-display { font-size: 1.8rem; font-weight: 700; text-align: center; color: #f87171; letter-spacing: 1px; font-family: 'Courier New', monospace; }
+        .countdown-label { text-align: center; font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
         /* ─── HISTORY LIST ─── */
-        .history-list {
-            max-height: 180px;
-            overflow-y: auto;
-            margin-top: 8px;
-            font-size: 0.8rem;
-            color: #cbd5e1;
-        }
-        .history-list .history-item {
-            background: #0f172a;
-            padding: 8px 10px;
-            border-radius: 8px;
-            margin-top: 4px;
-            display: flex;
-            justify-content: space-between;
-            border: 1px solid #334155;
-            flex-wrap: wrap;
-            gap: 4px;
-        }
-
+        .history-list { max-height: 180px; overflow-y: auto; margin-top: 8px; font-size: 0.8rem; color: #cbd5e1; }
+        .history-list .history-item { background: #0f172a; padding: 8px 10px; border-radius: 8px; margin-top: 4px; display: flex; justify-content: space-between; border: 1px solid #334155; flex-wrap: wrap; gap: 4px; }
         /* ─── SMALL TEXT ─── */
-        .small {
-            font-size: 0.75rem;
-            color: #a5b4fc;   /* better contrast */
-        }
-
+        .small { font-size: 0.75rem; color: #a5b4fc; }
         /* ─── PDF LIBRARY SPECIFIC ─── */
-        .pdf-list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            background: #0f172a;
-            border-radius: 8px;
-            margin-top: 4px;
-            border: 1px solid #334155;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .pdf-list-item:hover {
-            border-color: #3b82f6;
-            background: #1a2a4a;
-        }
-        .pdf-list-item .file-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-            min-width: 120px;
-            cursor: pointer;
-        }
-        .pdf-list-item .file-info .name {
-            font-weight: 500;
-            color: #e2e8f0;
-            word-break: break-word;
-        }
-        .pdf-list-item .file-info .meta {
-            font-size: 0.7rem;
-            color: #94a3b8;
-        }
-        .pdf-list-item .file-actions {
-            display: flex;
-            gap: 4px;
-            flex-wrap: wrap;
-        }
-        .pdf-viewer-container {
-            margin-top: 10px;
-            background: #0f172a;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid #334155;
-            min-height: 300px;
-            height: 60vh;
-            max-height: 700px;
-            width: 100%;
-            position: relative;
-        }
-        .pdf-viewer-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
-        }
-        .pdf-viewer-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #94a3b8;
-            padding: 20px;
-            text-align: center;
-        }
-        .pdf-viewer-placeholder .icon {
-            font-size: 4rem;
-            margin-bottom: 10px;
-            opacity: 0.5;
-        }
-        .upload-area {
-            border: 2px dashed #334155;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s;
-            cursor: pointer;
-            margin-top: 6px;
-            background: #0f172a;
-        }
-        .upload-area:hover {
-            border-color: #3b82f6;
-            background: #1a2a4a;
-        }
-        .upload-area.dragover {
-            border-color: #3b82f6;
-            background: #1a2a4a;
-            transform: scale(1.02);
-        }
-        .upload-area .icon {
-            font-size: 2.5rem;
-            margin-bottom: 6px;
-        }
-
+        .pdf-list-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #0f172a; border-radius: 8px; margin-top: 4px; border: 1px solid #334155; flex-wrap: wrap; gap: 6px; }
+        .pdf-list-item:hover { border-color: #3b82f6; background: #1a2a4a; }
+        .pdf-list-item .file-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 120px; cursor: pointer; }
+        .pdf-list-item .file-info .name { font-weight: 500; color: #e2e8f0; word-break: break-word; }
+        .pdf-list-item .file-info .meta { font-size: 0.7rem; color: #94a3b8; }
+        .pdf-list-item .file-actions { display: flex; gap: 4px; flex-wrap: wrap; }
+        .pdf-viewer-container { margin-top: 10px; background: #0f172a; border-radius: 10px; overflow: hidden; border: 1px solid #334155; min-height: 300px; height: 60vh; max-height: 700px; width: 100%; position: relative; }
+        .pdf-viewer-container iframe { width: 100%; height: 100%; border: none; display: block; }
+        .pdf-viewer-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #94a3b8; padding: 20px; text-align: center; }
+        .pdf-viewer-placeholder .icon { font-size: 4rem; margin-bottom: 10px; opacity: 0.5; }
+        .upload-area { border: 2px dashed #334155; border-radius: 10px; padding: 20px; text-align: center; transition: all 0.3s; cursor: pointer; margin-top: 6px; background: #0f172a; }
+        .upload-area:hover { border-color: #3b82f6; background: #1a2a4a; }
+        .upload-area.dragover { border-color: #3b82f6; background: #1a2a4a; transform: scale(1.02); }
+        .upload-area .icon { font-size: 2.5rem; margin-bottom: 6px; }
         /* ─── QUICK ACTIONS ─── */
-        .quick-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-top: 6px;
-        }
-        .quick-card {
-            background: #0f172a;
-            border-radius: 10px;
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #334155;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .quick-card:hover {
-            border-color: #3b82f6;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-        }
-        .quick-card .icon {
-            font-size: 1.8rem;
-            margin-bottom: 4px;
-        }
-        .quick-card .label {
-            font-size: 0.7rem;
-            color: #94a3b8;
-        }
-
+        .quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
+        .quick-card { background: #0f172a; border-radius: 10px; padding: 12px; text-align: center; border: 1px solid #334155; cursor: pointer; transition: all 0.2s; }
+        .quick-card:hover { border-color: #3b82f6; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15); }
+        .quick-card .icon { font-size: 1.8rem; margin-bottom: 4px; }
+        .quick-card .label { font-size: 0.7rem; color: #94a3b8; }
         /* ─── STUDY STREAK ─── */
-        .streak-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin: 6px 0;
-        }
-        .streak-grid .stat {
-            background: #0f172a;
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-            border: 1px solid #334155;
-        }
-        .streak-grid .stat .number {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #fbbf24;
-        }
-        .streak-grid .stat .label {
-            font-size: 0.65rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-        .badge {
-            display: inline-block;
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            background: #1e293b;
-            color: #fbbf24;
-            margin-top: 4px;
-        }
-
+        .streak-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 6px 0; }
+        .streak-grid .stat { background: #0f172a; border-radius: 8px; padding: 10px; text-align: center; border: 1px solid #334155; }
+        .streak-grid .stat .number { font-size: 1.8rem; font-weight: 700; color: #fbbf24; }
+        .streak-grid .stat .label { font-size: 0.65rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.3px; }
+        .badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.75rem; background: #1e293b; color: #fbbf24; margin-top: 4px; }
         /* ─── BACK TO TOP ─── */
-        #backToTopBtn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: #3b82f6;
-            color: #fff;
-            border: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            z-index: 200;
-            display: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            align-items: center;
-            justify-content: center;
-        }
-
+        #backToTopBtn { position: fixed; bottom: 20px; right: 20px; width: 44px; height: 44px; border-radius: 50%; background: #3b82f6; color: #fff; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 200; display: none; font-size: 1.2rem; cursor: pointer; align-items: center; justify-content: center; }
+        /* ─── THEMES ─── */
+        body.theme-ocean { background: #0b3d4f; }
+        body.theme-ocean .card, body.theme-ocean .topbar, body.theme-ocean .sidebar { background: #14566b; }
+        body.theme-purple { background: #2d1b4e; }
+        body.theme-purple .card, body.theme-purple .topbar, body.theme-purple .sidebar { background: #3e2a5c; }
+        body.theme-forest { background: #1a3a2a; }
+        body.theme-forest .card, body.theme-forest .topbar, body.theme-forest .sidebar { background: #2b5a3a; }
         /* ─── RESPONSIVE TWEAKS ─── */
         @media (max-width: 600px) {
-            .timer {
-                font-size: 32px;
-            }
-            .dash-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 6px;
-            }
-            .dash-card .value {
-                font-size: 1.3rem;
-            }
-            .container {
-                padding: 8px 10px;
-                gap: 10px;
-            }
-            .card {
-                padding: 12px 14px;
-            }
-            .row {
-                flex-direction: column;
-            }
-            .row input,
-            .row select,
-            .row button {
-                flex: 1 1 100%;
-                min-width: 0;
-            }
-            .row button {
-                min-height: 48px;
-            }
-            .sidebar {
-                width: 260px;
-                left: -260px;
-                padding: 16px 12px;
-            }
-            .sidebar button {
-                font-size: 0.9rem;
-                padding: 10px 12px;
-                min-height: 44px;
-            }
-            .topbar .logo {
-                font-size: 1rem;
-            }
-            .topbar .menuBtn {
-                font-size: 26px;
-                min-width: 40px;
-                min-height: 40px;
-            }
-            .notification-toast {
-                max-width: 90%;
-                right: 10px;
-                top: 10px;
-            }
-            .pdf-list-item .file-actions button {
-                font-size: 0.65rem;
-                padding: 4px 8px;
-                min-height: 28px;
-            }
-            .auth-page .auth-box {
-                padding: 20px 16px;
-            }
-            .auth-page .logo-big {
-                font-size: 2.5rem;
-            }
-            .topbar {
-                flex-direction: row;
-                flex-wrap: wrap;
-                gap: 6px;
-            }
-            .topbar .auth-status {
-                order: 1;
-            }
-            .topbar .menuBtn {
-                order: 2;
-            }
-            .quick-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            .streak-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            .dash-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+            .timer { font-size: 32px; }
+            .dash-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+            .dash-card .value { font-size: 1.3rem; }
+            .container { padding: 8px 10px; gap: 10px; }
+            .card { padding: 12px 14px; }
+            .row { flex-direction: column; }
+            .row input, .row select, .row button { flex: 1 1 100%; min-width: 0; }
+            .row button { min-height: 48px; }
+            .sidebar { width: 260px; left: -260px; padding: 16px 12px; }
+            .sidebar button { font-size: 0.9rem; padding: 10px 12px; min-height: 44px; }
+            .topbar .logo { font-size: 1rem; }
+            .topbar .menuBtn { font-size: 26px; min-width: 40px; min-height: 40px; }
+            .notification-toast { max-width: 90%; right: 10px; top: 10px; }
+            .pdf-list-item .file-actions button { font-size: 0.65rem; padding: 4px 8px; min-height: 28px; }
+            .auth-page .auth-box { padding: 20px 16px; }
+            .auth-page .logo-big { font-size: 2.5rem; }
+            .topbar { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+            .topbar .auth-status { order: 1; }
+            .topbar .menuBtn { order: 2; }
+            .quick-grid { grid-template-columns: 1fr 1fr; }
+            .streak-grid { grid-template-columns: 1fr 1fr; }
+            .dash-grid { grid-template-columns: 1fr 1fr; }
         }
-
         @media (max-width: 400px) {
-            .dash-grid {
-                grid-template-columns: 1fr;
-            }
-            .quick-grid {
-                grid-template-columns: 1fr;
-            }
-            .streak-grid {
-                grid-template-columns: 1fr;
-            }
-            .card h3 {
-                font-size: 0.9rem;
-            }
-            button {
-                font-size: 0.8rem;
-                padding: 10px 12px;
-                min-height: 44px;
-            }
-            .timer {
-                font-size: 26px;
-            }
-            .countdown-display {
-                font-size: 1.4rem;
-            }
-            .auth-page .auth-box h2 {
-                font-size: 1.2rem;
-            }
+            .dash-grid { grid-template-columns: 1fr; }
+            .quick-grid { grid-template-columns: 1fr; }
+            .streak-grid { grid-template-columns: 1fr; }
+            .card h3 { font-size: 0.9rem; }
+            button { font-size: 0.8rem; padding: 10px 12px; min-height: 44px; }
+            .timer { font-size: 26px; }
+            .countdown-display { font-size: 1.4rem; }
+            .auth-page .auth-box h2 { font-size: 1.2rem; }
         }
-
         /* ─── SCROLLBAR ─── */
-        ::-webkit-scrollbar {
-            width: 5px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #475569;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #64748b;
-        }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
     </style>
 </head>
 <body>
@@ -942,58 +209,37 @@
     <!-- ─── SIDEBAR (GROUPED) ─── -->
     <div class="sidebar" id="sidebar">
         <h3>📋 Navigation</h3>
-
-        <!-- Dashboard (Standalone) -->
         <button class="active-nav" onclick="navigateTo('main')" id="navMain">🏠 Dashboard</button>
-
-        <!-- ─── GROUP 1: ACADEMICS ─── -->
         <div class="sidebar-group">
-            <button class="sidebar-group-btn" onclick="toggleGroup('academics')" id="groupAcademics">
-                📚 Academics <span class="arrow">▼</span>
-            </button>
+            <button class="sidebar-group-btn" onclick="toggleGroup('academics')" id="groupAcademics">📚 Academics <span class="arrow">▼</span></button>
             <div class="sidebar-group-items" id="academicsItems">
                 <button onclick="navigateTo('gpaHistory')" id="navGPAHistory">📜 GPA History</button>
                 <button onclick="navigateTo('cgpaTracker')" id="navCGPA">📊 CGPA Tracker</button>
             </div>
         </div>
-
-        <!-- ─── GROUP 2: UNIOSUN TOOLS ─── -->
         <div class="sidebar-group">
-            <button class="sidebar-group-btn" onclick="toggleGroup('uniosun')" id="groupUniosun">
-                🎯 UNIOSUN Tools <span class="arrow">▼</span>
-            </button>
+            <button class="sidebar-group-btn" onclick="toggleGroup('uniosun')" id="groupUniosun">🎯 UNIOSUN Tools <span class="arrow">▼</span></button>
             <div class="sidebar-group-items" id="uniosunItems">
                 <button onclick="navigateTo('screening')" id="navScreening">🎯 Screening Calculator</button>
                 <button onclick="navigateTo('cutoff')" id="navCutoff">📊 Cut‑off Marks</button>
                 <button onclick="navigateTo('calendar')" id="navCalendar">📅 Academic Calendar</button>
             </div>
         </div>
-
-        <!-- ─── GROUP 3: STUDY TOOLS ─── -->
         <div class="sidebar-group">
-            <button class="sidebar-group-btn" onclick="toggleGroup('study')" id="groupStudy">
-                📖 Study Tools <span class="arrow">▼</span>
-            </button>
+            <button class="sidebar-group-btn" onclick="toggleGroup('study')" id="groupStudy">📖 Study Tools <span class="arrow">▼</span></button>
             <div class="sidebar-group-items" id="studyItems">
                 <button onclick="navigateTo('planner')" id="navPlanner">📅 Weekly Planner</button>
                 <button onclick="navigateTo('pdfLibrary')" id="navPdfLibrary">📄 PDF Library</button>
             </div>
         </div>
-
-        <!-- ─── GROUP 4: ANALYTICS ─── -->
         <div class="sidebar-group">
-            <button class="sidebar-group-btn" onclick="toggleGroup('analytics')" id="groupAnalytics">
-                📊 Analytics <span class="arrow">▼</span>
-            </button>
+            <button class="sidebar-group-btn" onclick="toggleGroup('analytics')" id="groupAnalytics">📊 Analytics <span class="arrow">▼</span></button>
             <div class="sidebar-group-items" id="analyticsItems">
                 <button onclick="navigateTo('analyzer')" id="navAnalyzer">📊 Smart Analyzer</button>
                 <button onclick="navigateTo('sessionLog')" id="navSessionLog">📝 Session Log</button>
             </div>
         </div>
-
-        <!-- Countdown (Standalone) -->
         <button onclick="navigateTo('countdown')" id="navCountdown">⏳ Exam Countdown</button>
-
         <button class="close-btn" onclick="closeMenu()">✕ Close Menu</button>
     </div>
 
@@ -1011,6 +257,7 @@
                 <span id="userDisplay">👤 Guest</span>
                 <button onclick="handleLogout()" id="authActionBtn" style="display:none;">Logout</button>
             </div>
+            <button class="menuBtn" onclick="cycleTheme()">🎨</button>
             <button class="menuBtn" onclick="toggleMenu()" aria-label="Open menu">☰</button>
         </div>
     </div>
@@ -1021,17 +268,12 @@
 
             <!-- ========== MAIN SECTION ========== -->
             <div class="page-section active" id="sectionMain">
-
                 <!-- AI CORE -->
                 <div class="card">
                     <h3>🧠 AI Study Interface</h3>
                     <textarea id="topic" placeholder="Enter topic (e.g., Calculus, Organic Chemistry, Python loops)..."></textarea>
                     <select id="mode">
-                        <option value="tutorial">📖 Tutorial</option>
-                        <option value="summary">📝 Summary</option>
-                        <option value="mcq">❓ MCQ Quiz</option>
-                        <option value="revision">🔄 Revision Notes</option>
-                        <option value="flashcards">🃏 Flashcards</option>
+                        <option value="tutorial">📖 Tutorial</option><option value="summary">📝 Summary</option><option value="mcq">❓ MCQ Quiz</option><option value="revision">🔄 Revision Notes</option><option value="flashcards">🃏 Flashcards</option>
                     </select>
                     <button onclick="askAI()" style="background:#3b82f6;">🚀 Ask AI (ChatGPT)</button>
                     <div class="small" style="text-align:center;color:#94a3b8;padding:8px;margin-top:6px;">ChatGPT will open in a new tab.</div>
@@ -1050,6 +292,16 @@
                     <div class="small">⏱ Study: <strong><span id="hoursDisplay">0</span> hrs</strong></div>
                     <div class="small">📅 Sessions: <strong><span id="sessionCountDisplay">0</span></strong></div>
                 </div>
+
+                <!-- ACHIEVEMENTS -->
+                <div class="card">
+                    <h3>🏅 Achievements</h3>
+                    <div id="achievementBadges" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+                </div>
+
+                <!-- SHARE CGPA CARD -->
+                <button onclick="shareCGPACard()" class="secondary small-btn" style="width:auto;">📸 Share CGPA Card</button>
+                <canvas id="cgpaCanvas" style="display:none;" width="600" height="400"></canvas>
 
                 <!-- STUDY STREAK -->
                 <div class="card">
@@ -1085,9 +337,7 @@
                             <input type="text" id="cname1" placeholder="Course" style="flex:2;">
                             <input type="number" id="cunit1" placeholder="Units" min="0" step="0.5" style="flex:1;">
                             <select id="cgrade1" style="flex:1;">
-                                <option value="5">A (5.0)</option><option value="4">B (4.0)</option>
-                                <option value="3">C (3.0)</option><option value="2">D (2.0)</option>
-                                <option value="1">E (1.0)</option><option value="0">F (0.0)</option>
+                                <option value="5">A (5.0)</option><option value="4">B (4.0)</option><option value="3">C (3.0)</option><option value="2">D (2.0)</option><option value="1">E (1.0)</option><option value="0">F (0.0)</option>
                             </select>
                             <button onclick="removeCourseRow(1)" class="danger small-btn" style="width:auto;flex:0;">✕</button>
                         </div>
@@ -1286,6 +536,89 @@
             { course: 'B.Sc. Banking & Finance', faculty: 'Management', merit: 55.0, indigene: 48.0 }
         ];
 
+        // ─── THEME TOGGLE ───
+        const themes = ['default', 'ocean', 'purple', 'forest'];
+        let currentTheme = localStorage.getItem('theme') || 'default';
+        applyTheme(currentTheme);
+
+        function cycleTheme() {
+            let idx = themes.indexOf(currentTheme) + 1;
+            if (idx >= themes.length) idx = 0;
+            currentTheme = themes[idx];
+            applyTheme(currentTheme);
+        }
+
+        function applyTheme(theme) {
+            document.body.className = '';
+            if (theme !== 'default') document.body.classList.add('theme-' + theme);
+            localStorage.setItem('theme', theme);
+        }
+
+        // ─── ACHIEVEMENTS ───
+        const achievements = [
+            { id: 'first_ai',   name: 'First AI Query',      icon: '🤖', condition: () => true },
+            { id: 'gpa_5',      name: 'Perfect GPA (5.0)',    icon: '🏆', condition: () => parseFloat(localStorage.getItem('gpa') || 0) >= 5.0 },
+            { id: 'streak_7',   name: '7-Day Streak',         icon: '🔥', condition: () => getStreakStats().streak >= 7 },
+            { id: 'streak_30',  name: '30-Day Streak',        icon: '🔥🔥', condition: () => getStreakStats().streak >= 30 },
+            { id: 'hours_50',   name: '50 Study Hours',       icon: '⏰', condition: () => (parseInt(localStorage.getItem('studyMinutes')||0)/60) >= 50 },
+            { id: 'pdf_quiz',   name: 'PDF Quizzed',          icon: '📄', condition: () => false } // unlocked manually after quiz
+        ];
+
+        function checkAchievements() {
+            const unlocked = JSON.parse(localStorage.getItem('achievements') || '[]');
+            let newUnlock = false;
+            achievements.forEach(a => {
+                if (!unlocked.includes(a.id) && a.condition()) {
+                    unlocked.push(a.id);
+                    newUnlock = true;
+                    showNotification(`🏅 Achievement unlocked: ${a.name}`, 4000);
+                }
+            });
+            if (newUnlock) {
+                localStorage.setItem('achievements', JSON.stringify(unlocked));
+                renderAchievements();
+                if (currentUser) syncLocalToCloud();
+            }
+        }
+
+        function renderAchievements() {
+            const unlocked = JSON.parse(localStorage.getItem('achievements') || '[]');
+            const container = document.getElementById('achievementBadges');
+            if (!container) return;
+            container.innerHTML = unlocked.map(id => {
+                const a = achievements.find(x => x.id === id);
+                return a ? `<span class="badge">${a.icon} ${a.name}</span>` : '';
+            }).join('');
+        }
+
+        // ─── SHAREABLE CGPA CARD ───
+        function shareCGPACard() {
+            const canvas = document.getElementById('cgpaCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#fbbf24';
+            ctx.font = 'bold 28px "Segoe UI", sans-serif';
+            ctx.fillText('🐐 GoatTutor CGPA', 30, 50);
+            const cgpa = localStorage.getItem('cgpa') || '--';
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 72px "Segoe UI", sans-serif';
+            ctx.fillText(cgpa === '--' ? '--' : parseFloat(cgpa).toFixed(2), 30, 140);
+            ctx.font = '24px "Segoe UI", sans-serif';
+            ctx.fillText(getDegreeClass(cgpa), 30, 190);
+            const streak = getStreakStats().streak;
+            ctx.fillText('🔥 ' + streak + ' Day Streak', 30, 240);
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '16px "Segoe UI", sans-serif';
+            ctx.fillText('Study smarter with GoatTutor NG', 30, 300);
+            const dataUrl = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = 'goattutor-cgpa-card.png';
+            link.href = dataUrl;
+            link.click();
+            showNotification('📸 CGPA card downloaded!');
+        }
+
         // ─── AUTH STATE ───
         auth.onAuthStateChanged(async user => {
             if (user) {
@@ -1313,6 +646,7 @@
                 loadLocalData();
             }
             updateDash();
+            renderAchievements();
         });
 
         // ─── AUTH FUNCTIONS ───
@@ -1359,6 +693,7 @@
             renderSessionLog();
             loadPlan(true);
             updateDash();
+            renderAchievements();
         }
 
         function loadUserData(data) {
@@ -1384,6 +719,7 @@
             renderSessionLog();
             loadPlan(true);
             updateCountdownDisplay();
+            renderAchievements();
             showNotification('📥 Data synced from cloud.');
         }
 
@@ -1403,7 +739,8 @@
                     sessionLog: JSON.parse(localStorage.getItem('sessionLog') || '[]'),
                     reminders: JSON.parse(localStorage.getItem('reminders') || '[]'),
                     examDate: localStorage.getItem('examDate') || '',
-                    examLabel: localStorage.getItem('examLabel') || ''
+                    examLabel: localStorage.getItem('examLabel') || '',
+                    achievements: JSON.parse(localStorage.getItem('achievements') || '[]')
                 };
                 await userDocRef.set(data, { merge: true });
                 console.log('✅ Data synced.');
@@ -1532,6 +869,7 @@
             window.open('https://chatgpt.com/?q=' + encodeURIComponent(prompt), '_blank');
             showNotification('🚀 Opening ChatGPT...');
             logQuickAction('AI Query: ' + t);
+            checkAchievements();
         }
 
         // ─── DEGREE CLASS ───
@@ -1614,6 +952,7 @@
             }
             document.getElementById('streakDisplay').innerText = newStreak;
             updateStreakUI();
+            checkAchievements();
             if (currentUser) syncLocalToCloud();
         }
 
@@ -1638,6 +977,7 @@
             const current = parseInt(localStorage.getItem('studyMinutes')) || 0;
             localStorage.setItem('studyMinutes', current + minutes);
             updateStudyHours();
+            checkAchievements();
             if (currentUser) syncLocalToCloud();
         }
 
@@ -1664,9 +1004,7 @@
         }
 
         // ─── SEMESTER SYSTEM ───
-        function getSavedSemesters() {
-            try { return JSON.parse(localStorage.getItem('semesters')) || []; } catch { return []; }
-        }
+        function getSavedSemesters() { try { return JSON.parse(localStorage.getItem('semesters')) || []; } catch { return []; } }
         function saveSemestersToStorage(s) { localStorage.setItem('semesters', JSON.stringify(s)); }
 
         function addCourseRow() {
@@ -1679,8 +1017,7 @@
                 <input type="text" id="cname${courseRowCounter}" placeholder="Course Name" style="flex:2;">
                 <input type="number" id="cunit${courseRowCounter}" placeholder="Units" min="0" step="0.5" style="flex:1;">
                 <select id="cgrade${courseRowCounter}" style="flex:1;">
-                    <option value="5">A</option><option value="4">B</option><option value="3">C</option>
-                    <option value="2">D</option><option value="1">E</option><option value="0">F</option>
+                    <option value="5">A</option><option value="4">B</option><option value="3">C</option><option value="2">D</option><option value="1">E</option><option value="0">F</option>
                 </select>
                 <button onclick="removeCourseRow(${courseRowCounter})" class="danger small-btn" style="width:auto;flex:0;">✕</button>
             `;
@@ -1746,6 +1083,7 @@
             renderSavedSemesters();
             updateDashFromSemesters();
             renderCGPATracker();
+            checkAchievements();
             showNotification('💾 Semester saved.');
             if (currentUser) syncLocalToCloud();
         }
@@ -1949,25 +1287,18 @@
             const container = document.getElementById('cutoffResults');
             const searchTerm = (filter || '').toLowerCase().trim();
             const facultyFilter = faculty || document.getElementById('cutoffFaculty').value || 'all';
-
             let filtered = cutoffData;
             if (searchTerm) {
-                filtered = filtered.filter(item =>
-                    item.course.toLowerCase().includes(searchTerm) ||
-                    item.faculty.toLowerCase().includes(searchTerm)
-                );
+                filtered = filtered.filter(item => item.course.toLowerCase().includes(searchTerm) || item.faculty.toLowerCase().includes(searchTerm));
             }
             if (facultyFilter !== 'all') {
                 filtered = filtered.filter(item => item.faculty === facultyFilter);
             }
-
             if (filtered.length === 0) {
                 container.innerHTML = '<span class="small">No courses found. Try a different search.</span>';
                 return;
             }
-
             filtered.sort((a, b) => a.course.localeCompare(b.course));
-
             let html = '<div style="display:flex;flex-direction:column;gap:4px;">';
             filtered.forEach(item => {
                 const isCompetitive = item.merit >= 70;
@@ -1999,7 +1330,6 @@
                 showNotification('⚠️ Invalid JAMB score.');
                 return;
             }
-
             const subjectNames = [
                 document.getElementById('subject1').value.trim(),
                 document.getElementById('subject2').value.trim(),
@@ -2007,30 +1337,20 @@
                 document.getElementById('subject4').value.trim(),
                 document.getElementById('subject5').value.trim()
             ];
-
             const gradeEls = [
-                document.getElementById('grade1'),
-                document.getElementById('grade2'),
-                document.getElementById('grade3'),
-                document.getElementById('grade4'),
+                document.getElementById('grade1'), document.getElementById('grade2'),
+                document.getElementById('grade3'), document.getElementById('grade4'),
                 document.getElementById('grade5')
             ];
-
-            const emptySubjects = subjectNames.filter(name => name === '');
-            if (emptySubjects.length > 0) {
+            if (subjectNames.filter(n => n === '').length > 0) {
                 document.getElementById('uniosunResult').innerHTML = '⚠️ Please enter all 5 subject names.';
                 showNotification('⚠️ All subject fields must be filled.');
                 return;
             }
-
             let totalOlevelPoints = 0;
-            gradeEls.forEach(select => {
-                totalOlevelPoints += parseInt(select.value);
-            });
-
+            gradeEls.forEach(select => { totalOlevelPoints += parseInt(select.value); });
             const jambContribution = (jamb * 60) / 400;
             const aggregate = jambContribution + totalOlevelPoints;
-
             const resultDiv = document.getElementById('uniosunResult');
             resultDiv.innerHTML = `
                 <div style="background:#0f172a;padding:10px;border-radius:8px;text-align:left;font-size:0.9rem;">
@@ -2048,26 +1368,9 @@
         }
 
         // ─── PLANNER ───
-        function savePlan() {
-            const plan = document.getElementById('plan').value;
-            localStorage.setItem('plan', plan);
-            document.getElementById('planStatus').innerText = '✅ Saved ' + new Date().toLocaleString();
-            showNotification('💾 Plan saved.');
-            if (currentUser) syncLocalToCloud();
-        }
-        function loadPlan(silent) {
-            const saved = localStorage.getItem('plan') || '';
-            document.getElementById('plan').value = saved;
-            if (!silent) document.getElementById('planStatus').innerText = saved ? '📂 Loaded.' : '📂 No plan.';
-        }
-        function clearPlan() {
-            if (confirm('Clear editor?')) {
-                document.getElementById('plan').value = '';
-                document.getElementById('planStatus').innerText = '🗑 Cleared.';
-                showNotification('🗑 Cleared.');
-                if (currentUser) syncLocalToCloud();
-            }
-        }
+        function savePlan() { const plan = document.getElementById('plan').value; localStorage.setItem('plan', plan); document.getElementById('planStatus').innerText = '✅ Saved ' + new Date().toLocaleString(); showNotification('💾 Plan saved.'); if (currentUser) syncLocalToCloud(); }
+        function loadPlan(silent) { const saved = localStorage.getItem('plan') || ''; document.getElementById('plan').value = saved; if (!silent) document.getElementById('planStatus').innerText = saved ? '📂 Loaded.' : '📂 No plan.'; }
+        function clearPlan() { if (confirm('Clear editor?')) { document.getElementById('plan').value = ''; document.getElementById('planStatus').innerText = '🗑 Cleared.'; showNotification('🗑 Cleared.'); if (currentUser) syncLocalToCloud(); } }
 
         // ─── ANALYZER ───
         function analyze() {
@@ -2093,10 +1396,7 @@
             document.getElementById('analysisBox').innerHTML = msg;
             showNotification('🔍 Analysis done.');
         }
-        function resetAnalysis() {
-            document.getElementById('analysisBox').innerHTML = '<span class="small">No analysis.</span>';
-            showNotification('🔄 Reset.');
-        }
+        function resetAnalysis() { document.getElementById('analysisBox').innerHTML = '<span class="small">No analysis.</span>'; showNotification('🔄 Reset.'); }
 
         // ─── COUNTDOWN ───
         function setCountdown() {
@@ -2135,7 +1435,6 @@
             showNotification('🔄 Cleared.');
             if (currentUser) syncLocalToCloud();
         }
-
         setInterval(() => {
             if (currentSection === 'countdown' || document.getElementById('sectionCountdown').classList.contains('active'))
                 updateCountdownDisplay();
@@ -2164,6 +1463,7 @@
                     document.getElementById('pomodoroCount').innerText = pomodoroCompleted;
                     addStudyMinutes(25);
                     logSession(25);
+                    checkAchievements();
                     showNotification('🍅 Done!');
                     document.getElementById('sessionTimerStatus').innerText = '✅ Completed';
                     sessionActive = false;
@@ -2228,7 +1528,6 @@
         let dbPdf = null;
         const DB_NAME = 'GoatTutorDB';
         const STORE_NAME = 'pdfs';
-
         function openDB() {
             return new Promise((resolve, reject) => {
                 if (dbPdf) { resolve(dbPdf); return; }
@@ -2239,16 +1538,10 @@
                         database.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
                     }
                 };
-                request.onsuccess = (event) => {
-                    dbPdf = event.target.result;
-                    resolve(dbPdf);
-                };
-                request.onerror = (event) => {
-                    reject(event.target.error);
-                };
+                request.onsuccess = (event) => { dbPdf = event.target.result; resolve(dbPdf); };
+                request.onerror = (event) => { reject(event.target.error); };
             });
         }
-
         function saveFileToIndexedDB(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -2257,25 +1550,16 @@
                         const database = await openDB();
                         const transaction = database.transaction([STORE_NAME], 'readwrite');
                         const store = transaction.objectStore(STORE_NAME);
-                        const data = {
-                            name: file.name,
-                            size: file.size,
-                            type: file.type,
-                            blob: e.target.result,
-                            uploadedAt: new Date().toISOString()
-                        };
+                        const data = { name: file.name, size: file.size, type: file.type, blob: e.target.result, uploadedAt: new Date().toISOString() };
                         const request = store.add(data);
                         request.onsuccess = () => { resolve(request.result); };
                         request.onerror = () => { reject(request.error); };
-                    } catch (err) {
-                        reject(err);
-                    }
+                    } catch (err) { reject(err); }
                 };
                 reader.onerror = () => { reject(reader.error); };
                 reader.readAsArrayBuffer(file);
             });
         }
-
         function getAllFiles() {
             return new Promise(async (resolve, reject) => {
                 try {
@@ -2285,12 +1569,9 @@
                     const request = store.getAll();
                     request.onsuccess = () => { resolve(request.result); };
                     request.onerror = () => { reject(request.error); };
-                } catch (err) {
-                    reject(err);
-                }
+                } catch (err) { reject(err); }
             });
         }
-
         function getFileById(id) {
             return new Promise(async (resolve, reject) => {
                 try {
@@ -2300,12 +1581,9 @@
                     const request = store.get(id);
                     request.onsuccess = () => { resolve(request.result); };
                     request.onerror = () => { reject(request.error); };
-                } catch (err) {
-                    reject(err);
-                }
+                } catch (err) { reject(err); }
             });
         }
-
         function deleteFileFromDB(id) {
             return new Promise(async (resolve, reject) => {
                 try {
@@ -2315,40 +1593,25 @@
                     const request = store.delete(id);
                     request.onsuccess = () => { resolve(); };
                     request.onerror = () => { reject(request.error); };
-                } catch (err) {
-                    reject(err);
-                }
+                } catch (err) { reject(err); }
             });
         }
-
         async function handleFileUpload(event) {
             const files = event.target.files;
             if (!files.length) return;
             let uploaded = 0;
             for (let file of files) {
-                if (file.type !== 'application/pdf') {
-                    showNotification('⚠️ "' + file.name + '" is not a PDF.');
-                    continue;
-                }
-                if (file.size > 50 * 1024 * 1024) {
-                    showNotification('⚠️ "' + file.name + '" exceeds 50MB limit.');
-                    continue;
-                }
+                if (file.type !== 'application/pdf') { showNotification('⚠️ "' + file.name + '" is not a PDF.'); continue; }
+                if (file.size > 50 * 1024 * 1024) { showNotification('⚠️ "' + file.name + '" exceeds 50MB limit.'); continue; }
                 try {
                     await saveFileToIndexedDB(file);
                     uploaded++;
-                } catch (err) {
-                    console.error(err);
-                    showNotification('❌ Failed to upload "' + file.name + '".');
-                }
+                } catch (err) { console.error(err); showNotification('❌ Failed to upload "' + file.name + '".'); }
             }
-            if (uploaded > 0) {
-                showNotification('✅ ' + uploaded + ' PDF(s) uploaded successfully!');
-            }
+            if (uploaded > 0) showNotification('✅ ' + uploaded + ' PDF(s) uploaded successfully!');
             event.target.value = '';
             loadPdfList();
         }
-
         async function displayStorageInfo() {
             const storageEl = document.getElementById('storageInfo');
             if (!storageEl) return;
@@ -2365,16 +1628,10 @@
                     const usedMB = (used / (1024*1024)).toFixed(2);
                     const quotaMB = quota === 'unknown' ? 'unknown' : (quota / (1024*1024)).toFixed(2);
                     quotaInfo = `Used: ${usedMB} MB ${quota !== 'unknown' ? '/ Quota: ' + quotaMB + ' MB' : ''}`;
-                } else {
-                    quotaInfo = `Total: ${totalMB} MB`;
-                }
+                } else { quotaInfo = `Total: ${totalMB} MB`; }
                 storageEl.textContent = quotaInfo;
-            } catch (err) {
-                console.error('Storage info error:', err);
-                storageEl.textContent = '';
-            }
+            } catch (err) { console.error('Storage info error:', err); storageEl.textContent = ''; }
         }
-
         async function loadPdfList() {
             const container = document.getElementById('pdfList');
             const countEl = document.getElementById('pdfCount');
@@ -2396,10 +1653,7 @@
                         <div class="pdf-list-item">
                             <div class="file-info" onclick="viewPdf(${file.id})">
                                 <span style="font-size:1.2rem;">📄</span>
-                                <div>
-                                    <div class="name">${file.name}</div>
-                                    <div class="meta">${sizeStr} • ${dateStr}</div>
-                                </div>
+                                <div><div class="name">${file.name}</div><div class="meta">${sizeStr} • ${dateStr}</div></div>
                             </div>
                             <div class="file-actions">
                                 <button onclick="event.stopPropagation();summarizePdf(${file.id})" class="ai-btn small-btn" style="padding:4px 10px;font-size:0.7rem;">🤖 Summarize</button>
@@ -2418,7 +1672,6 @@
                 showNotification('❌ Could not load PDF library.');
             }
         }
-
         async function renamePdf(id) {
             const newName = prompt('Enter new name for this PDF:');
             if (!newName || !newName.trim()) return;
@@ -2426,50 +1679,28 @@
                 const database = await openDB();
                 const transaction = database.transaction([STORE_NAME], 'readwrite');
                 const store = transaction.objectStore(STORE_NAME);
-                const file = await new Promise((resolve, reject) => {
-                    const req = store.get(id);
-                    req.onsuccess = () => resolve(req.result);
-                    req.onerror = () => reject(req.error);
-                });
-                if (!file) {
-                    showNotification('⚠️ PDF not found.');
-                    return;
-                }
+                const file = await new Promise((resolve, reject) => { const req = store.get(id); req.onsuccess = () => resolve(req.result); req.onerror = () => reject(req.error); });
+                if (!file) { showNotification('⚠️ PDF not found.'); return; }
                 file.name = newName.trim();
-                await new Promise((resolve, reject) => {
-                    const req = store.put(file);
-                    req.onsuccess = () => resolve();
-                    req.onerror = () => reject(req.error);
-                });
+                await new Promise((resolve, reject) => { const req = store.put(file); req.onsuccess = () => resolve(); req.onerror = () => reject(req.error); });
                 loadPdfList();
                 showNotification('✏️ Renamed to ' + file.name);
-            } catch (err) {
-                console.error(err);
-                showNotification('❌ Failed to rename PDF.');
-            }
+            } catch (err) { console.error(err); showNotification('❌ Failed to rename PDF.'); }
         }
-
         async function viewPdf(id) {
             const viewer = document.getElementById('pdfViewer');
             const placeholder = document.getElementById('pdfViewerPlaceholder');
             try {
                 const file = await getFileById(id);
-                if (!file) {
-                    showNotification('⚠️ PDF not found.');
-                    return;
-                }
+                if (!file) { showNotification('⚠️ PDF not found.'); return; }
                 const blob = new Blob([file.blob], { type: 'application/pdf' });
                 const url = URL.createObjectURL(blob);
                 viewer.src = url;
                 viewer.style.display = 'block';
                 placeholder.style.display = 'none';
                 showNotification('📄 Loading: ' + file.name);
-            } catch (err) {
-                console.error(err);
-                showNotification('❌ Failed to load PDF.');
-            }
+            } catch (err) { console.error(err); showNotification('❌ Failed to load PDF.'); }
         }
-
         async function deletePdf(id) {
             if (!confirm('Delete this PDF?')) return;
             try {
@@ -2477,24 +1708,14 @@
                 loadPdfList();
                 const viewer = document.getElementById('pdfViewer');
                 const placeholder = document.getElementById('pdfViewerPlaceholder');
-                viewer.src = '';
-                viewer.style.display = 'none';
-                placeholder.style.display = 'flex';
+                viewer.src = ''; viewer.style.display = 'none'; placeholder.style.display = 'flex';
                 showNotification('🗑 PDF deleted.');
-            } catch (err) {
-                console.error(err);
-                showNotification('❌ Failed to delete PDF.');
-            }
+            } catch (err) { console.error(err); showNotification('❌ Failed to delete PDF.'); }
         }
-
-        // ─── PDF TO AI ───
         async function extractPdfText(id) {
             try {
                 const file = await getFileById(id);
-                if (!file) {
-                    showNotification('⚠️ PDF not found.');
-                    return null;
-                }
+                if (!file) { showNotification('⚠️ PDF not found.'); return null; }
                 const pdfjsLib = window['pdfjs-dist/build/pdf'];
                 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
                 const arrayBuffer = file.blob;
@@ -2505,74 +1726,40 @@
                     const textContent = await page.getTextContent();
                     fullText += textContent.items.map(item => item.str).join(' ') + '\n\n';
                 }
-                if (!fullText.trim()) {
-                    showNotification('⚠️ No text extracted from PDF.');
-                    return null;
-                }
+                if (!fullText.trim()) { showNotification('⚠️ No text extracted from PDF.'); return null; }
                 return fullText.length > 6000 ? fullText.substring(0,6000) + '... [truncated]' : fullText;
-            } catch (err) {
-                console.error('PDF extraction error:', err);
-                showNotification('❌ Failed to extract text from PDF. The file might be image-based.');
-                return null;
-            }
+            } catch (err) { console.error('PDF extraction error:', err); showNotification('❌ Failed to extract text from PDF.'); return null; }
         }
-
         async function summarizePdf(id) {
             const text = await extractPdfText(id);
             if (!text) return;
             document.getElementById('topic').value = text;
             document.getElementById('mode').value = 'summary';
             navigateTo('main');
-            setTimeout(() => {
-                if (document.getElementById('topic').value.trim()) {
-                    askAI();
-                }
-            }, 300);
+            setTimeout(() => { if (document.getElementById('topic').value.trim()) askAI(); }, 300);
         }
-
         async function quizPdf(id) {
             const text = await extractPdfText(id);
             if (!text) return;
             document.getElementById('topic').value = text;
             document.getElementById('mode').value = 'mcq';
             navigateTo('main');
-            setTimeout(() => {
-                if (document.getElementById('topic').value.trim()) {
-                    askAI();
-                }
-            }, 300);
+            setTimeout(() => { if (document.getElementById('topic').value.trim()) askAI(); }, 300);
         }
-
         function setupDragDrop() {
             const area = document.getElementById('uploadArea');
-            area.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                area.classList.add('dragover');
-            });
-            area.addEventListener('dragleave', () => {
-                area.classList.remove('dragover');
-            });
+            area.addEventListener('dragover', (e) => { e.preventDefault(); area.classList.add('dragover'); });
+            area.addEventListener('dragleave', () => area.classList.remove('dragover'));
             area.addEventListener('drop', (e) => {
-                e.preventDefault();
-                area.classList.remove('dragover');
+                e.preventDefault(); area.classList.remove('dragover');
                 const files = e.dataTransfer.files;
-                if (files.length) {
-                    document.getElementById('pdfUploadInput').files = files;
-                    handleFileUpload({ target: { files: files } });
-                }
+                if (files.length) { document.getElementById('pdfUploadInput').files = files; handleFileUpload({ target: { files: files } }); }
             });
         }
 
         // ─── REMINDERS ───
-        function getReminders() {
-            try { return JSON.parse(localStorage.getItem('reminders')) || []; } catch { return []; }
-        }
-
-        function saveReminders(r) {
-            localStorage.setItem('reminders', JSON.stringify(r));
-            if (currentUser) syncLocalToCloud();
-        }
-
+        function getReminders() { try { return JSON.parse(localStorage.getItem('reminders')) || []; } catch { return []; } }
+        function saveReminders(r) { localStorage.setItem('reminders', JSON.stringify(r)); if (currentUser) syncLocalToCloud(); }
         function addReminder() {
             const title = document.getElementById('reminderTitle').value.trim();
             const dateTime = document.getElementById('reminderDateTime').value;
@@ -2580,34 +1767,21 @@
             if (!title) { showNotification('⚠️ Please enter a reminder title.'); return; }
             if (!dateTime) { showNotification('⚠️ Please select a date and time.'); return; }
             const reminders = getReminders();
-            reminders.push({
-                id: Date.now(),
-                title,
-                dateTime,
-                priority,
-                completed: false,
-                createdAt: new Date().toISOString()
-            });
+            reminders.push({ id: Date.now(), title, dateTime, priority, completed: false, createdAt: new Date().toISOString() });
             saveReminders(reminders);
             renderReminders();
             document.getElementById('reminderTitle').value = '';
             document.getElementById('reminderDateTime').value = '';
             showNotification('🔔 Reminder set: "' + title + '"');
             if (Notification.permission === 'default') {
-                Notification.requestPermission().then(perm => {
-                    document.getElementById('notifStatus').innerText = perm === 'granted' ? '✅ Enabled' : '❌ Blocked';
-                });
+                Notification.requestPermission().then(perm => { document.getElementById('notifStatus').innerText = perm === 'granted' ? '✅ Enabled' : '❌ Blocked'; });
             }
             if (currentUser) syncLocalToCloud();
         }
-
         function renderReminders() {
             const reminders = getReminders();
             const container = document.getElementById('reminderList');
-            if (reminders.length === 0) {
-                container.innerHTML = '<span class="small">No reminders set.</span>';
-                return;
-            }
+            if (reminders.length === 0) { container.innerHTML = '<span class="small">No reminders set.</span>'; return; }
             const sorted = [...reminders].sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime));
             container.innerHTML = sorted.map(r => {
                 const now = new Date();
@@ -2628,13 +1802,11 @@
                 `;
             }).join('');
         }
-
         function completeReminder(id) {
             const reminders = getReminders();
             const r = reminders.find(r => r.id === id);
             if (r) { r.completed = true; saveReminders(reminders); renderReminders(); showNotification('✅ Reminder completed!'); }
         }
-
         function deleteReminder(id) {
             let reminders = getReminders();
             reminders = reminders.filter(r => r.id !== id);
@@ -2642,37 +1814,19 @@
             renderReminders();
             showNotification('🗑 Reminder deleted.');
         }
-
         function clearAllReminders() {
             if (!confirm('Delete all reminders?')) return;
-            saveReminders([]);
-            renderReminders();
-            showNotification('🗑 All reminders cleared.');
+            saveReminders([]); renderReminders(); showNotification('🗑 All reminders cleared.');
         }
-
         function requestNotificationPermission() {
-            if (!('Notification' in window)) {
-                showNotification('⚠️ Notifications not supported.');
-                return;
-            }
-            if (Notification.permission === 'granted') {
-                showNotification('✅ Notifications already enabled.');
-                document.getElementById('notifStatus').innerText = '✅ Enabled';
-                return;
-            }
+            if (!('Notification' in window)) { showNotification('⚠️ Notifications not supported.'); return; }
+            if (Notification.permission === 'granted') { showNotification('✅ Notifications already enabled.'); document.getElementById('notifStatus').innerText = '✅ Enabled'; return; }
             Notification.requestPermission().then(perm => {
-                if (perm === 'granted') {
-                    showNotification('🔔 Notifications enabled!');
-                    document.getElementById('notifStatus').innerText = '✅ Enabled';
-                } else {
-                    showNotification('⚠️ Permission denied.');
-                    document.getElementById('notifStatus').innerText = '❌ Blocked';
-                }
+                if (perm === 'granted') { showNotification('🔔 Notifications enabled!'); document.getElementById('notifStatus').innerText = '✅ Enabled'; }
+                else { showNotification('⚠️ Permission denied.'); document.getElementById('notifStatus').innerText = '❌ Blocked'; }
             });
         }
-
         let reminderCheckerInterval = null;
-
         function scheduleReminderCheck() {
             if (reminderCheckerInterval) clearInterval(reminderCheckerInterval);
             reminderCheckerInterval = setInterval(() => {
@@ -2684,10 +1838,7 @@
                     const diff = reminderTime - now;
                     if (diff <= 0 && diff > -5000) {
                         if (Notification.permission === 'granted') {
-                            new Notification('🔔 GoatTutor Reminder', {
-                                body: r.title,
-                                icon: '🐐'
-                            });
+                            new Notification('🔔 GoatTutor Reminder', { body: r.title, icon: '🐐' });
                         }
                         showNotification('🔔 Reminder: ' + r.title);
                         r.completed = true;
@@ -2698,14 +1849,11 @@
             }, 10000);
         }
 
-        // ─── BACK TO TOP BUTTON ───
+        // ─── BACK TO TOP ───
         window.addEventListener('scroll', () => {
             const btn = document.getElementById('backToTopBtn');
-            if (window.scrollY > 300) {
-                btn.style.display = 'flex';
-            } else {
-                btn.style.display = 'none';
-            }
+            if (window.scrollY > 300) { btn.style.display = 'flex'; }
+            else { btn.style.display = 'none'; }
         });
 
         // ─── INIT ───
@@ -2722,17 +1870,15 @@
             initGPASection();
             renderAcademicCalendar();
             renderCutoffMarks();
-
             const cgpaRows = document.querySelectorAll('#cgpaBox .row');
             if (cgpaRows.length === 0) { semCounter = 0; addCGPARow(); } else { semCounter = cgpaRows.length; }
-
             loadPdfList();
             setupDragDrop();
             renderReminders();
             scheduleReminderCheck();
             loadGroupStates();
             updateStreakUI();
-
+            renderAchievements();
             if (Notification.permission === 'granted') {
                 document.getElementById('notifStatus').innerText = '✅ Enabled';
             } else if (Notification.permission === 'denied') {
@@ -2740,8 +1886,6 @@
             } else {
                 document.getElementById('notifStatus').innerText = 'Click to enable';
             }
-
-            // Service Worker Registration
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('service-worker.js')
@@ -2755,9 +1899,8 @@
         document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMenu(); });
 
         init();
-        console.log('🐐 GoatTutor v6 – Enhanced & PWA ready.');
+        console.log('🐐 GoatTutor v6 – Now with themes, achievements & shareable CGPA!');
     </script>
-    <!-- Clarity Tracking -->
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
