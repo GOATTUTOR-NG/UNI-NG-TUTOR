@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>GoatTutor NG v7 🐐</title>
+    <title>GoatTutor NG 🐐</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
     <!-- Firebase SDKs -->
@@ -96,7 +96,7 @@
             color: #fbbf24;
             font-weight: 500;
         }
-        /* ─── SIDEBAR OVERLAY ─── */
+        /* ─── SIDEBAR ─── */
         .sidebar-overlay {
             position: fixed;
             top: 0;
@@ -111,7 +111,6 @@
         .sidebar-overlay.show {
             display: block;
         }
-        /* ─── SIDEBAR ─── */
         .sidebar {
             position: fixed;
             top: 0;
@@ -240,7 +239,7 @@
             background: #b91c1c !important;
             transform: none !important;
         }
-        /* ─── AUTH PAGE ─── */
+        /* ─── AUTH ─── */
         .auth-page {
             position: fixed;
             top: 0;
@@ -333,7 +332,7 @@
             font-size: 3rem;
             margin-bottom: 10px;
         }
-        /* ─── MAIN CONTAINER ─── */
+        /* ─── CONTAINER ─── */
         .container {
             padding: 12px 14px;
             max-width: 720px;
@@ -343,7 +342,6 @@
             gap: 12px;
             padding-bottom: 40px;
         }
-        /* ─── CARDS ─── */
         .card {
             background: #1e293b;
             padding: 14px 16px;
@@ -363,7 +361,6 @@
             gap: 6px;
             flex-wrap: wrap;
         }
-        /* ─── INPUTS ─── */
         input,
         textarea,
         select {
@@ -389,7 +386,6 @@
         textarea {
             min-height: 70px;
         }
-        /* ─── BUTTONS ─── */
         button {
             width: 100%;
             padding: 12px 14px;
@@ -446,7 +442,6 @@
             flex: 1;
             min-width: 100px;
         }
-        /* ─── ROW ─── */
         .row {
             display: flex;
             gap: 8px;
@@ -462,7 +457,6 @@
             flex: 1 1 0;
             min-width: 70px;
         }
-        /* ─── TIMER ─── */
         .timer {
             font-size: 44px;
             text-align: center;
@@ -480,7 +474,6 @@
             flex: 1;
             min-width: 70px;
         }
-        /* ─── PAGE SECTIONS ─── */
         .page-section {
             display: none;
         }
@@ -777,7 +770,156 @@
         body.theme-forest .sidebar {
             background: #2b5a3a;
         }
-        /* ─── RESPONSIVE ─── */
+        /* ─── GAMIFICATION STYLES ─── */
+        .level-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .level-1 {
+            background: #1e293b;
+            color: #94a3b8;
+        }
+        .level-2 {
+            background: #1e3a5f;
+            color: #60a5fa;
+        }
+        .level-3 {
+            background: #3b1e5f;
+            color: #a78bfa;
+        }
+        .level-4 {
+            background: #5f3b1e;
+            color: #fbbf24;
+        }
+        .level-5 {
+            background: #1e5f3b;
+            color: #34d399;
+        }
+        .xp-bar {
+            height: 8px;
+            background: #1e293b;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .xp-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+        .badge-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .badge-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 12px;
+            background: #0f172a;
+            border-radius: 10px;
+            border: 2px solid #334155;
+            min-width: 70px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .badge-item.unlocked {
+            border-color: #fbbf24;
+            background: #1a2a3a;
+        }
+        .badge-item .icon {
+            font-size: 1.8rem;
+        }
+        .badge-item .name {
+            font-size: 0.6rem;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+        .badge-item.locked {
+            opacity: 0.4;
+            filter: grayscale(1);
+        }
+        .leaderboard-entry {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            background: #0f172a;
+            border-radius: 8px;
+            margin-top: 4px;
+            border: 1px solid #334155;
+        }
+        .leaderboard-entry.highlight {
+            border-color: #fbbf24;
+            background: #1a2a3a;
+        }
+        .leaderboard-entry .rank {
+            font-weight: 700;
+            color: #fbbf24;
+            min-width: 30px;
+            font-size: 0.9rem;
+        }
+        .leaderboard-entry .name {
+            flex: 1;
+            font-size: 0.85rem;
+        }
+        .leaderboard-entry .xp {
+            font-weight: 600;
+            color: #3b82f6;
+            font-size: 0.85rem;
+        }
+        .leaderboard-entry .level-tag {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: #1e293b;
+        }
+        /* Confetti canvas */
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .quiz-option {
+            display: block;
+            width: 100%;
+            padding: 10px 14px;
+            margin: 4px 0;
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 8px;
+            color: #e2e8f0;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover {
+            border-color: #3b82f6;
+        }
+        .quiz-option.correct {
+            border-color: #22c55e;
+            background: #14532d;
+        }
+        .quiz-option.wrong {
+            border-color: #ef4444;
+            background: #450a0a;
+        }
+        .quiz-option.disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
         @media (max-width:600px) {
             .timer {
                 font-size: 32px;
@@ -917,6 +1059,16 @@
     <div class="sidebar" id="sidebar">
         <h3>📋 Navigation</h3>
         <button class="active-nav" onclick="navigateTo('main')" id="navMain">🏠 Dashboard</button>
+
+        <div class="sidebar-group">
+            <button class="sidebar-group-btn" onclick="toggleGroup('gamification')" id="groupGamification">🎮 Gamification <span class="arrow">▼</span></button>
+            <div class="sidebar-group-items" id="gamificationItems">
+                <button onclick="navigateTo('gamification')" id="navGamification">🏆 My Stats</button>
+                <button onclick="navigateTo('leaderboard')" id="navLeaderboard">📊 Leaderboard</button>
+                <button onclick="navigateTo('challenge')" id="navChallenge">🎯 Daily Challenge</button>
+            </div>
+        </div>
+
         <div class="sidebar-group">
             <button class="sidebar-group-btn" onclick="toggleGroup('academics')" id="groupAcademics">📚 Academics <span class="arrow">▼</span></button>
             <div class="sidebar-group-items" id="academicsItems">
@@ -924,6 +1076,7 @@
                 <button onclick="navigateTo('cgpaTracker')" id="navCGPA">📊 CGPA Tracker</button>
             </div>
         </div>
+
         <div class="sidebar-group">
             <button class="sidebar-group-btn" onclick="toggleGroup('uniosun')" id="groupUniosun">🎯 UNIOSUN Tools <span class="arrow">▼</span></button>
             <div class="sidebar-group-items" id="uniosunItems">
@@ -932,6 +1085,7 @@
                 <button onclick="navigateTo('calendar')" id="navCalendar">📅 Academic Calendar</button>
             </div>
         </div>
+
         <div class="sidebar-group">
             <button class="sidebar-group-btn" onclick="toggleGroup('study')" id="groupStudy">📖 Study Tools <span class="arrow">▼</span></button>
             <div class="sidebar-group-items" id="studyItems">
@@ -940,6 +1094,7 @@
                 <button onclick="navigateTo('feedback')" id="navFeedback">💬 Feedback</button>
             </div>
         </div>
+
         <div class="sidebar-group">
             <button class="sidebar-group-btn" onclick="toggleGroup('analytics')" id="groupAnalytics">📊 Analytics <span class="arrow">▼</span></button>
             <div class="sidebar-group-items" id="analyticsItems">
@@ -947,6 +1102,7 @@
                 <button onclick="navigateTo('sessionLog')" id="navSessionLog">📝 Session Log</button>
             </div>
         </div>
+
         <button onclick="navigateTo('countdown')" id="navCountdown">⏳ Exam Countdown</button>
         <button class="close-btn" onclick="closeMenu()">✕ Close Menu</button>
     </div>
@@ -957,9 +1113,12 @@
         <span id="notificationText">Notification</span>
     </div>
 
+    <!-- CONFETTI CANVAS -->
+    <canvas id="confettiCanvas"></canvas>
+
     <!-- TOP BAR -->
     <div class="topbar">
-        <div class="logo">🐐 GoatTutor NG v7</div>
+        <div class="logo">🐐 GoatTutor NG</div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <div class="auth-status" id="authStatus">
                 <span id="userDisplay">👤 Guest</span>
@@ -996,7 +1155,7 @@
                     <div class="small" style="text-align:center;color:#94a3b8;padding:4px;">(Opens in a new tab – no API key needed)</div>
                 </div>
 
-                <!-- DASHBOARD -->
+                <!-- DASHBOARD with Gamification -->
                 <div class="card">
                     <h3>📊 Academic Dashboard</h3>
                     <div class="dash-grid">
@@ -1008,6 +1167,15 @@
                     <div class="small" style="margin-top:10px;">🔥 Study Streak: <strong><span id="streakDisplay">0</span> Days</strong></div>
                     <div class="small">⏱ Study: <strong><span id="hoursDisplay">0</span> hrs</strong></div>
                     <div class="small">📅 Sessions: <strong><span id="sessionCountDisplay">0</span></strong></div>
+                    <!-- Gamification XP & Level -->
+                    <div style="margin-top:10px;padding-top:10px;border-top:1px solid #334155;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span class="small">🏅 <span id="dashLevel">--</span></span>
+                            <span class="small">⚡ <span id="dashXP">--</span> XP</span>
+                        </div>
+                        <div class="xp-bar"><div class="xp-bar-fill" id="dashXpBar" style="width:0%;"></div></div>
+                        <div class="small" style="margin-top:2px;">Next level: <span id="dashXpNext">--</span> XP needed</div>
+                    </div>
                 </div>
 
                 <!-- ACHIEVEMENTS -->
@@ -1040,6 +1208,72 @@
                         <div class="quick-card" onclick="navigateTo('gpaCalculator')"><div class="icon">📊</div><div class="label">GPA Calculator</div></div>
                         <div class="quick-card" onclick="navigateTo('cgpaCalculator')"><div class="icon">📈</div><div class="label">CGPA Calculator</div></div>
                         <div class="quick-card" onclick="navigateTo('timer')"><div class="icon">⏱</div><div class="label">Study Timer</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== GAMIFICATION STATS ========== -->
+            <div class="page-section" id="sectionGamification">
+                <div class="card">
+                    <h3>🏆 Your Gamification Stats</h3>
+                    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:8px 0;">
+                        <div style="font-size:3rem;"><span id="gLevelIcon">🐣</span></div>
+                        <div>
+                            <div style="font-size:1.2rem;font-weight:700;"><span id="gLevelName">Fresher</span></div>
+                            <div class="small">Level <span id="gLevelNum">1</span></div>
+                        </div>
+                        <div style="margin-left:auto;text-align:right;">
+                            <div style="font-size:1.5rem;font-weight:700;color:#fbbf24;"><span id="gXP">0</span> XP</div>
+                            <div class="small">⚡ Total experience</div>
+                        </div>
+                    </div>
+                    <div class="xp-bar"><div class="xp-bar-fill" id="gXpBar" style="width:0%;"></div></div>
+                    <div class="small" style="margin-top:2px;"><span id="gXpProgress">0</span> / <span id="gXpNext">500</span> XP to next level</div>
+
+                    <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                        <div class="dash-card"><div class="value" id="gStreak">0</div><div class="label">🔥 Streak</div></div>
+                        <div class="dash-card"><div class="value" id="gBadges">0</div><div class="label">🏅 Badges</div></div>
+                    </div>
+
+                    <div style="margin-top:12px;">
+                        <h4 style="font-size:0.85rem;margin-bottom:6px;">🏅 Your Badges</h4>
+                        <div class="badge-grid" id="gBadgeGrid">
+                            <span class="small">Complete activities to unlock badges!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="forceSyncGamification()" class="secondary small-btn" style="width:auto;">🔄 Sync Stats</button>
+            </div>
+
+            <!-- ========== LEADERBOARD ========== -->
+            <div class="page-section" id="sectionLeaderboard">
+                <div class="card">
+                    <h3>📊 Global Leaderboard</h3>
+                    <p class="small">Top students ranked by XP</p>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;">
+                        <button onclick="loadLeaderboard('all_time')" class="secondary small-btn" style="flex:1;">🏆 All Time</button>
+                        <button onclick="loadLeaderboard('monthly')" class="secondary small-btn" style="flex:1;">📅 Monthly</button>
+                        <button onclick="loadLeaderboard('weekly')" class="secondary small-btn" style="flex:1;">📆 Weekly</button>
+                        <button onclick="loadLeaderboard('daily')" class="secondary small-btn" style="flex:1;">📊 Daily</button>
+                    </div>
+                    <div id="leaderboardList"><span class="small">Loading...</span></div>
+                </div>
+            </div>
+
+            <!-- ========== DAILY CHALLENGE ========== -->
+            <div class="page-section" id="sectionChallenge">
+                <div class="card">
+                    <h3>🎯 Daily Challenge</h3>
+                    <p class="small">5 random questions – earn bonus XP!</p>
+                    <div id="challengeContainer">
+                        <button onclick="startDailyChallenge()" id="startChallengeBtn">🚀 Start Challenge</button>
+                        <div id="challengeQuestions" style="margin-top:12px;display:none;"></div>
+                        <div id="challengeResult" style="margin-top:12px;display:none;text-align:center;">
+                            <div style="font-size:1.8rem;font-weight:700;color:#fbbf24;" id="challengeScore">0/5</div>
+                            <div class="small">XP Earned: <span id="challengeXP">0</span></div>
+                            <button onclick="startDailyChallenge()" style="margin-top:8px;">🔄 Try Again</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1151,7 +1385,7 @@
                 <div class="card"><h3>📄 PDF Library</h3><p class="small">Upload, view, summarise, quiz</p><div class="upload-area" id="uploadArea" onclick="document.getElementById('pdfUploadInput').click()"><div class="icon">📂</div><div style="font-weight:500;">Click or drag & drop PDF files</div><div style="font-size:0.75rem;color:#94a3b8;">Max 50MB</div><input type="file" id="pdfUploadInput" accept=".pdf,application/pdf" multiple style="display:none;" onchange="handleFileUpload(event)"></div><div style="margin-top:10px;"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span style="font-weight:600;">📑 My PDFs</span><div><span style="font-size:0.75rem;color:#94a3b8;" id="pdfCount">0 files</span><span style="font-size:0.7rem;color:#94a3b8;margin-left:8px;" id="storageInfo"></span></div></div><div id="pdfList" style="margin-top:6px;max-height:250px;overflow-y:auto;"><span class="small">No PDFs uploaded.</span></div></div><div class="pdf-viewer-container" id="pdfViewerContainer"><div class="pdf-viewer-placeholder" id="pdfViewerPlaceholder"><div class="icon">📄</div><div style="font-weight:500;margin-bottom:4px;">Select a PDF</div><div style="font-size:0.8rem;color:#64748b;">Click on any PDF above</div></div><iframe id="pdfViewer" style="display:none;width:100%;height:100%;border:none;"></iframe></div></div>
             </div>
 
-            <!-- ========== FEEDBACK SECTION (ANONYMOUS) ========== -->
+            <!-- ========== FEEDBACK SECTION ========== -->
             <div class="page-section" id="sectionFeedback">
                 <div class="card">
                     <h3>💬 Anonymous Feedback</h3>
@@ -1199,6 +1433,28 @@
         let semCounter = 1;
         let currentUser = null;
         let userDocRef = null;
+        let gamificationData = { xp: 0, level: 1, streak: 0, badges: [] };
+
+        // ─── LEVEL SYSTEM ───
+        const LEVELS = [
+            { level: 1, name: 'Fresher', icon: '🐣', xpRequired: 0 },
+            { level: 2, name: 'Scholar', icon: '📚', xpRequired: 500 },
+            { level: 3, name: 'Genius', icon: '🧠', xpRequired: 1500 },
+            { level: 4, name: 'GOAT', icon: '🐐', xpRequired: 3500 },
+            { level: 5, name: 'Legend', icon: '👑', xpRequired: 7000 },
+        ];
+
+        // ─── BADGE DEFINITIONS ───
+        const BADGE_DEFS = [
+            { id: 'first_quiz', name: 'First Quiz', icon: '🎯', desc: 'Complete your first quiz' },
+            { id: 'streak_7', name: '7-Day Streak', icon: '🔥', desc: 'Study 7 days in a row' },
+            { id: 'streak_30', name: '30-Day Streak', icon: '💎', desc: 'Study 30 days in a row' },
+            { id: 'read_notes', name: 'Note Reader', icon: '📖', desc: 'Read 50 notes' },
+            { id: 'quiz_master', name: 'Quiz Master', icon: '🏆', desc: 'Score 90%+ on 10 quizzes' },
+            { id: 'perfect_score', name: 'Perfect Score', icon: '⭐', desc: 'Get 100% on a quiz' },
+            { id: 'top_10', name: 'Top 10', icon: '🏅', desc: 'Rank in top 10 leaderboard' },
+            { id: 'xp_5000', name: 'XP Collector', icon: '💪', desc: 'Reach 5,000 XP' },
+        ];
 
         // ─── ACADEMIC EVENTS ───
         const academicEvents = [
@@ -1293,46 +1549,642 @@
             localStorage.setItem('theme', theme);
         }
 
-        // ─── ACHIEVEMENTS ───
-        const achievements = [
-            { id: 'first_ai', name: 'First AI Query', icon: '🤖', condition: () => true },
-            { id: 'gpa_5', name: 'Perfect GPA (5.0)', icon: '🏆', condition: () => parseFloat(localStorage.getItem('gpa') || 0) >=
-                    5.0 },
-            { id: 'streak_7', name: '7-Day Streak', icon: '🔥', condition: () => getStreakStats().streak >= 7 },
-            { id: 'streak_30', name: '30-Day Streak', icon: '🔥🔥', condition: () => getStreakStats().streak >= 30 },
-            { id: 'hours_50', name: '50 Study Hours', icon: '⏰', condition: () => (parseInt(localStorage.getItem(
-                    'studyMinutes') || 0) / 60) >= 50 },
-            { id: 'pdf_quiz', name: 'PDF Quizzed', icon: '📄', condition: () => false }
-        ];
+        // ─── CONFETTI ───
+        function fireConfetti() {
+            const canvas = document.getElementById('confettiCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const particles = [];
+            const colors = ['#fbbf24', '#ef4444', '#22c55e', '#3b82f6', '#a78bfa', '#ec4899', '#f97316'];
 
-        function checkAchievements() {
-            const unlocked = JSON.parse(localStorage.getItem('achievements') || '[]');
-            let newUnlock = false;
-            achievements.forEach(a => {
-                if (!unlocked.includes(a.id) && a.condition()) {
-                    unlocked.push(a.id);
-                    newUnlock = true;
-                    showNotification(`🏅 Achievement unlocked: ${a.name}`, 4000);
+            for (let i = 0; i < 150; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    w: Math.random() * 8 + 4,
+                    h: Math.random() * 6 + 3,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: Math.random() * 4 + 2,
+                    rotation: Math.random() * 360,
+                    rotSpeed: (Math.random() - 0.5) * 10,
+                });
+            }
+
+            let frames = 0;
+            const maxFrames = 120;
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.rotation += p.rotSpeed;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                    ctx.restore();
+                });
+                frames++;
+                if (frames < maxFrames) {
+                    requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
                 }
-            });
-            if (newUnlock) {
-                localStorage.setItem('achievements', JSON.stringify(unlocked));
-                renderAchievements();
-                if (currentUser) syncLocalToCloud();
+            }
+            animate();
+        }
+
+        // ─── GAMIFICATION HELPERS ───
+        function getLevelFromXP(xp) {
+            let level = 1;
+            for (const l of LEVELS) {
+                if (xp >= l.xpRequired) level = l.level;
+            }
+            return level;
+        }
+
+        function getLevelData(level) {
+            return LEVELS.find(l => l.level === level) || LEVELS[0];
+        }
+
+        function getNextLevelXP(level) {
+            const next = LEVELS.find(l => l.level === level + 1);
+            return next ? next.xpRequired : Infinity;
+        }
+
+        function getXPProgress(xp, level) {
+            const current = LEVELS.find(l => l.level === level) || LEVELS[0];
+            const next = LEVELS.find(l => l.level === level + 1);
+            if (!next) return 100;
+            const xpInLevel = xp - current.xpRequired;
+            const xpNeeded = next.xpRequired - current.xpRequired;
+            return Math.min((xpInLevel / xpNeeded) * 100, 100);
+        }
+
+        // ─── AWARD XP (Server-like via Firestore) ───
+        async function awardXP(amount, activity) {
+            if (!currentUser) return;
+            try {
+                const userRef = db.collection('users').doc(currentUser.uid);
+                const doc = await userRef.get();
+                if (!doc.exists) return;
+                const data = doc.data();
+                const newXP = (data.xp || 0) + amount;
+                const newLevel = getLevelFromXP(newXP);
+
+                await userRef.update({
+                    xp: newXP,
+                    level: newLevel,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Log transaction
+                await db.collection('xpTransactions').add({
+                    userId: currentUser.uid,
+                    amount: amount,
+                    activity: activity,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Check level up
+                const oldLevel = data.level || 1;
+                if (newLevel > oldLevel) {
+                    fireConfetti();
+                    showNotification(`🎉 LEVEL UP! You're now a ${getLevelData(newLevel).name} ${getLevelData(newLevel).icon}`, 5000);
+                }
+
+                // Check badges
+                await checkBadges();
+                updateGamificationUI();
+                updateDash();
+                showNotification(`⚡ +${amount} XP (${activity})`, 2000);
+
+            } catch (err) {
+                console.error('XP award error:', err);
             }
         }
 
-        function renderAchievements() {
-            const unlocked = JSON.parse(localStorage.getItem('achievements') || '[]');
-            const container = document.getElementById('achievementBadges');
-            if (!container) return;
-            container.innerHTML = unlocked.map(id => {
-                const a = achievements.find(x => x.id === id);
-                return a ? `<span class="badge">${a.icon} ${a.name}</span>` : '';
-            }).join('');
+        // ─── CHECK BADGES ───
+        async function checkBadges() {
+            if (!currentUser) return;
+            try {
+                const userRef = db.collection('users').doc(currentUser.uid);
+                const doc = await userRef.get();
+                if (!doc.exists) return;
+                const data = doc.data();
+                const unlocked = data.badges || [];
+                let newBadges = [];
+
+                // Get stats
+                const quizAttempts = await db.collection('quizAttempts')
+                    .where('userId', '==', currentUser.uid)
+                    .get();
+
+                const totalQuizzes = quizAttempts.size;
+                const perfectScores = quizAttempts.docs.filter(d => d.data().score === 100).length;
+                const highScores = quizAttempts.docs.filter(d => d.data().score >= 90).length;
+
+                const streak = data.streak || 0;
+                const xp = data.xp || 0;
+
+                // Read notes count from XP transactions
+                const notesRead = await db.collection('xpTransactions')
+                    .where('userId', '==', currentUser.uid)
+                    .where('activity', '==', 'note_read')
+                    .get();
+
+                // Check each badge condition
+                for (const badge of BADGE_DEFS) {
+                    if (unlocked.includes(badge.id)) continue;
+                    let conditionMet = false;
+
+                    switch (badge.id) {
+                        case 'first_quiz':
+                            conditionMet = totalQuizzes >= 1;
+                            break;
+                        case 'streak_7':
+                            conditionMet = streak >= 7;
+                            break;
+                        case 'streak_30':
+                            conditionMet = streak >= 30;
+                            break;
+                        case 'read_notes':
+                            conditionMet = notesRead.size >= 50;
+                            break;
+                        case 'quiz_master':
+                            conditionMet = highScores >= 10;
+                            break;
+                        case 'perfect_score':
+                            conditionMet = perfectScores >= 1;
+                            break;
+                        case 'top_10':
+                            // Check if user is in top 10 of all-time leaderboard
+                            const lb = await db.collection('leaderboard')
+                                .where('period', '==', 'all_time')
+                                .orderBy('xp', 'desc')
+                                .limit(10)
+                                .get();
+                            const top10 = lb.docs.map(d => d.data().userId);
+                            conditionMet = top10.includes(currentUser.uid);
+                            break;
+                        case 'xp_5000':
+                            conditionMet = xp >= 5000;
+                            break;
+                    }
+
+                    if (conditionMet) {
+                        newBadges.push(badge.id);
+                        fireConfetti();
+                        showNotification(`🏅 Badge Unlocked: ${badge.icon} ${badge.name}`, 4000);
+                    }
+                }
+
+                if (newBadges.length > 0) {
+                    await userRef.update({
+                        badges: firebase.firestore.FieldValue.arrayUnion(...newBadges),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    // Award XP for badges
+                    for (const b of newBadges) {
+                        await awardXP(50, 'badge_unlocked');
+                    }
+                }
+
+                updateGamificationUI();
+
+            } catch (err) {
+                console.error('Badge check error:', err);
+            }
         }
 
-        // ─── SHAREABLE CGPA CARD ───
+        // ─── UPDATE STREAK ───
+        async function updateStreak() {
+            if (!currentUser) return;
+            try {
+                const userRef = db.collection('users').doc(currentUser.uid);
+                const doc = await userRef.get();
+                if (!doc.exists) return;
+                const data = doc.data();
+                const today = new Date().toDateString();
+                const lastActivity = data.lastActivityDate || '';
+
+                let currentStreak = data.streak || 0;
+                let bestStreak = data.bestStreak || 0;
+
+                if (lastActivity === today) {
+                    // Already logged today
+                    return;
+                }
+
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                const yesterdayStr = yesterday.toDateString();
+
+                if (lastActivity === yesterdayStr) {
+                    currentStreak += 1;
+                } else {
+                    currentStreak = 1;
+                }
+
+                if (currentStreak > bestStreak) {
+                    bestStreak = currentStreak;
+                }
+
+                await userRef.update({
+                    streak: currentStreak,
+                    bestStreak: bestStreak,
+                    lastActivityDate: today,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Streak bonus every 7 days
+                if (currentStreak % 7 === 0) {
+                    await awardXP(currentStreak * 10, 'streak_bonus');
+                }
+
+                updateGamificationUI();
+                updateStreakUI();
+
+            } catch (err) {
+                console.error('Streak update error:', err);
+            }
+        }
+
+        // ─── GAMIFICATION UI ───
+        function updateGamificationUI() {
+            if (!currentUser) return;
+            const userRef = db.collection('users').doc(currentUser.uid);
+            userRef.get().then(doc => {
+                if (!doc.exists) return;
+                const data = doc.data();
+                const xp = data.xp || 0;
+                const level = data.level || 1;
+                const streak = data.streak || 0;
+                const badges = data.badges || [];
+                const levelData = getLevelData(level);
+                const nextXP = getNextLevelXP(level);
+                const progress = getXPProgress(xp, level);
+
+                // Dashboard
+                document.getElementById('dashLevel').textContent = `${levelData.icon} ${levelData.name} (Lv.${level})`;
+                document.getElementById('dashXP').textContent = xp;
+                document.getElementById('dashXpBar').style.width = progress + '%';
+                document.getElementById('dashXpNext').textContent = nextXP === Infinity ? 'MAX' : (nextXP - xp);
+
+                // Gamification page
+                document.getElementById('gLevelIcon').textContent = levelData.icon;
+                document.getElementById('gLevelName').textContent = levelData.name;
+                document.getElementById('gLevelNum').textContent = level;
+                document.getElementById('gXP').textContent = xp;
+                document.getElementById('gXpBar').style.width = progress + '%';
+                document.getElementById('gXpProgress').textContent = xp;
+                document.getElementById('gXpNext').textContent = nextXP === Infinity ? 'MAX' : nextXP;
+                document.getElementById('gStreak').textContent = streak;
+                document.getElementById('gBadges').textContent = badges.length;
+
+                // Badge grid
+                const grid = document.getElementById('gBadgeGrid');
+                grid.innerHTML = '';
+                BADGE_DEFS.forEach(b => {
+                    const unlocked = badges.includes(b.id);
+                    const div = document.createElement('div');
+                    div.className = `badge-item ${unlocked ? 'unlocked' : 'locked'}`;
+                    div.innerHTML = `
+                        <div class="icon">${b.icon}</div>
+                        <div class="name">${b.name}</div>
+                        <div style="font-size:0.5rem;color:#64748b;">${unlocked ? '✅' : '🔒'}</div>
+                    `;
+                    grid.appendChild(div);
+                });
+
+                // Achievement badges on main
+                const achContainer = document.getElementById('achievementBadges');
+                achContainer.innerHTML = badges.map(id => {
+                    const b = BADGE_DEFS.find(bd => bd.id === id);
+                    return b ? `<span class="badge">${b.icon} ${b.name}</span>` : '';
+                }).join('');
+
+                // Local storage sync
+                localStorage.setItem('gamification', JSON.stringify({ xp, level, streak, badges }));
+                gamificationData = { xp, level, streak, badges };
+
+            }).catch(err => console.error('UI update error:', err));
+        }
+
+        function forceSyncGamification() {
+            updateGamificationUI();
+            showNotification('🔄 Stats synced!', 2000);
+        }
+
+        // ─── LEADERBOARD ───
+        async function loadLeaderboard(period = 'all_time') {
+            const container = document.getElementById('leaderboardList');
+            container.innerHTML = '<span class="small">Loading...</span>';
+            try {
+                const lbRef = db.collection('leaderboard')
+                    .where('period', '==', period)
+                    .orderBy('xp', 'desc')
+                    .limit(100);
+
+                const snapshot = await lbRef.get();
+                if (snapshot.empty) {
+                    container.innerHTML = '<span class="small">No entries yet. Start earning XP!</span>';
+                    return;
+                }
+
+                let html = '';
+                let rank = 1;
+                let userRank = null;
+                const userUid = currentUser ? currentUser.uid : null;
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const isUser = data.userId === userUid;
+                    if (isUser) userRank = rank;
+                    const levelData = getLevelData(data.level || 1);
+                    html += `
+                        <div class="leaderboard-entry ${isUser ? 'highlight' : ''}">
+                            <span class="rank">${rank <= 3 ? ['🥇','🥈','🥉'][rank-1] : '#'+rank}</span>
+                            <span class="name">${data.displayName || 'Student'} ${isUser ? '👈' : ''}</span>
+                            <span class="level-tag">${levelData.icon} Lv.${data.level || 1}</span>
+                            <span class="xp">${(data.xp || 0).toLocaleString()} XP</span>
+                        </div>
+                    `;
+                    rank++;
+                });
+
+                if (userRank && userRank > 20) {
+                    html += `
+                        <div style="margin-top:8px;padding:8px;border:1px dashed #fbbf24;border-radius:8px;text-align:center;">
+                            <span class="small">📍 You're currently <strong style="color:#fbbf24;">#${userRank}</strong></span>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = html;
+
+            } catch (err) {
+                console.error('Leaderboard error:', err);
+                container.innerHTML = '<span class="small">Error loading leaderboard.</span>';
+            }
+        }
+
+        // ─── DAILY CHALLENGE ───
+        let challengeQuestions = [];
+        let challengeIndex = 0;
+        let challengeScore = 0;
+        let challengeAnswered = false;
+
+        async function startDailyChallenge() {
+            const container = document.getElementById('challengeQuestions');
+            const resultDiv = document.getElementById('challengeResult');
+            const startBtn = document.getElementById('startChallengeBtn');
+
+            container.style.display = 'block';
+            resultDiv.style.display = 'none';
+            startBtn.style.display = 'none';
+            challengeIndex = 0;
+            challengeScore = 0;
+            challengeAnswered = false;
+
+            try {
+                // Fetch 5 random questions from the quizzes collection
+                const qSnap = await db.collection('quizzes').limit(30).get();
+                let allQs = [];
+                qSnap.forEach(doc => allQs.push({ id: doc.id, ...doc.data() }));
+
+                if (allQs.length === 0) {
+                    // Fallback: generate dummy questions
+                    allQs = generateDummyQuestions();
+                }
+
+                // Shuffle and pick 5
+                challengeQuestions = shuffleArray(allQs).slice(0, 5);
+                if (challengeQuestions.length < 5) {
+                    // Fill with dummies if not enough
+                    const dummies = generateDummyQuestions();
+                    while (challengeQuestions.length < 5) {
+                        challengeQuestions.push(dummies[challengeQuestions.length % dummies.length]);
+                    }
+                }
+
+                renderChallengeQuestion();
+
+            } catch (err) {
+                console.error('Challenge error:', err);
+                // Fallback to dummy questions
+                challengeQuestions = shuffleArray(generateDummyQuestions()).slice(0, 5);
+                renderChallengeQuestion();
+            }
+        }
+
+        function generateDummyQuestions() {
+            return [
+                { question: 'What is the capital of Nigeria?', options: ['Lagos', 'Abuja', 'Kano', 'Ibadan'], correctIndex: 1 },
+                { question: 'What is 2 + 2?', options: ['3', '4', '5', '6'], correctIndex: 1 },
+                { question: 'Which planet is known as the Red Planet?', options: ['Venus', 'Mars', 'Jupiter', 'Saturn'], correctIndex: 1 },
+                { question: 'What is the chemical symbol for water?', options: ['H2O', 'CO2', 'NaCl', 'HCl'], correctIndex: 0 },
+                { question: 'Who wrote "Things Fall Apart"?', options: ['Wole Soyinka', 'Chinua Achebe', 'Chimamanda Adichie', 'Ben Okri'], correctIndex: 1 },
+                { question: 'What is the largest ocean on Earth?', options: ['Atlantic', 'Indian', 'Arctic', 'Pacific'], correctIndex: 3 },
+                { question: 'What is the square root of 144?', options: ['10', '11', '12', '13'], correctIndex: 2 },
+                { question: 'Which gas do plants absorb from the atmosphere?', options: ['Oxygen', 'Carbon Dioxide', 'Nitrogen', 'Hydrogen'], correctIndex: 1 },
+                { question: 'What is the longest river in the world?', options: ['Amazon', 'Nile', 'Mississippi', 'Yangtze'], correctIndex: 1 },
+                { question: 'Which year did Nigeria gain independence?', options: ['1957', '1960', '1963', '1970'], correctIndex: 1 },
+            ];
+        }
+
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function renderChallengeQuestion() {
+            const container = document.getElementById('challengeQuestions');
+            if (challengeIndex >= challengeQuestions.length) {
+                finishChallenge();
+                return;
+            }
+
+            const q = challengeQuestions[challengeIndex];
+            container.innerHTML = `
+                <div style="margin-bottom:8px;">
+                    <span class="small">Question ${challengeIndex+1} of ${challengeQuestions.length}</span>
+                    <div style="font-size:1rem;font-weight:500;margin:8px 0;">${q.question}</div>
+                </div>
+                <div id="challengeOptions">
+                    ${q.options.map((opt, idx) => `
+                        <button class="quiz-option" data-index="${idx}" onclick="answerChallenge(${idx})">
+                            ${String.fromCharCode(65 + idx)}. ${opt}
+                        </button>
+                    `).join('')}
+                </div>
+                <div class="small" style="margin-top:6px;">Score: <span id="challengeLiveScore">${challengeScore}</span></div>
+            `;
+            challengeAnswered = false;
+        }
+
+        function answerChallenge(index) {
+            if (challengeAnswered) return;
+            challengeAnswered = true;
+
+            const q = challengeQuestions[challengeIndex];
+            const buttons = document.querySelectorAll('#challengeOptions .quiz-option');
+            buttons.forEach((btn, i) => {
+                btn.classList.add('disabled');
+                if (i === q.correctIndex) btn.classList.add('correct');
+                if (i === index && i !== q.correctIndex) btn.classList.add('wrong');
+            });
+
+            if (index === q.correctIndex) {
+                challengeScore++;
+                document.getElementById('challengeLiveScore').textContent = challengeScore;
+            }
+
+            // Auto advance after 1.5s
+            setTimeout(() => {
+                challengeIndex++;
+                renderChallengeQuestion();
+            }, 1500);
+        }
+
+        function finishChallenge() {
+            const container = document.getElementById('challengeQuestions');
+            container.style.display = 'none';
+            const resultDiv = document.getElementById('challengeResult');
+            resultDiv.style.display = 'block';
+            document.getElementById('challengeScore').textContent = `${challengeScore}/${challengeQuestions.length}`;
+
+            const xpEarned = challengeScore * 10 + (challengeScore === challengeQuestions.length ? 20 : 0);
+            document.getElementById('challengeXP').textContent = xpEarned;
+
+            if (xpEarned > 0) {
+                awardXP(xpEarned, 'daily_challenge');
+                if (challengeScore === challengeQuestions.length) {
+                    fireConfetti();
+                    showNotification('🎉 Perfect Score! Bonus XP awarded!', 3000);
+                }
+            }
+
+            document.getElementById('startChallengeBtn').style.display = 'inline-block';
+            document.getElementById('startChallengeBtn').textContent = '🔄 Try Again';
+        }
+
+        // ─── DAILY CHALLENGE SCHEDULER ───
+        function checkDailyChallengeReset() {
+            const today = new Date().toDateString();
+            const lastChallenge = localStorage.getItem('lastChallengeDate');
+            if (lastChallenge !== today) {
+                localStorage.setItem('lastChallengeDate', today);
+                localStorage.setItem('challengeCompleted', 'false');
+                // Reset challenge state
+                document.getElementById('challengeResult').style.display = 'none';
+                document.getElementById('challengeQuestions').style.display = 'none';
+                document.getElementById('startChallengeBtn').style.display = 'inline-block';
+                document.getElementById('startChallengeBtn').textContent = '🚀 Start Challenge';
+            }
+        }
+
+        // ─── STREAK (local fallback + Firestore) ───
+        function getStreakStats() {
+            const streak = parseInt(localStorage.getItem('streak')) || 0;
+            const bestStreak = parseInt(localStorage.getItem('bestStreak')) || 0;
+            const totalDays = parseInt(localStorage.getItem('totalStudyDays')) || 0;
+            return { streak, bestStreak, totalDays };
+        }
+
+        function updateStreakUI() {
+            const stats = getStreakStats();
+            document.getElementById('currentStreak').innerText = stats.streak;
+            document.getElementById('bestStreak').innerText = stats.bestStreak;
+            document.getElementById('totalStudyDays').innerText = stats.totalDays;
+            document.getElementById('streakDisplay').innerText = stats.streak;
+
+            const badge = document.getElementById('streakBadge');
+            if (stats.streak >= 100) badge.innerText = '🏆 Legendary';
+            else if (stats.streak >= 30) badge.innerText = '🥇 Elite';
+            else if (stats.streak >= 14) badge.innerText = '🥈 Dedicated';
+            else if (stats.streak >= 7) badge.innerText = '🥉 Consistent';
+            else if (stats.streak >= 3) badge.innerText = '💪 Getting Started';
+            else badge.innerText = '📚 Start your streak!';
+        }
+
+        function logStudyDay() {
+            const today = new Date().toDateString();
+            const lastStudy = localStorage.getItem('lastStudyDay');
+            const streak = parseInt(localStorage.getItem('streak')) || 0;
+            const bestStreak = parseInt(localStorage.getItem('bestStreak')) || 0;
+            const totalDays = parseInt(localStorage.getItem('totalStudyDays')) || 0;
+
+            if (lastStudy === today) {
+                showNotification('✅ Already logged today.');
+                return;
+            }
+
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            let newStreak = 1;
+            if (lastStudy === yesterday.toDateString()) newStreak = streak + 1;
+
+            localStorage.setItem('streak', newStreak);
+            localStorage.setItem('lastStudyDay', today);
+            localStorage.setItem('totalStudyDays', totalDays + 1);
+
+            if (newStreak > bestStreak) {
+                localStorage.setItem('bestStreak', newStreak);
+                showNotification('🎉 New best streak: ' + newStreak + ' days!');
+            } else {
+                showNotification('🔥 Streak: ' + newStreak + ' days!');
+            }
+
+            updateStreakUI();
+            // Also update Firestore
+            updateStreak();
+            // Award XP for logging study
+            awardXP(5, 'daily_login');
+
+            if (currentUser) syncLocalToCloud();
+        }
+
+        function resetStreakStats() {
+            if (!confirm('Reset all streak stats?')) return;
+            localStorage.removeItem('streak');
+            localStorage.removeItem('bestStreak');
+            localStorage.removeItem('totalStudyDays');
+            localStorage.removeItem('lastStudyDay');
+            updateStreakUI();
+            document.getElementById('streakDisplay').innerText = '0';
+            showNotification('🔄 Streak reset.');
+            if (currentUser) syncLocalToCloud();
+        }
+
+        // ─── DEGREE CLASS ───
+        function getDegreeClass(cgpa) {
+            cgpa = parseFloat(cgpa);
+            if (isNaN(cgpa)) return 'N/A';
+            if (cgpa >= 4.50) return '🥇 First Class';
+            if (cgpa >= 3.50) return '🥈 2nd Class Upper';
+            if (cgpa >= 2.40) return '🥉 2nd Class Lower';
+            if (cgpa >= 1.50) return '📘 Third Class';
+            if (cgpa >= 1.00) return '📗 Pass';
+            return '⚠️ Below Pass';
+        }
+
+        function getStanding(cgpa) {
+            cgpa = parseFloat(cgpa);
+            if (isNaN(cgpa)) return 'N/A';
+            if (cgpa >= 3.50) return '✅ Good Standing';
+            if (cgpa >= 2.40) return '⚠️ Average';
+            return '🔴 Needs Improvement';
+        }
+
+        // ─── SHARE CGPA ───
         function shareCGPACard() {
             const canvas = document.getElementById('cgpaCanvas');
             const ctx = canvas.getContext('2d');
@@ -1351,7 +2203,14 @@
             ctx.fillText('🔥 ' + streak + ' Day Streak', 30, 240);
             ctx.fillStyle = '#94a3b8';
             ctx.font = '16px "Segoe UI", sans-serif';
-            ctx.fillText('Study smarter with GoatTutor NG', 30, 300);
+            ctx.fillText('Study smarter with GoatTutor', 30, 300);
+
+            // Add XP & Level
+            const levelData = getLevelData(gamificationData.level || 1);
+            ctx.fillStyle = '#fbbf24';
+            ctx.font = '18px "Segoe UI", sans-serif';
+            ctx.fillText(`${levelData.icon} ${levelData.name} • ${gamificationData.xp || 0} XP`, 30, 340);
+
             const dataUrl = canvas.toDataURL('image/png');
             const link = document.createElement('a');
             link.download = 'goattutor-cgpa-card.png';
@@ -1365,55 +2224,33 @@
             const t = document.getElementById('topic').value.trim();
             const m = document.getElementById('mode').value;
             if (!t) { showNotification('⚠️ Enter a topic.'); return; }
-            // Build the GoatTutor prompt – this is the core prompt we want Gemini to have
             const prompt = 'Act as GoatTutor AI, an expert academic tutor. Mode: ' + m + '. Topic: ' + t;
-
             let url = '';
-            let toastMsg = '';
-
             if (service === 'chatgpt') {
                 url = 'https://chatgpt.com/?q=' + encodeURIComponent(prompt);
-                toastMsg = '🚀 Opening ChatGPT...';
             } else if (service === 'gemini') {
-                // ─── GEMINI: best-effort pre‑fill + clipboard fallback ───
-                // Use the Gemini app URL which supports ?q= for pre‑filling
                 url = 'https://gemini.google.com/app?q=' + encodeURIComponent(prompt);
-                toastMsg = '🧠 Opening Gemini with your GoatTutor prompt...';
-
-                // Also copy the prompt to the clipboard as a reliable fallback
-                if (navigator.clipboard) {
-                    navigator.clipboard.writeText(prompt).catch(() => {});
-                } else {
-                    // Fallback for older browsers
-                    const ta = document.createElement('textarea');
-                    ta.value = prompt;
-                    document.body.appendChild(ta);
-                    ta.select();
-                    try { document.execCommand('copy'); } catch (e) {}
-                    document.body.removeChild(ta);
-                }
-                // Show a notification that also reminds the user to paste if needed
-                setTimeout(() => {
-                    showNotification('📋 Prompt copied to clipboard! Paste into Gemini if not pre‑filled (Ctrl+V)',
-                        6000);
-                }, 800);
-
-            } else if (service === 'deepseek') {
-                url = 'https://chat.deepseek.com/';
-                toastMsg = '🌐 Opening DeepSeek...';
-                // DeepSeek doesn't support query prompts, so copy to clipboard
                 if (navigator.clipboard) {
                     navigator.clipboard.writeText(prompt).catch(() => {});
                     setTimeout(() => {
-                        showNotification('📋 Prompt copied! Paste into DeepSeek', 4000);
+                        showNotification('📋 Prompt copied! Paste into Gemini if not pre‑filled', 5000);
+                    }, 600);
+                }
+            } else if (service === 'deepseek') {
+                url = 'https://chat.deepseek.com/';
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(prompt).catch(() => {});
+                    setTimeout(() => {
+                        showNotification('📋 Prompt copied! Paste into DeepSeek', 5000);
                     }, 600);
                 }
             }
-
-            if (url) window.open(url, '_blank');
-            if (toastMsg) showNotification(toastMsg, 3000);
+            window.open(url, '_blank');
+            showNotification('🚀 Opening ' + (service === 'chatgpt' ? 'ChatGPT' : service === 'gemini' ? 'Gemini' : 'DeepSeek') +
+                '...');
             logQuickAction('AI Query (' + service + '): ' + t);
-            checkAchievements();
+            // Award XP for using AI
+            awardXP(3, 'ai_query');
         }
 
         // ─── AUTH STATE ───
@@ -1429,11 +2266,24 @@
                 if (doc.exists) {
                     loadUserData(doc.data());
                 } else {
-                    await userDocRef.set({ email: user.email, createdAt: firebase.firestore.FieldValue
-                            .serverTimestamp() });
+                    await userDocRef.set({
+                        email: user.email,
+                        displayName: user.email.split('@')[0],
+                        xp: 0,
+                        level: 1,
+                        streak: 0,
+                        bestStreak: 0,
+                        badges: [],
+                        lastActivityDate: '',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
                 }
                 syncLocalToCloud();
                 showNotification('✅ Welcome back, ' + user.email);
+                updateGamificationUI();
+                updateDash();
+                loadLeaderboard('all_time');
+                checkDailyChallengeReset();
             } else {
                 currentUser = null;
                 userDocRef = null;
@@ -1443,7 +2293,6 @@
                 document.getElementById('authActionBtn').style.display = 'none';
                 loadLocalData();
             }
-            updateDash();
             renderAchievements();
         });
 
@@ -1459,14 +2308,18 @@
                 'Already have an account? <span onclick="toggleAuthMode()">Login</span>';
             document.getElementById('authError').innerText = '';
         }
+
         async function handleAuth() {
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value;
             const errorEl = document.getElementById('authError');
             if (!email || !password) { errorEl.innerText = 'Please fill in all fields.'; return; }
             try {
-                if (isLoginMode) { await auth.signInWithEmailAndPassword(email, password); } else { await auth
-                        .createUserWithEmailAndPassword(email, password); }
+                if (isLoginMode) {
+                    await auth.signInWithEmailAndPassword(email, password);
+                } else {
+                    await auth.createUserWithEmailAndPassword(email, password);
+                }
             } catch (err) { errorEl.innerText = err.message; }
         }
 
@@ -1484,6 +2337,15 @@
             loadPlan(true);
             updateDash();
             renderAchievements();
+            // Load gamification from localStorage
+            const saved = localStorage.getItem('gamification');
+            if (saved) {
+                try {
+                    gamificationData = JSON.parse(saved);
+                } catch (e) {}
+            }
+            updateGamificationUI();
+            checkDailyChallengeReset();
         }
 
         function loadUserData(data) {
@@ -1510,8 +2372,10 @@
             loadPlan(true);
             updateCountdownDisplay();
             renderAchievements();
+            updateGamificationUI();
             showNotification('📥 Data synced from cloud.');
         }
+
         async function syncLocalToCloud() {
             if (!currentUser) return;
             try {
@@ -1563,7 +2427,7 @@
 
         function loadGroupStates() {
             const states = JSON.parse(localStorage.getItem('sidebarGroups') || '{}');
-            ['academics', 'uniosun', 'study', 'analytics'].forEach(g => {
+            ['gamification', 'academics', 'uniosun', 'study', 'analytics'].forEach(g => {
                 const items = document.getElementById(g + 'Items');
                 const btn = document.getElementById('group' + g.charAt(0).toUpperCase() + g.slice(1));
                 if (items && states[g]) {
@@ -1572,8 +2436,12 @@
                 }
             });
         }
+
         const sectionMap = {
             'main': 'sectionMain',
+            'gamification': 'sectionGamification',
+            'leaderboard': 'sectionLeaderboard',
+            'challenge': 'sectionChallenge',
             'gpaCalculator': 'sectionGPACalculator',
             'cgpaCalculator': 'sectionCGPACalculator',
             'timer': 'sectionTimer',
@@ -1589,8 +2457,12 @@
             'pdfLibrary': 'sectionPdfLibrary',
             'feedback': 'sectionFeedback'
         };
+
         const navMap = {
             'main': 'navMain',
+            'gamification': 'navGamification',
+            'leaderboard': 'navLeaderboard',
+            'challenge': 'navChallenge',
             'gpaHistory': 'navGPAHistory',
             'cgpaTracker': 'navCGPA',
             'planner': 'navPlanner',
@@ -1615,6 +2487,8 @@
             const navBtnId = navMap[section];
             if (navBtnId) document.getElementById(navBtnId).classList.add('active-nav');
             window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Load data on navigation
             if (section === 'planner') loadPlan(true);
             if (section === 'gpaHistory') renderSavedSemesters();
             if (section === 'calendar') renderAcademicCalendar();
@@ -1623,6 +2497,9 @@
             if (section === 'sessionLog') renderSessionLog();
             if (section === 'countdown') updateCountdownDisplay();
             if (section === 'pdfLibrary') loadPdfList();
+            if (section === 'gamification') updateGamificationUI();
+            if (section === 'leaderboard') loadLeaderboard('all_time');
+            if (section === 'challenge') checkDailyChallengeReset();
         }
 
         // ─── NOTIFICATIONS ───
@@ -1637,111 +2514,40 @@
 
         function hideNotification() { document.getElementById('notificationToast').classList.remove('show'); }
 
-        // ─── DEGREE CLASS ───
-        function getDegreeClass(cgpa) {
-            cgpa = parseFloat(cgpa);
-            if (isNaN(cgpa)) return 'N/A';
-            if (cgpa >= 4.50) return '🥇 First Class';
-            if (cgpa >= 3.50) return '🥈 2nd Class Upper';
-            if (cgpa >= 2.40) return '🥉 2nd Class Lower';
-            if (cgpa >= 1.50) return '📘 Third Class';
-            if (cgpa >= 1.00) return '📗 Pass';
-            return '⚠️ Below Pass';
-        }
-
-        function getStanding(cgpa) {
-            cgpa = parseFloat(cgpa);
-            if (isNaN(cgpa)) return 'N/A';
-            if (cgpa >= 3.50) return '✅ Good Standing';
-            if (cgpa >= 2.40) return '⚠️ Average';
-            return '🔴 Needs Improvement';
-        }
-
-        // ─── STREAK ───
-        function updateStreak() {
-            const today = new Date().toDateString();
-            const lastVisit = localStorage.getItem('lastVisit');
-            let streak = parseInt(localStorage.getItem('streak')) || 0;
-            if (lastVisit !== today) {
-                const yesterday = new Date();
-                yesterday.setDate(yesterday.getDate() - 1);
-                if (lastVisit === yesterday.toDateString()) streak++;
-                else streak = 1;
-                localStorage.setItem('streak', streak);
-                localStorage.setItem('lastVisit', today);
-                if (streak > 1) showNotification('🔥 Streak: ' + streak + ' days!');
+        // ─── DASHBOARD ───
+        function updateDash() {
+            const semesters = getSavedSemesters();
+            let gpa = '--',
+                cgpa = '--';
+            if (semesters.length > 0) {
+                let totalPoints = 0,
+                    totalUnits = 0;
+                semesters.forEach(s => {
+                    totalPoints += s.gpa * s.totalUnits;
+                    totalUnits += s.totalUnits;
+                });
+                cgpa = totalUnits > 0 ? (totalPoints / totalUnits).toFixed(2) : '--';
+                const lastSem = semesters[semesters.length - 1];
+                gpa = lastSem.gpa.toFixed(2);
+                localStorage.setItem('gpa', gpa);
+                localStorage.setItem('cgpa', cgpa);
+            } else {
+                localStorage.removeItem('gpa');
+                localStorage.removeItem('cgpa');
             }
-            document.getElementById('streakDisplay').innerText = localStorage.getItem('streak') || 1;
-        }
-
-        function getStreakStats() {
-            const streak = parseInt(localStorage.getItem('streak')) || 0;
-            const bestStreak = parseInt(localStorage.getItem('bestStreak')) || 0;
-            const totalDays = parseInt(localStorage.getItem('totalStudyDays')) || 0;
-            return { streak, bestStreak, totalDays };
-        }
-
-        function updateStreakUI() {
-            const stats = getStreakStats();
-            document.getElementById('currentStreak').innerText = stats.streak;
-            document.getElementById('bestStreak').innerText = stats.bestStreak;
-            document.getElementById('totalStudyDays').innerText = stats.totalDays;
-            const badge = document.getElementById('streakBadge');
-            if (stats.streak >= 100) badge.innerText = '🏆 Legendary';
-            else if (stats.streak >= 30) badge.innerText = '🥇 Elite';
-            else if (stats.streak >= 14) badge.innerText = '🥈 Dedicated';
-            else if (stats.streak >= 7) badge.innerText = '🥉 Consistent';
-            else if (stats.streak >= 3) badge.innerText = '💪 Getting Started';
-            else badge.innerText = '📚 Start your streak!';
-        }
-
-        function logStudyDay() {
-            const today = new Date().toDateString();
-            const lastStudy = localStorage.getItem('lastStudyDay');
-            const streak = parseInt(localStorage.getItem('streak')) || 0;
-            const bestStreak = parseInt(localStorage.getItem('bestStreak')) || 0;
-            const totalDays = parseInt(localStorage.getItem('totalStudyDays')) || 0;
-            if (lastStudy === today) { showNotification('✅ Already logged today.'); return; }
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            let newStreak = 1;
-            if (lastStudy === yesterday.toDateString()) newStreak = streak + 1;
-            localStorage.setItem('streak', newStreak);
-            localStorage.setItem('lastStudyDay', today);
-            localStorage.setItem('totalStudyDays', totalDays + 1);
-            if (newStreak > bestStreak) {
-                localStorage.setItem('bestStreak', newStreak);
-                showNotification('🎉 New best streak: ' + newStreak + ' days!');
-            } else { showNotification('🔥 Streak: ' + newStreak + ' days!'); }
-            document.getElementById('streakDisplay').innerText = newStreak;
+            document.getElementById('dashGPA').innerText = gpa === '--' ? '--' : parseFloat(gpa).toFixed(2);
+            document.getElementById('dashCGPA').innerText = cgpa === '--' ? '--' : parseFloat(cgpa).toFixed(2);
+            document.getElementById('dashDegree').innerText = getDegreeClass(cgpa);
+            document.getElementById('dashStanding').innerText = getStanding(cgpa);
+            updateStudyHours();
+            updateSessionCountDisplay();
             updateStreakUI();
-            checkAchievements();
-            if (currentUser) syncLocalToCloud();
-        }
-
-        function resetStreakStats() {
-            if (!confirm('Reset all streak stats?')) return;
-            localStorage.removeItem('streak');
-            localStorage.removeItem('bestStreak');
-            localStorage.removeItem('totalStudyDays');
-            localStorage.removeItem('lastStudyDay');
-            updateStreakUI();
-            document.getElementById('streakDisplay').innerText = '0';
-            showNotification('🔄 Streak reset.');
-            if (currentUser) syncLocalToCloud();
+            updateGamificationUI();
         }
 
         function updateStudyHours() {
             const minutes = parseInt(localStorage.getItem('studyMinutes')) || 0;
             document.getElementById('hoursDisplay').innerText = (minutes / 60).toFixed(1);
-        }
-
-        function addStudyMinutes(minutes) {
-            const current = parseInt(localStorage.getItem('studyMinutes')) || 0;
-            localStorage.setItem('studyMinutes', current + minutes);
-            updateStudyHours();
-            checkAchievements();
-            if (currentUser) syncLocalToCloud();
         }
 
         function getSessionCount() {
@@ -1753,39 +2559,8 @@
             document.getElementById('sessionCountDisplay').innerText = getSessionCount();
         }
 
-        function updateDash() {
-            // Always recalc from saved semesters (most accurate)
-            const semesters = getSavedSemesters();
-            let gpa = '--';
-            let cgpa = '--';
-
-            if (semesters.length > 0) {
-                let totalPoints = 0,
-                    totalUnits = 0;
-                semesters.forEach(s => {
-                    totalPoints += s.gpa * s.totalUnits;
-                    totalUnits += s.totalUnits;
-                });
-                cgpa = totalUnits > 0 ? (totalPoints / totalUnits).toFixed(2) : '--';
-                const lastSem = semesters[semesters.length - 1];
-                gpa = lastSem.gpa.toFixed(2);
-
-                // Also save to localStorage so other parts of the app stay in sync
-                localStorage.setItem('gpa', gpa);
-                localStorage.setItem('cgpa', cgpa);
-            } else {
-                localStorage.removeItem('gpa');
-                localStorage.removeItem('cgpa');
-            }
-
-            document.getElementById('dashGPA').innerText = gpa === '--' ? '--' : parseFloat(gpa).toFixed(2);
-            document.getElementById('dashCGPA').innerText = cgpa === '--' ? '--' : parseFloat(cgpa).toFixed(2);
-            document.getElementById('dashDegree').innerText = getDegreeClass(cgpa);
-            document.getElementById('dashStanding').innerText = getStanding(cgpa);
-            updateStreak();
-            updateStudyHours();
-            updateSessionCountDisplay();
-            updateStreakUI();
+        function renderAchievements() {
+            // Handled by updateGamificationUI
         }
 
         // ─── SEMESTER SYSTEM ───
@@ -1874,9 +2649,10 @@
             document.getElementById('semesterGpaOut').innerHTML = '✅ Saved! GPA: ' + gpa.toFixed(2);
             renderSavedSemesters();
             renderCGPATracker();
-            updateDash(); // <-- dashboard will now update immediately
-            checkAchievements();
-            showNotification('💾 Semester saved.');
+            updateDash();
+            // Award XP for saving a semester
+            awardXP(10, 'semester_saved');
+            showNotification('💾 Semester saved. +10 XP');
             if (currentUser) syncLocalToCloud();
         }
 
@@ -1907,11 +2683,9 @@
 
         function renderSavedSemesters() {
             const semesters = getSavedSemesters();
-            const container = document.getElementById('savedSemestersList');
             const historyContainer = document.getElementById('gpaHistoryList');
             if (!semesters.length) {
                 const msg = '<span class="small">No semesters saved.</span>';
-                container.innerHTML = msg;
                 if (historyContainer) historyContainer.innerHTML = msg;
                 return;
             }
@@ -1925,7 +2699,6 @@
                     <div style="font-size:0.7rem;color:#64748b;">${s.date} <button onclick="deleteSemester(${s.id})" class="danger small-btn" style="padding:2px 8px;font-size:0.65rem;">✕</button></div>
                 </div>
             `).join('');
-            container.innerHTML = html;
             if (historyContainer) historyContainer.innerHTML = html;
         }
 
@@ -1938,7 +2711,7 @@
             updateDash();
         }
 
-        // ─── CGPA CALCULATOR (manual) ───
+        // ─── CGPA CALCULATOR ───
         function addCGPARow() {
             semCounter++;
             const container = document.getElementById('cgpaBox');
@@ -1979,6 +2752,8 @@
             document.getElementById('cgpaOut').innerHTML = '✅ CGPA: <strong>' + cgpa + '</strong> | Class: ' + getDegreeClass(
                 cgpa);
             showNotification('📈 CGPA: ' + cgpa);
+            // Award XP
+            awardXP(5, 'cgpa_calculated');
         }
 
         // ─── ACADEMIC CALENDAR ───
@@ -1987,7 +2762,8 @@
             const now = new Date();
             const upcoming = academicEvents.filter(e => new Date(e.date + 'T00:00:00') >= now);
             if (!upcoming.length) {
-                container.innerHTML = '<span class="small" style="display:block;text-align:center;padding:10px;">No upcoming events.</span>';
+                container.innerHTML =
+                    '<span class="small" style="display:block;text-align:center;padding:10px;">No upcoming events.</span>';
                 document.getElementById('calendarCountdown').innerText = '--';
                 return;
             }
@@ -1998,7 +2774,8 @@
                 const isNext = i === 0;
                 const dateStr = new Date(e.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short',
                     year: 'numeric' });
-                html += `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #334155;${isNext ? 'background:#1a2a4a;padding:8px 10px;border-radius:6px;margin-bottom:4px;' : ''}">
+                html +=
+                    `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #334155;${isNext ? 'background:#1a2a4a;padding:8px 10px;border-radius:6px;margin-bottom:4px;' : ''}">
                     <span style="${isNext ? 'font-weight:600;color:#fbbf24;' : ''}">${isNext ? '🔴 ' : ''}${e.title}</span>
                     <span style="color:#94a3b8;font-size:0.8rem;">${dateStr}</span></div>`;
             });
@@ -2061,7 +2838,8 @@
             let html = '<div style="display:flex;flex-direction:column;gap:4px;">';
             filtered.forEach(item => {
                 const isCompetitive = item.merit >= 70;
-                html += `<div style="display:flex;justify-content:space-between;padding:6px 8px;background:#0f172a;border-radius:6px;border:1px solid #334155;${isCompetitive ? 'border-color:#fbbf24;' : ''}">
+                html +=
+                    `<div style="display:flex;justify-content:space-between;padding:6px 8px;background:#0f172a;border-radius:6px;border:1px solid #334155;${isCompetitive ? 'border-color:#fbbf24;' : ''}">
                     <span style="font-size:0.85rem;${isCompetitive ? 'font-weight:600;' : ''}">${item.course}</span>
                     <span style="font-size:0.8rem;color:#94a3b8;white-space:nowrap;">GM: <span style="color:#fbbf24;font-weight:600;">${item.merit}</span> IC: <span style="color:#94a3b8;">${item.indigene}</span></span></div>`;
             });
@@ -2102,6 +2880,7 @@
                     <div style="margin-top:6px;font-size:0.85rem;color:#fbbf24;">${aggregate >= 68 ? '✅ Competitive score – likely admission' : '🔍 Average – check course cut-off'}</div>
                 </div>`;
             showNotification('📊 Screening score: ' + aggregate.toFixed(2) + '%');
+            awardXP(5, 'screening_calculated');
         }
 
         // ─── PLANNER ───
@@ -2135,6 +2914,11 @@
             msg += 'Study: ' + (mins / 60).toFixed(1) + ' hrs<br>';
             msg += 'Sessions: ' + sessions + '<br>';
             msg += 'Semesters: ' + semesters.length + '<br><br>';
+            // Gamification stats
+            msg += '🎮 Gamification:<br>';
+            msg += 'Level: ' + (gamificationData.level || 1) + ' (' + (getLevelData(gamificationData.level || 1).name) + ')<br>';
+            msg += 'XP: ' + (gamificationData.xp || 0) + '<br>';
+            msg += 'Badges: ' + ((gamificationData.badges || []).length) + '<br><br>';
             if (gpa >= 4.5) msg += '🌟 Excellent!';
             else if (gpa >= 3.5) msg += '👍 Good!';
             else if (gpa >= 2.4) msg += '⚠️ Average.';
@@ -2142,6 +2926,7 @@
             else msg += '📌 No GPA data.';
             document.getElementById('analysisBox').innerHTML = msg;
             showNotification('🔍 Analysis done.');
+            awardXP(3, 'analysis_run');
         }
 
         function resetAnalysis() { document.getElementById('analysisBox').innerHTML = '<span class="small">No analysis.</span>';
@@ -2213,8 +2998,9 @@
                     document.getElementById('pomodoroCount').innerText = pomodoroCompleted;
                     addStudyMinutes(25);
                     logSession(25);
-                    checkAchievements();
-                    showNotification('🍅 Done!');
+                    // Award XP for completing a Pomodoro
+                    awardXP(10, 'pomodoro_complete');
+                    showNotification('🍅 Done! +10 XP');
                     document.getElementById('sessionTimerStatus').innerText = '✅ Completed';
                     sessionActive = false;
                     updateDash();
@@ -2376,7 +3162,10 @@
                     uploaded++; } catch (err) { console.error(err);
                     showNotification('❌ Failed to upload "' + file.name + '".'); }
             }
-            if (uploaded > 0) showNotification('✅ ' + uploaded + ' PDF(s) uploaded successfully!');
+            if (uploaded > 0) {
+                showNotification('✅ ' + uploaded + ' PDF(s) uploaded successfully!');
+                awardXP(5, 'pdf_upload');
+            }
             event.target.value = '';
             loadPdfList();
         }
@@ -2467,6 +3256,8 @@
                 viewer.style.display = 'block';
                 placeholder.style.display = 'none';
                 showNotification('📄 Loading: ' + file.name);
+                // Award XP for viewing a PDF
+                awardXP(2, 'pdf_view');
             } catch (err) { console.error(err);
                 showNotification('❌ Failed to load PDF.'); }
         }
@@ -2509,7 +3300,8 @@
             if (!text) return;
             document.getElementById('topic').value = text;
             document.getElementById('mode').value = 'summary';
-            openAI('chatgpt'); // opens ChatGPT with the extracted text
+            openAI('chatgpt');
+            awardXP(5, 'pdf_summary');
         }
 
         async function quizPdf(id) {
@@ -2518,6 +3310,7 @@
             document.getElementById('topic').value = text;
             document.getElementById('mode').value = 'mcq';
             openAI('chatgpt');
+            awardXP(5, 'pdf_quiz');
         }
 
         function setupDragDrop() {
@@ -2554,6 +3347,7 @@
             if (Notification.permission === 'default') { Notification.requestPermission().then(perm => { document
                         .getElementById('notifStatus').innerText = perm === 'granted' ? '✅ Enabled' : '❌ Blocked'; }); }
             if (currentUser) syncLocalToCloud();
+            awardXP(2, 'reminder_set');
         }
 
         function renderReminders() {
@@ -2578,7 +3372,8 @@
             const r = reminders.find(r => r.id === id); if (r) { r.completed = true;
                 saveReminders(reminders);
                 renderReminders();
-                showNotification('✅ Reminder completed!'); } }
+                showNotification('✅ Reminder completed!');
+                awardXP(3, 'reminder_complete'); } }
 
         function deleteReminder(id) { let reminders = getReminders();
             reminders = reminders.filter(r => r.id !== id);
@@ -2602,56 +3397,25 @@
                     document.getElementById('notifStatus').innerText = '❌ Blocked'; }
             });
         }
-        let reminderCheckerInterval = null;
-
-        function scheduleReminderCheck() {
-            if (reminderCheckerInterval) clearInterval(reminderCheckerInterval);
-            reminderCheckerInterval = setInterval(() => {
-                const reminders = getReminders();
-                const now = new Date();
-                reminders.forEach(r => {
-                    if (r.completed) return;
-                    const reminderTime = new Date(r.dateTime);
-                    const diff = reminderTime - now;
-                    if (diff <= 0 && diff > -5000) {
-                        if (Notification.permission === 'granted') { new Notification('🔔 GoatTutor Reminder', {
-                                body: r.title,
-                                icon: '🐐'
-                            }); }
-                        showNotification('🔔 Reminder: ' + r.title);
-                        r.completed = true;
-                        saveReminders(reminders);
-                        renderReminders();
-                    }
-                });
-            }, 10000);
-        }
 
         // ─── ANONYMOUS FEEDBACK ───
         async function submitFeedback() {
             const message = document.getElementById('feedbackMessage').value.trim();
             const category = document.getElementById('feedbackCategory').value;
             const statusEl = document.getElementById('feedbackStatus');
-
-            if (!message) {
-                statusEl.innerText = '⚠️ Please write a message.';
-                return;
-            }
-
+            if (!message) { statusEl.innerText = '⚠️ Please write a message.'; return; }
             try {
                 await db.collection('feedbacks').add({
                     category,
                     message,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    // absolutely no user info stored – anonymous by design
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 document.getElementById('feedbackMessage').value = '';
                 statusEl.innerText = '✅ Feedback sent. Thank you! 🐐';
                 showNotification('📨 Anonymous feedback sent. Thank you!');
-            } catch (err) {
-                console.error(err);
-                statusEl.innerText = '❌ Failed to send. Check your connection.';
-            }
+                awardXP(5, 'feedback_sent');
+            } catch (err) { console.error(err);
+                statusEl.innerText = '❌ Failed to send. Check your connection.'; }
         }
 
         // ─── BACK TO TOP ───
@@ -2662,7 +3426,7 @@
         // ─── INIT ───
         function init() {
             updateTimerDisplay();
-            updateStreak();
+            updateStreakUI();
             updateStudyHours();
             updateDash();
             updateCountdownDisplay();
@@ -2679,13 +3443,14 @@
             loadPdfList();
             setupDragDrop();
             renderReminders();
-            scheduleReminderCheck();
             loadGroupStates();
-            updateStreakUI();
-            renderAchievements();
+            updateGamificationUI();
+            checkDailyChallengeReset();
+
             if (Notification.permission === 'granted') { document.getElementById('notifStatus').innerText = '✅ Enabled'; } else if (
                 Notification.permission === 'denied') { document.getElementById('notifStatus').innerText = '❌ Blocked'; } else {
                 document.getElementById('notifStatus').innerText = 'Click to enable'; }
+
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('service-worker.js').then(reg => console.log('SW registered',
@@ -2693,10 +3458,11 @@
                 });
             }
         }
+
         document.getElementById('sidebarOverlay').addEventListener('click', closeMenu);
         document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMenu(); });
         init();
-        console.log('🐐 GoatTutor v7 – Multi-AI support ready!');
+        console.log('🐐 GoatTutor v7 – Gamification ready!');
     </script>
     <script type="text/javascript">
         (function(c, l, a, r, i, t, y) {
