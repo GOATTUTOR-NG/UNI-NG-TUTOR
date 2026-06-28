@@ -187,6 +187,7 @@
             <div class="sidebar-group-items" id="studyItems">
                 <button onclick="navigateTo('planner')" id="navPlanner">📅 Weekly Planner</button>
                 <button onclick="navigateTo('pdfLibrary')" id="navPdfLibrary">📄 PDF Library</button>
+                <button onclick="navigateTo('feedback')" id="navFeedback">💬 Feedback</button>
             </div>
         </div>
         <div class="sidebar-group">
@@ -225,7 +226,6 @@
 
             <!-- ========== MAIN SECTION ========== -->
             <div class="page-section active" id="sectionMain">
-
                 <!-- AI CORE -->
                 <div class="card">
                     <h3>🧠 AI Study Interface</h3>
@@ -395,6 +395,23 @@
             <!-- ========== PDF LIBRARY ========== -->
             <div class="page-section" id="sectionPdfLibrary">
                 <div class="card"><h3>📄 PDF Library</h3><p class="small">Upload, view, summarise, quiz</p><div class="upload-area" id="uploadArea" onclick="document.getElementById('pdfUploadInput').click()"><div class="icon">📂</div><div style="font-weight:500;">Click or drag & drop PDF files</div><div style="font-size:0.75rem;color:#94a3b8;">Max 50MB</div><input type="file" id="pdfUploadInput" accept=".pdf,application/pdf" multiple style="display:none;" onchange="handleFileUpload(event)"></div><div style="margin-top:10px;"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span style="font-weight:600;">📑 My PDFs</span><div><span style="font-size:0.75rem;color:#94a3b8;" id="pdfCount">0 files</span><span style="font-size:0.7rem;color:#94a3b8;margin-left:8px;" id="storageInfo"></span></div></div><div id="pdfList" style="margin-top:6px;max-height:250px;overflow-y:auto;"><span class="small">No PDFs uploaded.</span></div></div><div class="pdf-viewer-container" id="pdfViewerContainer"><div class="pdf-viewer-placeholder" id="pdfViewerPlaceholder"><div class="icon">📄</div><div style="font-weight:500;margin-bottom:4px;">Select a PDF</div><div style="font-size:0.8rem;color:#64748b;">Click on any PDF above</div></div><iframe id="pdfViewer" style="display:none;width:100%;height:100%;border:none;"></iframe></div></div>
+            </div>
+
+            <!-- ========== FEEDBACK SECTION (ANONYMOUS) ========== -->
+            <div class="page-section" id="sectionFeedback">
+                <div class="card">
+                    <h3>💬 Anonymous Feedback</h3>
+                    <p class="small">Your message is completely anonymous. We don't store any personal information.</p>
+                    <select id="feedbackCategory" style="margin-top:8px;">
+                        <option value="suggestion">💡 Suggestion</option>
+                        <option value="bug">🐛 Bug Report</option>
+                        <option value="praise">🎉 Praise</option>
+                        <option value="other">📌 Other</option>
+                    </select>
+                    <textarea id="feedbackMessage" placeholder="Write your feedback or message here..." style="min-height:120px;"></textarea>
+                    <button onclick="submitFeedback()">📨 Send Anonymously</button>
+                    <div class="small" id="feedbackStatus" style="text-align:center;margin-top:6px;"></div>
+                </div>
             </div>
 
         </div>
@@ -624,7 +641,7 @@
                 messagesDiv.innerHTML += `<p id="${typingId}" style="color:#94a3b8;">🤔 Thinking...</p>`;
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AQ.Ab8RN6JtCIa0Rh4L4avPgKEadIcJ08adik0bb0sfK-CJ5LiO2w`, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AQ.Ab8RN6LbsAmcSpO-yF_1hzDeCJzAePta6BdyJhz9NsVAKdxNZA`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -653,9 +670,6 @@
             document.getElementById('aiChatCard').style.display = 'none';
             document.getElementById('aiChatMessages').innerHTML = '';
         }
-
-        // Override the old askAI that opened ChatGPT – now it's handled above.
-        // PDF summarise/quiz will also launch the chat with the extracted text.
 
         // ─── AUTH STATE ───
         auth.onAuthStateChanged(async user => {
@@ -810,13 +824,13 @@
             'timer': 'sectionTimer', 'gpaHistory': 'sectionGPAHistory', 'cgpaTracker': 'sectionCGPA',
             'planner': 'sectionPlanner', 'analyzer': 'sectionAnalyzer', 'sessionLog': 'sectionSessionLog',
             'calendar': 'sectionCalendar', 'cutoff': 'sectionCutoff', 'screening': 'sectionScreening',
-            'countdown': 'sectionCountdown', 'pdfLibrary': 'sectionPdfLibrary'
+            'countdown': 'sectionCountdown', 'pdfLibrary': 'sectionPdfLibrary', 'feedback': 'sectionFeedback'
         };
         const navMap = {
             'main': 'navMain', 'gpaHistory': 'navGPAHistory', 'cgpaTracker': 'navCGPA',
             'planner': 'navPlanner', 'analyzer': 'navAnalyzer', 'sessionLog': 'navSessionLog',
             'calendar': 'navCalendar', 'cutoff': 'navCutoff', 'screening': 'navScreening',
-            'countdown': 'navCountdown', 'pdfLibrary': 'navPdfLibrary'
+            'countdown': 'navCountdown', 'pdfLibrary': 'navPdfLibrary', 'feedback': 'navFeedback'
         };
         function navigateTo(section) {
             closeMenu();
@@ -951,16 +965,40 @@
             document.getElementById('sessionCountDisplay').innerText = getSessionCount();
         }
         function updateDash() {
-            const gpa = localStorage.getItem('gpa') || '--';
-            const cgpa = localStorage.getItem('cgpa') || '--';
+            // Always recalc from saved semesters (most accurate)
+            const semesters = getSavedSemesters();
+            let gpa = '--';
+            let cgpa = '--';
+            
+            if (semesters.length > 0) {
+                let totalPoints = 0, totalUnits = 0;
+                semesters.forEach(s => {
+                    totalPoints += s.gpa * s.totalUnits;
+                    totalUnits += s.totalUnits;
+                });
+                cgpa = totalUnits > 0 ? (totalPoints / totalUnits).toFixed(2) : '--';
+                const lastSem = semesters[semesters.length - 1];
+                gpa = lastSem.gpa.toFixed(2);
+                
+                // Also save to localStorage so other parts of the app stay in sync
+                localStorage.setItem('gpa', gpa);
+                localStorage.setItem('cgpa', cgpa);
+            } else {
+                localStorage.removeItem('gpa');
+                localStorage.removeItem('cgpa');
+            }
+            
             document.getElementById('dashGPA').innerText = gpa === '--' ? '--' : parseFloat(gpa).toFixed(2);
             document.getElementById('dashCGPA').innerText = cgpa === '--' ? '--' : parseFloat(cgpa).toFixed(2);
             document.getElementById('dashDegree').innerText = getDegreeClass(cgpa);
             document.getElementById('dashStanding').innerText = getStanding(cgpa);
-            updateStreak(); updateStudyHours(); updateSessionCountDisplay(); updateStreakUI();
+            updateStreak();
+            updateStudyHours();
+            updateSessionCountDisplay();
+            updateStreakUI();
         }
 
-        // ─── SEMESTER SYSTEM ─── (unchanged, but I kept it)
+        // ─── SEMESTER SYSTEM ───
         function getSavedSemesters() { try { return JSON.parse(localStorage.getItem('semesters')) || []; } catch { return []; } }
         function saveSemestersToStorage(s) { localStorage.setItem('semesters', JSON.stringify(s)); }
         function addCourseRow() {
@@ -1025,8 +1063,11 @@
             document.getElementById('semesterTitle').value = ''; document.getElementById('semesterCourseBox').innerHTML = '';
             courseRowCounter = 0; addCourseRow();
             document.getElementById('semesterGpaOut').innerHTML = '✅ Saved! GPA: ' + gpa.toFixed(2);
-            renderSavedSemesters(); updateDashFromSemesters(); renderCGPATracker();
-            checkAchievements(); showNotification('💾 Semester saved.');
+            renderSavedSemesters();
+            renderCGPATracker();
+            updateDash(); // <-- dashboard will now update immediately
+            checkAchievements();
+            showNotification('💾 Semester saved.');
             if (currentUser) syncLocalToCloud();
         }
         function deleteSemester(id) {
@@ -1035,12 +1076,12 @@
             let target = id;
             if (!target) { const last = semesters[semesters.length-1]; if (!confirm('Delete "' + last.title + '"?')) return; target = last.id; }
             semesters = semesters.filter(s => s.id !== target); saveSemestersToStorage(semesters);
-            renderSavedSemesters(); updateDashFromSemesters(); renderCGPATracker();
+            renderSavedSemesters(); renderCGPATracker(); updateDash();
             showNotification('🗑 Deleted.'); if (currentUser) syncLocalToCloud();
         }
         function clearAllSemesters() {
             if (!confirm('Delete all semesters?')) return;
-            saveSemestersToStorage([]); renderSavedSemesters(); updateDashFromSemesters(); renderCGPATracker();
+            saveSemestersToStorage([]); renderSavedSemesters(); renderCGPATracker(); updateDash();
             showNotification('🗑 All cleared.'); if (currentUser) syncLocalToCloud();
         }
         function renderSavedSemesters() {
@@ -1064,19 +1105,11 @@
             `).join('');
             container.innerHTML = html; if (historyContainer) historyContainer.innerHTML = html;
         }
-        function updateDashFromSemesters() {
-            const semesters = getSavedSemesters();
-            if (!semesters.length) { localStorage.removeItem('gpa'); localStorage.removeItem('cgpa'); updateDash(); return; }
-            let total = 0, units = 0;
-            semesters.forEach(s => { total += s.gpa * s.totalUnits; units += s.totalUnits; });
-            const cgpa = units > 0 ? (total / units) : 0;
-            const last = semesters[semesters.length-1];
-            localStorage.setItem('gpa', last.gpa.toFixed(2)); localStorage.setItem('cgpa', cgpa.toFixed(2)); updateDash();
-        }
+
         function initGPASection() {
             const rows = document.querySelectorAll('#semesterCourseBox .course-row');
             if (rows.length === 0) { courseRowCounter = 0; addCourseRow(); } else { courseRowCounter = rows.length; }
-            renderSavedSemesters(); updateDashFromSemesters(); renderCGPATracker();
+            renderSavedSemesters(); renderCGPATracker(); updateDash();
         }
 
         // ─── CGPA CALCULATOR (manual) ───
@@ -1322,7 +1355,7 @@
             navigator.clipboard.writeText(text).then(() => showNotification('📋 Copied!'));
         }
 
-        // ─── PDF LIBRARY (unchanged, but PDF summarise/quiz now use chat) ───
+        // ─── PDF LIBRARY ───
         let dbPdf = null; const DB_NAME = 'GoatTutorDB'; const STORE_NAME = 'pdfs';
         function openDB() {
             return new Promise((resolve, reject) => {
@@ -1503,6 +1536,33 @@
             }, 10000);
         }
 
+        // ─── ANONYMOUS FEEDBACK ───
+        async function submitFeedback() {
+            const message = document.getElementById('feedbackMessage').value.trim();
+            const category = document.getElementById('feedbackCategory').value;
+            const statusEl = document.getElementById('feedbackStatus');
+
+            if (!message) {
+                statusEl.innerText = '⚠️ Please write a message.';
+                return;
+            }
+
+            try {
+                await db.collection('feedbacks').add({
+                    category,
+                    message,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    // absolutely no user info stored – anonymous by design
+                });
+                document.getElementById('feedbackMessage').value = '';
+                statusEl.innerText = '✅ Feedback sent. Thank you! 🐐';
+                showNotification('📨 Anonymous feedback sent. Thank you!');
+            } catch (err) {
+                console.error(err);
+                statusEl.innerText = '❌ Failed to send. Check your connection.';
+            }
+        }
+
         // ─── BACK TO TOP ───
         window.addEventListener('scroll', () => { const btn = document.getElementById('backToTopBtn'); if (window.scrollY > 300) btn.style.display = 'flex'; else btn.style.display = 'none'; });
 
@@ -1522,7 +1582,7 @@
         document.getElementById('sidebarOverlay').addEventListener('click', closeMenu);
         document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMenu(); });
         init();
-        console.log('🐐 GoatTutor v7 – AI chat inside!');
+        console.log('🐐 GoatTutor v7 – Anonymous feedback enabled!');
     </script>
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){ c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)}; t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i; y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y); })(window, document, "clarity", "script", "xb50ly2ja2");
