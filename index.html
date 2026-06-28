@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>GoatTutor NG 🐐 – Gamified</title>
+    <title>GoatTutor NG 🐐</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
     <!-- Firebase SDKs -->
@@ -16,7 +16,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js">
     </script>
     <style>
-        /* ─── All existing styles (same as before) ─── */
+        /* ─── RESET & BASE ─── */
         * {
             margin: 0;
             padding: 0;
@@ -1456,7 +1456,7 @@
             { id: 'xp_5000', name: 'XP Collector', icon: '💪', desc: 'Reach 5,000 XP' },
         ];
 
-        // ─── ACADEMIC EVENTS (unchanged) ───
+        // ─── ACADEMIC EVENTS ───
         const academicEvents = [
             { date: '2025-11-10', title: 'Resumption – Fresh Students' },
             { date: '2025-11-10', title: 'Orientation for Fresh Students' },
@@ -1480,7 +1480,7 @@
             { date: '2026-09-24', title: 'Convocation Ceremonies' }
         ];
 
-        // ─── CUT-OFF DATA (unchanged) ───
+        // ─── CUT-OFF DATA ───
         const cutoffData = [
             { course: 'B. Agric. Economics', faculty: 'Agriculture', merit: 57.0, indigene: 46.4 },
             { course: 'B. Agric. Extension', faculty: 'Agriculture', merit: 56.5, indigene: 44.5 },
@@ -1864,61 +1864,141 @@
             showNotification('🔄 Stats synced!', 2000);
         }
 
-        // ─── LEADERBOARD ───
+        // ─── LEADERBOARD (FIXED & RESPONSIVE) ───
         async function loadLeaderboard(period = 'all_time') {
             const container = document.getElementById('leaderboardList');
-            container.innerHTML = '<span class="small">Loading...</span>';
+            container.innerHTML = '<span class="small">⏳ Loading leaderboard...</span>';
+
             try {
+                // Try to fetch from leaderboard collection
                 const lbRef = db.collection('leaderboard')
                     .where('period', '==', period)
                     .orderBy('xp', 'desc')
                     .limit(100);
 
                 const snapshot = await lbRef.get();
-                if (snapshot.empty) {
-                    container.innerHTML = '<span class="small">No entries yet. Start earning XP!</span>';
+
+                if (!snapshot.empty) {
+                    renderLeaderboardEntries(snapshot.docs, container);
                     return;
                 }
 
-                let html = '';
-                let rank = 1;
-                let userRank = null;
-                const userUid = currentUser ? currentUser.uid : null;
+                // Fallback: read from users collection
+                console.log('Leaderboard collection empty, falling back to users...');
+                const usersSnapshot = await db.collection('users')
+                    .orderBy('xp', 'desc')
+                    .limit(100)
+                    .get();
 
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const isUser = data.userId === userUid;
-                    if (isUser) userRank = rank;
-                    const levelData = getLevelData(data.level || 1);
-                    html += `
-                        <div class="leaderboard-entry ${isUser ? 'highlight' : ''}">
-                            <span class="rank">${rank <= 3 ? ['🥇','🥈','🥉'][rank-1] : '#'+rank}</span>
-                            <span class="name">${data.displayName || 'Student'} ${isUser ? '👈' : ''}</span>
-                            <span class="level-tag">${levelData.icon} Lv.${data.level || 1}</span>
-                            <span class="xp">${(data.xp || 0).toLocaleString()} XP</span>
-                        </div>
-                    `;
-                    rank++;
-                });
-
-                if (userRank && userRank > 20) {
-                    html += `
-                        <div style="margin-top:8px;padding:8px;border:1px dashed #fbbf24;border-radius:8px;text-align:center;">
-                            <span class="small">📍 You're currently <strong style="color:#fbbf24;">#${userRank}</strong></span>
-                        </div>
-                    `;
+                if (usersSnapshot.empty) {
+                    container.innerHTML =
+                    '<span class="small">No users yet. Start earning XP to appear!</span>';
+                    return;
                 }
 
-                container.innerHTML = html;
+                const entries = usersSnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        userId: doc.id,
+                        displayName: data.displayName || 'Student',
+                        photoURL: data.photoURL || '',
+                        department: data.department || 'N/A',
+                        faculty: data.faculty || 'N/A',
+                        xp: data.xp || 0,
+                        level: data.level || 1,
+                        badgeCount: (data.badges || []).length,
+                        period: period,
+                    };
+                });
+
+                renderLeaderboardEntries(entries, container);
 
             } catch (err) {
                 console.error('Leaderboard error:', err);
-                container.innerHTML = '<span class="small">Error loading leaderboard.</span>';
+                // Local fallback
+                const localXP = parseInt(localStorage.getItem('xp')) || 0;
+                const localLevel = parseInt(localStorage.getItem('level')) || 1;
+                if (localXP > 0) {
+                    container.innerHTML = `
+                        <div class="leaderboard-entry highlight">
+                            <span class="rank">#1</span>
+                            <span class="name">You (local) 👈</span>
+                            <span class="level-tag">${getLevelData(localLevel).icon} Lv.${localLevel}</span>
+                            <span class="xp">${localXP.toLocaleString()} XP</span>
+                        </div>
+                        <div class="small" style="margin-top:8px;text-align:center;color:#94a3b8;">
+                            ⚡ Offline mode — connect to see global rankings.
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML =
+                        '<span class="small">⚠️ Could not load leaderboard. Please try again later.</span>';
+                }
             }
         }
 
+        // Helper to render leaderboard entries
+        function renderLeaderboardEntries(items, container) {
+            if (!items || items.length === 0) {
+                container.innerHTML = '<span class="small">No entries yet. Start earning XP!</span>';
+                return;
+            }
+
+            let html = '';
+            let rank = 1;
+            const userUid = currentUser ? currentUser.uid : null;
+            let userRank = null;
+
+            // Process items (could be Firestore docs or plain objects)
+            const entries = items.map(item => {
+                if (item.data) {
+                    const data = item.data();
+                    return {
+                        userId: item.id,
+                        displayName: data.displayName || 'Student',
+                        photoURL: data.photoURL || '',
+                        department: data.department || 'N/A',
+                        faculty: data.faculty || 'N/A',
+                        xp: data.xp || 0,
+                        level: data.level || 1,
+                        badgeCount: (data.badges || []).length,
+                    };
+                } else {
+                    return item;
+                }
+            });
+
+            // Sort by XP descending
+            entries.sort((a, b) => b.xp - a.xp);
+
+            for (const entry of entries) {
+                const isUser = entry.userId === userUid;
+                if (isUser) userRank = rank;
+                const levelData = getLevelData(entry.level || 1);
+                const medal = rank <= 3 ? ['🥇', '🥈', '🥉'][rank - 1] : '#' + rank;
+                html += `
+                    <div class="leaderboard-entry ${isUser ? 'highlight' : ''}">
+                        <span class="rank">${medal}</span>
+                        <span class="name">${entry.displayName} ${isUser ? '👈' : ''}</span>
+                        <span class="level-tag">${levelData.icon} Lv.${entry.level || 1}</span>
+                        <span class="xp">${(entry.xp || 0).toLocaleString()} XP</span>
+                    </div>
+                `;
+                rank++;
+            }
+
+            if (userRank && userRank > 20) {
+                html += `
+                    <div style="margin-top:8px;padding:8px;border:1px dashed #fbbf24;border-radius:8px;text-align:center;">
+                        <span class="small">📍 You're currently <strong style="color:#fbbf24;">#${userRank}</strong></span>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
         // ─── 🎯 DAILY CHALLENGE – UNIOSUN QUESTION BANK ───
-        // Complete question bank based on the course outlines
         const QUESTION_BANK = {
             'MTH 102': [
                 { question: 'What is the derivative of f(x) = x³?', options: ['3x²', 'x²', '3x', 'x³'], correctIndex: 0 },
@@ -1933,13 +2013,13 @@
                         '-cos(x) + C'
                     ], correctIndex: 0 },
                 { question: 'What is the derivative of e^x?', options: ['e^x', 'x e^x', 'e^x + x', 'ln(e^x)'],
-                correctIndex: 0 },
+                    correctIndex: 0 },
                 { question: 'What is the integral of 1/x dx?', options: ['ln|x| + C', 'x + C', 'ln(x) + C', '1/x + C'],
                     correctIndex: 0 },
                 { question: 'What is the derivative of ln(x)?', options: ['1/x', 'x', 'ln(x)', '1/ln(x)'],
-                correctIndex: 0 },
+                    correctIndex: 0 },
                 { question: 'What is the second derivative of x⁴?', options: ['12x²', '4x³', '12x', '24x²'],
-                correctIndex: 0 },
+                    correctIndex: 0 },
                 { question: 'What is the area under the curve y = x from x=0 to x=2?', options: ['2', '4', '1', '3'],
                     correctIndex: 0 },
                 { question: 'What is the derivative of tan(x)?', options: ['sec²(x)', 'csc²(x)', 'cot²(x)', 'sin²(x)'],
@@ -1970,7 +2050,7 @@
                 { question: 'What is the area under the curve y = x² from x=0 to x=3?', options: ['9', '6', '3', '27'],
                     correctIndex: 0 },
                 { question: 'What is the derivative of ln(2x)?', options: ['1/x', '2/x', '1/(2x)', 'ln(2)'],
-                correctIndex: 0 },
+                    correctIndex: 0 },
                 { question: 'What is the integral of e^(2x) dx?', options: ['(1/2)e^(2x) + C', 'e^(2x) + C',
                         '2e^(2x) + C', 'e^(2x)/2 + C'
                     ], correctIndex: 0 },
@@ -1995,7 +2075,6 @@
                         'arcsec(x) + C', 'ln(x) + C'
                     ], correctIndex: 0 },
             ],
-
             'CHM 102': [
                 { question: 'What is the functional group of an alcohol?', options: ['-OH', '-COOH', '-CHO', '-NH₂'],
                     correctIndex: 0 },
@@ -2074,7 +2153,6 @@
                 { question: 'What is the functional group of a phosphate?', options: ['-PO₄', '-OH', '-COOH', '-NH₂'],
                     correctIndex: 0 },
             ],
-
             'PHY 102': [
                 { question: 'What is the SI unit of electric charge?', options: ['Coulomb', 'Ampere', 'Volt', 'Ohm'],
                     correctIndex: 0 },
@@ -2104,10 +2182,10 @@
                 { question: 'What is the unit of electric current?', options: ['Ampere', 'Volt', 'Ohm', 'Watt'],
                     correctIndex: 0 },
                 { question: 'What is the unit of resistance?', options: ['Ohm', 'Volt', 'Ampere', 'Watt'],
-                correctIndex: 0 },
+                    correctIndex: 0 },
                 { question: 'What is the unit of power?', options: ['Watt', 'Joule', 'Volt', 'Ampere'], correctIndex: 0 },
                 { question: 'What is the unit of energy?', options: ['Joule', 'Watt', 'Volt', 'Ampere'],
-                correctIndex: 0 },
+                    correctIndex: 0 },
                 { question: 'What is the law that states the force between two charges is proportional to the product of charges and inversely proportional to the square of distance?',
                     options: ['Coulomb\'s law', 'Ohm\'s law', 'Faraday\'s law', 'Gauss\'s law'], correctIndex: 0 },
                 { question: 'What is the unit of capacitance?', options: ['Farad', 'Henry', 'Tesla', 'Weber'],
@@ -2157,7 +2235,6 @@
                         '3 × 10⁶ m/s', '3 × 10¹⁰ m/s', '3 × 10⁴ m/s'
                     ], correctIndex: 0 },
             ],
-
             'BIO 102': [
                 { question: 'Which of the following is a characteristic of the Animal Kingdom?', options: ['Heterotrophic',
                         'Autotrophic', 'Cell wall present', 'Chlorophyll present'
@@ -2250,7 +2327,6 @@
                         'No nucleus', 'No membrane-bound organelles', 'Simple structure'
                     ], correctIndex: 0 },
             ],
-
             'GNS 102': [
                 { question: 'What is the term for a group of words that functions as a single unit in a sentence?',
                     options: ['Phrase', 'Clause', 'Sentence', 'Paragraph'], correctIndex: 0 },
@@ -2334,7 +2410,6 @@
                         'Exclamatory', 'Declarative', 'Interrogative', 'Imperative'
                     ], correctIndex: 0 },
             ],
-
             'GNS 104': [
                 { question: 'What is the name of the largest ethnic group in Nigeria?', options: ['Hausa', 'Yoruba',
                         'Igbo', 'Fulani'
@@ -2450,7 +2525,6 @@
 
         function getQuestionsForSubject(subject) {
             const qs = QUESTION_BANK[subject] || [];
-            // Shuffle and pick 5
             return shuffleArray([...qs]).slice(0, 5);
         }
 
@@ -2459,10 +2533,8 @@
                 subject = getRandomSubject();
             }
 
-            // Ensure we have at least 5 questions for the subject
             let questions = getQuestionsForSubject(subject);
             if (questions.length < 5) {
-                // Fallback to random subject
                 subject = getRandomSubject();
                 questions = getQuestionsForSubject(subject);
             }
@@ -2481,15 +2553,13 @@
             resultDiv.style.display = 'none';
             startBtn.style.display = 'none';
 
-            // Show subject label
-            document.querySelector('#challengeContainer .small')?.remove();
+            const containerDiv = document.getElementById('challengeContainer');
+            const existing = containerDiv.querySelector('.small');
+            if (existing) existing.remove();
             const subjectLabel = document.createElement('p');
             subjectLabel.className = 'small';
             subjectLabel.style.margin = '4px 0';
             subjectLabel.textContent = `📚 Subject: ${subject} • ${challengeQuestions.length} questions`;
-            const containerDiv = document.getElementById('challengeContainer');
-            const existing = containerDiv.querySelector('.small');
-            if (existing) existing.remove();
             containerDiv.insertBefore(subjectLabel, containerDiv.firstChild);
 
             renderChallengeQuestion();
@@ -2582,7 +2652,7 @@
             }
         }
 
-        // ─── STREAK (local + Firestore) ───
+        // ─── STREAK ───
         function getStreakStats() {
             const streak = parseInt(localStorage.getItem('streak')) || 0;
             const bestStreak = parseInt(localStorage.getItem('bestStreak')) || 0;
@@ -3937,7 +4007,7 @@
         document.getElementById('sidebarOverlay').addEventListener('click', closeMenu);
         document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMenu(); });
         init();
-        console.log('🐐 GoatTutor v7 – Gamified with UNIOSUN question bank!');
+        console.log('🐐 GoatTutor v7 – Gamified with UNIOSUN question bank & fixed leaderboard!');
     </script>
     <script type="text/javascript">
         (function(c, l, a, r, i, t, y) {
