@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>GoatTutor NG 🐐 – The Ultimate Study Platform</title>
+    <title>GoatTutor NG 🐐 – Fully Fixed</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
@@ -1522,6 +1522,7 @@
                             <option value="general">General</option>
                         </select>
                         <button onclick="submitUpdate()" style="margin-top:4px;">📨 Publish Update</button>
+                        <div id="updateStatus" class="small" style="text-align:center;margin-top:6px;"></div>
                     </div>
                 </div>
             </div>
@@ -1923,13 +1924,19 @@
             return Math.min((xpInLevel / xpNeeded) * 100, 100);
         }
 
-        // ─── AWARD XP ───
+        // ─── AWARD XP (FIXED) ───
         async function awardXP(amount, activity) {
-            if (!currentUser) return;
+            if (!currentUser) {
+                console.warn('No user logged in, XP not awarded.');
+                return;
+            }
             try {
                 const userRef = db.collection('users').doc(currentUser.uid);
                 const doc = await userRef.get();
-                if (!doc.exists) return;
+                if (!doc.exists) {
+                    console.warn('User document does not exist.');
+                    return;
+                }
                 const data = doc.data();
                 const newXP = (data.xp || 0) + amount;
                 const newLevel = getLevelFromXP(newXP);
@@ -1954,11 +1961,23 @@
                 updateGamificationUI();
                 updateDash();
                 showNotification(`⚡ +${amount} XP (${activity})`, 2000);
-                if (['note_read', 'finish_quiz', 'complete_revision', 'answer_cbt'].includes(activity)) {
-                    await updateMissionProgress(activity);
+                const missionMap = {
+                    'pdf_view': 'read_note',
+                    'pdf_summary': 'read_note',
+                    'pomodoro_complete': 'complete_revision',
+                    'pdf_quiz': 'finish_quiz',
+                    'analysis_run': 'answer_cbt',
+                    'screening_calculated': 'answer_cbt',
+                    'semester_saved': 'finish_quiz',
+                    'daily_login': 'read_note'
+                };
+                const missionType = missionMap[activity] || activity;
+                if (['read_note', 'finish_quiz', 'complete_revision', 'answer_cbt'].includes(missionType)) {
+                    await updateMissionProgress(missionType);
                 }
             } catch (err) {
                 console.error('XP award error:', err);
+                showNotification('⚠️ XP award failed. Check console.', 3000);
             }
         }
 
@@ -2082,10 +2101,16 @@
 
         // ─── GAMIFICATION UI ───
         function updateGamificationUI() {
-            if (!currentUser) return;
+            if (!currentUser) {
+                console.warn('No user logged in for UI update.');
+                return;
+            }
             const userRef = db.collection('users').doc(currentUser.uid);
             userRef.get().then(doc => {
-                if (!doc.exists) return;
+                if (!doc.exists) {
+                    console.warn('User document not found for UI update.');
+                    return;
+                }
                 const data = doc.data();
                 const xp = data.xp || 0;
                 const level = data.level || 1;
@@ -2333,12 +2358,16 @@
             container.innerHTML = html;
         }
 
-        // ─── FACULTY RANKINGS ───
+        // ─── FACULTY RANKINGS (FIXED) ───
         async function loadFacultyRankings() {
             const container = document.getElementById('facultyRankings');
             if (!container) return;
             try {
                 const users = await db.collection('users').get();
+                if (users.empty) {
+                    container.innerHTML = '<span class="small">No faculty data yet. Start using GoatTutor!</span>';
+                    return;
+                }
                 const facultyMap = {};
                 users.forEach(doc => {
                     const data = doc.data();
@@ -2352,8 +2381,9 @@
                 const sorted = Object.entries(facultyMap)
                     .map(([name, data]) => ({ name, ...data }))
                     .sort((a, b) => b.totalXP - a.totalXP);
-                if (sorted.length === 0) {
-                    container.innerHTML = '<span class="small">No faculty data yet.</span>';
+                if (sorted.length === 0 || (sorted.length === 1 && sorted[0].name === 'Unknown')) {
+                    container.innerHTML =
+                        '<span class="small">No faculty data yet. Update your profile with your faculty!</span>';
                     return;
                 }
                 let html = `<div style="display:flex;flex-direction:column;gap:4px;">`;
@@ -2410,17 +2440,23 @@
             }
         }
 
-        // ─── ADMIN: SUBMIT UPDATE ───
+        // ─── ADMIN: SUBMIT UPDATE (FIXED) ───
         async function submitUpdate() {
-            if (!currentUser || currentUser.uid !== ADMIN_UID) {
-                showNotification('⛔ You are not authorized to post updates.');
+            const statusEl = document.getElementById('updateStatus');
+            statusEl.innerText = '⏳ Publishing...';
+            if (!currentUser) {
+                statusEl.innerText = '⛔ Please log in first.';
+                return;
+            }
+            if (currentUser.uid !== ADMIN_UID) {
+                statusEl.innerText = '⛔ You are not authorized to post updates.';
                 return;
             }
             const title = document.getElementById('updateTitle').value.trim();
             const content = document.getElementById('updateContent').value.trim();
             const category = document.getElementById('updateCategory').value;
             if (!title || !content) {
-                showNotification('⚠️ Please fill in both title and content.');
+                statusEl.innerText = '⚠️ Please fill in both title and content.';
                 return;
             }
             try {
@@ -2432,11 +2468,13 @@
                 });
                 document.getElementById('updateTitle').value = '';
                 document.getElementById('updateContent').value = '';
+                statusEl.innerText = '✅ Update published!';
                 showNotification('✅ Update published!');
                 loadUpdates();
-                navigateTo('main');
+                setTimeout(() => { navigateTo('main'); }, 1000);
             } catch (err) {
                 console.error('Submit update error:', err);
+                statusEl.innerText = '❌ Failed to publish update: ' + err.message;
                 showNotification('❌ Failed to publish update.');
             }
         }
@@ -2586,86 +2624,112 @@
         }
 
         // ─── DAILY CHALLENGE ───
-        // ─── COMPLETE QUESTION BANK ───
+        // ─── COMPLETE QUESTION BANK WITH UPDATED MTH 102 ───
         const QUESTION_BANK = {
             'MTH 102': [
-                { question: 'Find the derivative of y = ln(sin(x²)).', options: ['2x cot(x²)', '2x tan(x²)',
-                        '2x sec²(x²)', '2x csc²(x²)'
-                    ], correctIndex: 0 },
-                { question: 'Evaluate ∫₀^π/2 sin²(x) dx.', options: ['π/4', 'π/2', 'π/8', '1/2'], correctIndex: 0 },
-                { question: 'What is the radius of convergence of Σ (xⁿ)/n²?', options: ['1', '∞', '0', '2'],
+                // ─── LIMITS ───
+                { question: 'Evaluate lim_{x→0} (sin 3x)/x.', options: ['0', '1', '3', '∞'], correctIndex: 2 },
+                { question: 'Evaluate lim_{x→∞} (3x² + 2x - 1)/(5x² + 1).', options: ['0', '3/5', '5/3', '∞'],
+                    correctIndex: 1 },
+                { question: 'Evaluate lim_{x→1} (x² - 1)/(x - 1).', options: ['0', '1', '2', 'undefined'],
+                    correctIndex: 2 },
+                { question: 'Evaluate lim_{x→0} (1 - cos x)/x².', options: ['0', '1/2', '1', '2'], correctIndex: 1 },
+                { question: 'Evaluate lim_{x→0} (eˣ - 1)/x.', options: ['0', '1', 'e', '∞'], correctIndex: 1 },
+                { question: 'Evaluate lim_{x→0} ln(1+x)/x.', options: ['0', '1', 'e', '∞'], correctIndex: 1 },
+                { question: 'Evaluate lim_{x→0} (1 - cos x)/x.', options: ['0', '1', '1/2', '∞'], correctIndex: 0 },
+                { question: 'Evaluate lim_{x→0} (tan x)/x.', options: ['0', '1', '∞', 'undefined'], correctIndex: 1 },
+                // ─── FUNCTIONS ───
+                { question: 'Find the domain of f(x) = √(x-2).', options: ['[2, ∞)', '(-∞, 2]', '(-∞, ∞)', '(2, ∞)'],
                     correctIndex: 0 },
-                { question: 'Solve dy/dx = y(1-y), y(0)=0.5.', options: ['y = 1/(1+e⁻ˣ)', 'y = 1/(1+eˣ)',
-                        'y = eˣ/(1+eˣ)', 'y = 1/(1+e⁻²ˣ)'
-                    ], correctIndex: 0 },
-                { question: 'The derivative of arctan(x) is:', options: ['1/(1+x²)', '1/(1-x²)', '1/(x²+1)',
-                        'x/(1+x²)'
-                    ], correctIndex: 0 },
-                { question: 'What is the area enclosed by r = 2cosθ?', options: ['π', '2π', 'π/2', '1'], correctIndex: 0 },
-                { question: 'The Laplace transform of tⁿ is:', options: ['n!/s^(n+1)', 'n!/s^n', '1/s^(n+1)',
-                        'n!/s^(n-1)'
-                    ], correctIndex: 0 },
-                { question: 'The Fourier series of a square wave has only:', options: ['odd harmonics', 'even harmonics',
-                        'all harmonics', 'no harmonics'
-                    ], correctIndex: 0 },
-                { question: 'What is the solution to y′′ + y = 0?', options: ['A cos x + B sin x', 'A eˣ + B e⁻ˣ',
-                        'A cosh x + B sinh x', 'A eⁱˣ + B e⁻ⁱˣ'
-                    ], correctIndex: 0 },
-                { question: 'The mean of a Poisson distribution with parameter λ is:', options: ['λ', 'λ²', '1/λ', '√λ'],
+                { question: 'Find the range of f(x) = x² + 1.', options: ['[1, ∞)', '(-∞, 1]', '(0, ∞)', '(-∞, ∞)'],
                     correctIndex: 0 },
-                { question: 'The variance of a binomial distribution with n trials and probability p is:', options: [
-                        'np(1-p)', 'np', 'n²p', 'np(1+p)'
-                    ], correctIndex: 0 },
-                { question: 'The determinant of a 3×3 matrix A is zero. What can we conclude?', options: [
-                        'A is singular', 'A is invertible', 'A is diagonalizable', 'A is symmetric'
-                    ], correctIndex: 0 },
-                { question: 'The eigenvalue of a projection matrix is either 0 or:', options: ['1', '2', '-1', '0.5'],
+                { question: 'Find the inverse of f(x) = 2x + 3.', options: ['(x-3)/2', '(x+3)/2', '2x-3', 'x/2-3'],
                     correctIndex: 0 },
-                { question: 'The gradient of f(x,y)=x²+y² at (1,1) is:', options: ['(2,2)', '(1,1)', '(0,0)', '(2,0)'],
+                { question: 'Find the inverse of f(x) = 1/(x-1).', options: ['1 + 1/x', '1 - 1/x', 'x/(x-1)', '(x+1)/x'],
                     correctIndex: 0 },
-                { question: 'The directional derivative of f in the direction of u is:', options: ['∇f·u', '∇f×u',
-                        '∇f/u', 'u·∇f'
-                    ], correctIndex: 0 },
-                { question: 'The curl of a conservative vector field is:', options: ['0', '1', '∇f', 'undefined'],
+                { question: 'Given f(x)=x² and g(x)=x+1, find f(g(x)).', options: ['(x+1)²', 'x²+1', 'x²+x+1', 'x²+2x+1'],
                     correctIndex: 0 },
-                { question: 'The line integral of a gradient field is:', options: ['path independent', 'path dependent',
-                        'always zero', 'infinite'
-                    ], correctIndex: 0 },
-                { question: 'The Green’s theorem relates a line integral to a:', options: ['double integral',
-                        'triple integral', 'surface integral', 'contour integral'
-                    ], correctIndex: 0 },
-                { question: 'The Fourier transform of a Gaussian is:', options: ['Gaussian', 'exponential', 'sinc',
-                        'rect'
-                    ], correctIndex: 0 },
-                { question: 'The Nyquist frequency is half of the:', options: ['sampling rate', 'signal bandwidth',
-                        'modulation frequency', 'carrier frequency'
-                    ], correctIndex: 0 },
-                { question: 'The Z-transform of δ[n] is:', options: ['1', 'z', '1/z', '0'], correctIndex: 0 },
-                { question: 'The probability density function integrates to:', options: ['1', '∞', '0', 'π'],
+                { question: 'Given f(x)=2x and g(x)=x-3, find g(f(x)).', options: ['2x-3', '2(x-3)', '2x+3', 'x-6'],
                     correctIndex: 0 },
-                { question: 'The median of a symmetric distribution equals its:', options: ['mean', 'mode', 'variance',
-                        'standard deviation'
-                    ], correctIndex: 0 },
-                { question: 'The central limit theorem applies to:', options: ['sample means', 'sample variances',
-                        'sample medians', 'sample ranges'
-                    ], correctIndex: 0 },
-                { question: 'The covariance of independent variables is:', options: ['0', '1', '∞', 'undefined'],
+                { question: 'Is f(x)=x³ an even, odd, or neither?', options: ['Even', 'Odd', 'Neither', 'Both'],
+                    correctIndex: 1 },
+                { question: 'Is f(x)=x²+1 an even, odd, or neither?', options: ['Even', 'Odd', 'Neither', 'Both'],
                     correctIndex: 0 },
-                { question: 'The correlation coefficient ranges between:', options: ['-1 and 1', '0 and 1', '-∞ and ∞',
-                        '0 and ∞'
+                // ─── DIFFERENTIATION ───
+                { question: 'Find the derivative of f(x) = 3x⁴.', options: ['12x³', '12x⁴', '3x³', '4x³'],
+                    correctIndex: 0 },
+                { question: 'Find the derivative of f(x) = sin(2x).', options: ['2cos(2x)', '-2cos(2x)', 'cos(2x)',
+                        '2sin(2x)'
                     ], correctIndex: 0 },
-                { question: 'The chi‑square distribution with n degrees of freedom has mean:', options: ['n', '2n', '√n',
-                        'n²'
+                { question: 'Find the derivative of f(x) = e^(3x).', options: ['3e^(3x)', 'e^(3x)', '3e^x', 'e^(3x)/3'],
+                    correctIndex: 0 },
+                { question: 'Find the derivative of f(x) = ln(5x).', options: ['1/x', '5/x', '1/(5x)', 'ln(5)'],
+                    correctIndex: 0 },
+                { question: 'Find the derivative of f(x) = x² sin(x).', options: ['2x sin x + x² cos x',
+                        '2x cos x + x² sin x', 'x² cos x', '2x sin x'
                     ], correctIndex: 0 },
-                { question: 'The t‑distribution approaches normal as degrees of freedom:', options: ['increase',
-                        'decrease', 'remain constant', 'become zero'
+                { question: 'Find the derivative of f(x) = (x²+1)⁵.', options: ['10x(x²+1)⁴', '5x(x²+1)⁴',
+                        '10x(x²+1)⁵', '5(x²+1)⁴'
                     ], correctIndex: 0 },
-                { question: 'The F‑distribution is used to compare two:', options: ['variances', 'means', 'medians',
-                        'proportions'
+                { question: 'Find the second derivative of f(x) = x⁴.', options: ['12x²', '4x³', '24x', '12x³'],
+                    correctIndex: 0 },
+                { question: 'Find the equation of the tangent line to f(x)=x² at x=1.', options: ['y=2x-1', 'y=2x+1',
+                        'y=x+1', 'y=x-1'
                     ], correctIndex: 0 },
-                { question: 'The p‑value is the probability of observing a test statistic as extreme as the one obtained, assuming:',
-                    options: ['null hypothesis is true', 'alternative hypothesis is true',
-                        'sample size is large', 'variance is known'
+                { question: 'Find the derivative of f(x) = tan(x).', options: ['sec²(x)', 'csc²(x)', 'sin²(x)',
+                        'cos²(x)'
+                    ], correctIndex: 0 },
+                { question: 'Find the derivative of f(x) = ln(sin x).', options: ['cot x', 'tan x', 'csc x', 'sec x'],
+                    correctIndex: 0 },
+                { question: 'Find the derivative of f(x) = arctan(x).', options: ['1/(1+x²)', '1/(1-x²)',
+                        'x/(1+x²)', '1/(√(1-x²))'
+                    ], correctIndex: 0 },
+                { question: 'Find the derivative of f(x) = cos²(x).', options: ['-2cos x sin x', '2cos x sin x',
+                        '-sin² x', 'cos² x'
+                    ], correctIndex: 0 },
+                // ─── INTEGRATION ───
+                { question: 'Evaluate ∫ 3x² dx.', options: ['x³ + C', '3x³ + C', 'x² + C', '9x³ + C'],
+                    correctIndex: 0 },
+                { question: 'Evaluate ∫ 2cos(2x) dx.', options: ['sin(2x) + C', '2sin(2x) + C', 'cos(2x) + C',
+                        '-sin(2x) + C'
+                    ], correctIndex: 0 },
+                { question: 'Evaluate ∫ e^(3x) dx.', options: ['(1/3)e^(3x) + C', '3e^(3x) + C', 'e^(3x) + C',
+                        'e^(3x)/3x + C'
+                    ], correctIndex: 0 },
+                { question: 'Evaluate ∫ (2x+1) dx.', options: ['x²+x+C', 'x²+2x+C', '2x²+x+C', 'x²+x+1+C'],
+                    correctIndex: 0 },
+                { question: 'Evaluate ∫ from 0 to 1 of x² dx.', options: ['1/3', '1/2', '1', '0'], correctIndex: 0 },
+                { question: 'Evaluate ∫ from 0 to π/2 of sin x dx.', options: ['1', '0', '2', 'π/2'], correctIndex: 0 },
+                { question: 'Evaluate ∫ (cos x + sin x) dx.', options: ['sin x - cos x + C', 'sin x + cos x + C',
+                        '-sin x + cos x + C', 'cos x - sin x + C'
+                    ], correctIndex: 0 },
+                { question: 'Evaluate ∫ (1/x) dx.', options: ['ln|x| + C', '1/x + C', 'x + C', 'ln(x) + C'],
+                    correctIndex: 0 },
+                { question: 'Evaluate ∫ x e^(x²) dx.', options: ['(1/2)e^(x²) + C', 'e^(x²) + C', 'xe^(x²) + C',
+                        'e^(x²)/x + C'
+                    ], correctIndex: 0 },
+                // ─── CIRCLE EQUATIONS ───
+                { question: 'What is the standard form of a circle with center (2, -3) and radius 4?', options: [
+                        '(x-2)² + (y+3)² = 16', '(x+2)² + (y-3)² = 16', '(x-2)² + (y-3)² = 4', '(x+2)² + (y+3)² = 16'
+                    ], correctIndex: 0 },
+                { question: 'Find the center of the circle x² + y² - 4x + 6y - 3 = 0.', options: ['(2, -3)',
+                        '(-2, 3)', '(2, 3)', '(-2, -3)'
+                    ], correctIndex: 0 },
+                { question: 'Find the radius of the circle x² + y² = 25.', options: ['5', '25', '√5', '10'],
+                    correctIndex: 0 },
+                { question: 'What is the center of the circle (x+1)² + (y-2)² = 9?', options: ['(-1, 2)', '(1, -2)',
+                        '(-1, -2)', '(1, 2)'
+                    ], correctIndex: 0 },
+                { question: 'Find the radius of the circle x² + y² - 6x + 8y = 0.', options: ['5', '10', '√5', '25'],
+                    correctIndex: 0 },
+                { question: 'Find the equation of the circle with center (0,0) and radius r.', options: ['x²+y²=r²',
+                        'x²+y²=r', 'x+y=r', 'x²-y²=r²'
+                    ], correctIndex: 0 },
+                { question: 'Find the center of the circle x² + y² + 4x - 2y - 4 = 0.', options: ['(-2, 1)', '(2, -1)',
+                        '(-2, -1)', '(2, 1)'
+                    ], correctIndex: 0 },
+                { question: 'Find the radius of the circle x² + y² - 2x + 4y - 11 = 0.', options: ['4', '2', '√11',
+                        '16'
                     ], correctIndex: 0 },
             ],
             'CHM 102': [
@@ -4457,7 +4521,7 @@
         document.getElementById('sidebarOverlay').addEventListener('click', closeMenu);
         document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMenu(); });
         init();
-        console.log('🐐 GoatTutor v7 – 100% fully functional!');
+        console.log('🐐 GoatTutor v7 – ALL FIXED: admin updates, faculty rankings, XP reflection, daily login XP!');
     </script>
     <script type="text/javascript">
         (function(c, l, a, r, i, t, y) {
