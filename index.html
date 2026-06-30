@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>GoatTutor NG 🐐 – The Ultimate AI Study Platform</title>
+    <title>GoatTutor NG 🐐 – The Ultimate Study Platform</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
     </script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js">
@@ -16,7 +15,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js">
     </script>
     <style>
-        /* ─── RESET & BASE ─── */
         * {
             margin: 0;
             padding: 0;
@@ -915,7 +913,95 @@
             pointer-events: none;
             opacity: 0.7;
         }
-        /* ─── NEW LANDING PAGE STYLES ─── */
+        .mission-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            margin-top: 4px;
+        }
+        .mission-item .icon {
+            font-size: 1.4rem;
+        }
+        .mission-item .info {
+            flex: 1;
+        }
+        .mission-item .info .label {
+            font-size: 0.85rem;
+        }
+        .mission-item .info .progress-text {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+        .mission-item .status {
+            font-size: 1.2rem;
+        }
+        .mission-item .progress-bar {
+            height: 4px;
+            background: #1e293b;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 2px;
+        }
+        .mission-item .progress-bar .fill {
+            height: 100%;
+            background: #3b82f6;
+            border-radius: 2px;
+            transition: width 0.5s;
+        }
+        .mission-item.completed {
+            border-color: #22c55e;
+        }
+        .mission-item.completed .fill {
+            background: #22c55e;
+        }
+        .faculty-rank-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 10px;
+            background: #0f172a;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            margin-top: 4px;
+        }
+        .faculty-rank-item.top {
+            border-color: #fbbf24;
+            background: #1a2a3a;
+        }
+        .faculty-rank-item .name {
+            font-weight: 500;
+        }
+        .faculty-rank-item .stats {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+        .update-item {
+            padding: 10px 12px;
+            background: #0f172a;
+            border-radius: 8px;
+            border-left: 3px solid #3b82f6;
+            margin-top: 6px;
+        }
+        .update-item .date {
+            font-size: 0.65rem;
+            color: #64748b;
+        }
+        .update-item .content {
+            font-size: 0.85rem;
+            margin-top: 2px;
+        }
+        .update-item .tag {
+            display: inline-block;
+            font-size: 0.6rem;
+            padding: 1px 8px;
+            border-radius: 12px;
+            background: #1e293b;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
         .hero-section {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border-radius: 20px;
@@ -1215,7 +1301,6 @@
     </style>
 </head>
 <body>
-
     <!-- AUTH PAGE -->
     <div class="auth-page" id="authPage">
         <div class="auth-box">
@@ -1230,10 +1315,8 @@
             <div class="auth-error" id="authError"></div>
         </div>
     </div>
-
     <!-- SIDEBAR OVERLAY -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMenu()"></div>
-
     <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
         <h3>📋 Navigation</h3>
@@ -1276,19 +1359,22 @@
                 <button onclick="navigateTo('sessionLog')" id="navSessionLog">📝 Session Log</button>
             </div>
         </div>
+        <div class="sidebar-group" id="groupAdmin" style="display:none;">
+            <button class="sidebar-group-btn" onclick="toggleGroup('admin')">🔐 Admin Panel <span class="arrow">▼</span></button>
+            <div class="sidebar-group-items" id="adminItems">
+                <button onclick="navigateTo('adminUpdate')" id="navAdminUpdate">📝 Post Update</button>
+            </div>
+        </div>
         <button onclick="navigateTo('countdown')" id="navCountdown">⏳ Exam Countdown</button>
         <button class="close-btn" onclick="closeMenu()">✕ Close Menu</button>
     </div>
-
     <!-- TOAST -->
     <div class="notification-toast" id="notificationToast">
         <span class="close-toast" onclick="hideNotification()">✕</span>
         <span id="notificationText">Notification</span>
     </div>
-
     <!-- CONFETTI CANVAS -->
     <canvas id="confettiCanvas"></canvas>
-
     <!-- TOP BAR -->
     <div class="topbar">
         <div class="logo">🐐 <span>GoatTutor</span> NG</div>
@@ -1301,15 +1387,11 @@
             <button class="menuBtn" onclick="toggleMenu()" aria-label="Open menu">☰</button>
         </div>
     </div>
-
     <!-- MAIN APP -->
     <div id="appContainer" style="display:none;">
         <div class="container">
-
-            <!-- ========== MAIN SECTION = LANDING PAGE ========== -->
+            <!-- ========== MAIN SECTION ========== -->
             <div class="page-section active" id="sectionMain">
-
-                <!-- HERO SECTION -->
                 <div class="hero-section">
                     <h1>Your <span>AI‑Powered</span> <br>University Companion</h1>
                     <p>🧠 Study smarter with AI tutors, track your GPA, earn XP, and compete with friends – all in one platform, 100% free.</p>
@@ -1323,64 +1405,25 @@
                         <span>🏅 Gamified Learning</span>
                     </div>
                 </div>
-
-                <!-- FEATURES GRID -->
                 <div class="card">
                     <h3>⚡ What GoatTutor Offers</h3>
                     <div class="feature-grid">
-                        <div class="feature-card">
-                            <div class="icon">🧠</div>
-                            <div class="title">AI Study Interface</div>
-                            <div class="desc">ChatGPT, Gemini, DeepSeek – ask anything</div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="icon">📊</div>
-                            <div class="title">GPA / CGPA Tracker</div>
-                            <div class="desc">Visual progress & degree class</div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="icon">📄</div>
-                            <div class="title">PDF Intelligence</div>
-                            <div class="desc">Upload past questions, get AI summaries & quizzes</div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="icon">🎮</div>
-                            <div class="title">Gamification</div>
-                            <div class="desc">XP, Levels, Streaks, Badges, Leaderboard</div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="icon">⏱️</div>
-                            <div class="title">Study Timer</div>
-                            <div class="desc">Pomodoro with rewards</div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="icon">🎯</div>
-                            <div class="title">UNIOSUN Tools</div>
-                            <div class="desc">Screening, Cut‑off, Academic Calendar</div>
-                        </div>
+                        <div class="feature-card"><div class="icon">🧠</div><div class="title">AI Study Interface</div><div class="desc">ChatGPT, Gemini, DeepSeek – ask anything</div></div>
+                        <div class="feature-card"><div class="icon">📊</div><div class="title">GPA / CGPA Tracker</div><div class="desc">Visual progress & degree class</div></div>
+                        <div class="feature-card"><div class="icon">📄</div><div class="title">PDF Intelligence</div><div class="desc">Upload past questions, get AI summaries & quizzes</div></div>
+                        <div class="feature-card"><div class="icon">🎮</div><div class="title">Gamification</div><div class="desc">XP, Levels, Streaks, Badges, Leaderboard</div></div>
+                        <div class="feature-card"><div class="icon">⏱️</div><div class="title">Study Timer</div><div class="desc">Pomodoro with rewards</div></div>
+                        <div class="feature-card"><div class="icon">🎯</div><div class="title">UNIOSUN Tools</div><div class="desc">Screening, Cut‑off, Academic Calendar</div></div>
                     </div>
                 </div>
-
-                <!-- HOW IT WORKS -->
                 <div class="card">
                     <h3>📖 How It Works</h3>
                     <div class="how-it-works">
-                        <div class="how-step">
-                            <span class="step-num">1</span>
-                            <span class="step-text"><strong>Pick a Topic</strong> – Type anything you're studying</span>
-                        </div>
-                        <div class="how-step">
-                            <span class="step-num">2</span>
-                            <span class="step-text"><strong>Choose a Mode</strong> – Tutorial, Quiz, Summary, Flashcards, Revision</span>
-                        </div>
-                        <div class="how-step">
-                            <span class="step-num">3</span>
-                            <span class="step-text"><strong>Let AI Teach You</strong> – Open ChatGPT, Gemini, or DeepSeek with your topic pre‑loaded</span>
-                        </div>
+                        <div class="how-step"><span class="step-num">1</span><span class="step-text"><strong>Pick a Topic</strong> – Type anything you're studying</span></div>
+                        <div class="how-step"><span class="step-num">2</span><span class="step-text"><strong>Choose a Mode</strong> – Tutorial, Quiz, Summary, Flashcards, Revision</span></div>
+                        <div class="how-step"><span class="step-num">3</span><span class="step-text"><strong>Let AI Teach You</strong> – Open ChatGPT, Gemini, or DeepSeek with your topic pre‑loaded</span></div>
                     </div>
                 </div>
-
-                <!-- DASHBOARD (quick stats) -->
                 <div class="card">
                     <h3>📊 Your Academic Dashboard</h3>
                     <div class="dash-grid">
@@ -1401,18 +1444,12 @@
                         <div class="small" style="margin-top:2px;">Next level: <span id="dashXpNext">--</span> XP needed</div>
                     </div>
                 </div>
-
-                <!-- ACHIEVEMENTS -->
                 <div class="card">
                     <h3>🏅 Achievements</h3>
                     <div id="achievementBadges" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
                 </div>
-
-                <!-- SHARE CGPA -->
                 <button onclick="shareCGPACard()" class="secondary small-btn" style="width:auto;">📸 Share CGPA Card</button>
                 <canvas id="cgpaCanvas" style="display:none;" width="600" height="400"></canvas>
-
-                <!-- STREAK -->
                 <div class="card">
                     <h3>🔥 Study Streak</h3>
                     <div class="streak-grid">
@@ -1424,8 +1461,6 @@
                     <button onclick="logStudyDay()" class="secondary small-btn" style="width:auto;">✅ Log Today's Study</button>
                     <button onclick="resetStreakStats()" class="danger small-btn" style="width:auto;">🔄 Reset Stats</button>
                 </div>
-
-                <!-- QUICK ACTIONS -->
                 <div class="card">
                     <h3>⚡ Quick Actions</h3>
                     <div class="quick-grid">
@@ -1434,33 +1469,18 @@
                         <div class="quick-card" onclick="navigateTo('timer')"><div class="icon">⏱</div><div class="label">Study Timer</div></div>
                     </div>
                 </div>
-
-                <!-- TESTIMONIALS -->
                 <div class="card">
-                    <h3>💬 What Students Say</h3>
-                    <div class="testimonial-grid">
-                        <div class="testimonial-card">
-                            <div class="quote">“GoatTutor helped me raise my CGPA from 3.2 to 4.1 – the AI tutor is a lifesaver!”</div>
-                            <div class="author">– Chidi, UNIOSUN</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="quote">“The PDF summarizer saved me hours of reading past questions. I wish I knew about this earlier.”</div>
-                            <div class="author">– Funke, UNIOSUN</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="quote">“I love the gamification – competing on the leaderboard keeps me motivated to study every day.”</div>
-                            <div class="author">– Tunde, UNIOSUN</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="quote">“The screening calculator gave me confidence before my admission screening – it was spot on.”</div>
-                            <div class="author">– Amina, UNIOSUN Aspirant</div>
-                        </div>
-                    </div>
+                    <h3>🎯 Daily Missions</h3>
+                    <div id="missionsContainer"><span class="small">Loading missions...</span></div>
                 </div>
-
-                <!-- AI INTERFACE (repeated for convenience, but it's already in the main section) -->
-                <!-- We'll keep the original AI card below, but it's redundant; we can remove or keep for quick access -->
-                <!-- I'll keep it as the last card for easy access -->
+                <div class="card">
+                    <h3>🏛️ Faculty Rankings</h3>
+                    <div id="facultyRankings"><span class="small">Loading...</span></div>
+                </div>
+                <div class="card">
+                    <h3>📰 Education & UNIOSUN Updates</h3>
+                    <div id="updatesContainer"><span class="small">Loading updates...</span></div>
+                </div>
                 <div class="card">
                     <h3>🧠 AI Study Interface</h3>
                     <textarea id="topic" placeholder="Enter topic (e.g., Calculus, Organic Chemistry)..."></textarea>
@@ -1478,11 +1498,34 @@
                     </div>
                     <div class="small" style="text-align:center;color:#94a3b8;padding:4px;">(Opens in a new tab – no API key needed)</div>
                 </div>
-
-            </div> <!-- end sectionMain -->
-
-            <!-- ========== OTHER PAGE SECTIONS (identical to before) ========== -->
-            <!-- GPA CALCULATOR -->
+                <div class="card">
+                    <h3>💬 What Students Say</h3>
+                    <div class="testimonial-grid">
+                        <div class="testimonial-card"><div class="quote">“GoatTutor helped me raise my CGPA from 3.2 to 4.1 – the AI tutor is a lifesaver!”</div><div class="author">– Chidi, UNIOSUN</div></div>
+                        <div class="testimonial-card"><div class="quote">“The PDF summarizer saved me hours of reading past questions. I wish I knew about this earlier.”</div><div class="author">– Funke, UNIOSUN</div></div>
+                        <div class="testimonial-card"><div class="quote">“I love the gamification – competing on the leaderboard keeps me motivated to study every day.”</div><div class="author">– Tunde, UNIOSUN</div></div>
+                        <div class="testimonial-card"><div class="quote">“The screening calculator gave me confidence before my admission screening – it was spot on.”</div><div class="author">– Amina, UNIOSUN Aspirant</div></div>
+                    </div>
+                </div>
+            </div>
+            <!-- ========== ADMIN UPDATE SECTION ========== -->
+            <div class="page-section" id="sectionAdminUpdate">
+                <div class="card">
+                    <h3>📝 Post Update</h3>
+                    <p class="small">Publish news, announcements, or important information for all users.</p>
+                    <div style="margin-top:8px;">
+                        <input type="text" id="updateTitle" placeholder="Title" style="margin-bottom:4px;" />
+                        <textarea id="updateContent" placeholder="Content" style="min-height:80px;"></textarea>
+                        <select id="updateCategory" style="margin-top:4px;">
+                            <option value="education">Education Sector</option>
+                            <option value="uniosun">UNIOSUN</option>
+                            <option value="general">General</option>
+                        </select>
+                        <button onclick="submitUpdate()" style="margin-top:4px;">📨 Publish Update</button>
+                    </div>
+                </div>
+            </div>
+            <!-- ========== GPA CALCULATOR ========== -->
             <div class="page-section" id="sectionGPACalculator">
                 <div class="card">
                     <h3>📚 GPA Calculator – Semester View</h3>
@@ -1492,12 +1535,7 @@
                             <input type="text" id="cname1" placeholder="Course" style="flex:2;">
                             <input type="number" id="cunit1" placeholder="Units" min="0" step="0.5" style="flex:1;">
                             <select id="cgrade1" style="flex:1;">
-                                <option value="5">A (5.0)</option>
-                                <option value="4">B (4.0)</option>
-                                <option value="3">C (3.0)</option>
-                                <option value="2">D (2.0)</option>
-                                <option value="1">E (1.0)</option>
-                                <option value="0">F (0.0)</option>
+                                <option value="5">A (5.0)</option><option value="4">B (4.0)</option><option value="3">C (3.0)</option><option value="2">D (2.0)</option><option value="1">E (1.0)</option><option value="0">F (0.0)</option>
                             </select>
                             <button onclick="removeCourseRow(1)" class="danger small-btn" style="width:auto;flex:0;">✕</button>
                         </div>
@@ -1511,8 +1549,7 @@
                     <div id="semesterGpaOut" style="margin-top:6px;font-weight:600;color:#fbbf24;text-align:center;"></div>
                 </div>
             </div>
-
-            <!-- CGPA CALCULATOR -->
+            <!-- ========== CGPA CALCULATOR ========== -->
             <div class="page-section" id="sectionCGPACalculator">
                 <div class="card">
                     <h3>📈 CGPA Calculator</h3>
@@ -1524,8 +1561,7 @@
                     <div id="cgpaOut" style="margin-top:8px;font-weight:600;color:#fbbf24;text-align:center;"></div>
                 </div>
             </div>
-
-            <!-- STUDY TIMER -->
+            <!-- ========== STUDY TIMER ========== -->
             <div class="page-section" id="sectionTimer">
                 <div class="card">
                     <h3>⏱ Study Tracker</h3>
@@ -1538,58 +1574,47 @@
                     <div class="small" style="text-align:center;margin-top:6px;">Session: <span id="sessionTimerStatus">Idle</span> | Pomodoro: <span id="pomodoroCount">0</span></div>
                 </div>
             </div>
-
-            <!-- GPA HISTORY -->
+            <!-- ========== GPA HISTORY ========== -->
             <div class="page-section" id="sectionGPAHistory">
                 <div class="card"><h3>📜 GPA History</h3><div id="gpaHistoryList"><span class="small">No history.</span></div><button onclick="clearAllSemesters()" class="danger">🗑 Clear All</button></div>
             </div>
-
-            <!-- CGPA TRACKER -->
+            <!-- ========== CGPA TRACKER ========== -->
             <div class="page-section" id="sectionCGPA">
                 <div class="card"><h3>📈 CGPA Tracker</h3><p class="small">Visual progress</p><div id="cgpaTrackerContent"><span class="small">No data yet.</span></div></div>
             </div>
-
-            <!-- PLANNER -->
+            <!-- ========== PLANNER ========== -->
             <div class="page-section" id="sectionPlanner">
                 <div class="card"><h3>📅 Weekly Study Planner</h3><textarea id="plan" placeholder="Write your plan..."></textarea><button onclick="savePlan()">💾 Save</button><button onclick="loadPlan()" class="secondary">📂 Load</button><button onclick="clearPlan()" class="danger">🗑 Clear</button><div class="small" id="planStatus"></div></div>
             </div>
-
-            <!-- ANALYZER -->
+            <!-- ========== ANALYZER ========== -->
             <div class="page-section" id="sectionAnalyzer">
                 <div class="card"><h3>📊 Performance Analyzer</h3><button onclick="analyze()">🔍 Run Analysis</button><div class="card" style="margin-top:10px;background:#0f172a;" id="analysisBox"><span class="small">No analysis yet.</span></div><button onclick="resetAnalysis()" class="secondary">🔄 Reset</button></div>
             </div>
-
-            <!-- SESSION LOG -->
+            <!-- ========== SESSION LOG ========== -->
             <div class="page-section" id="sectionSessionLog">
                 <div class="card"><h3>📝 Session Log</h3><div class="history-list" id="sessionLogList"><span class="small">No sessions.</span></div><button onclick="clearSessionLog()" class="danger">🗑 Clear</button><button onclick="exportSessionLog()" class="secondary">📋 Copy</button></div>
             </div>
-
-            <!-- ACADEMIC CALENDAR -->
+            <!-- ========== ACADEMIC CALENDAR ========== -->
             <div class="page-section" id="sectionCalendar">
                 <div class="card"><h3>📅 UNIOSUN Academic Calendar</h3><div id="academicCalendarList"><span class="small">Loading...</span></div><div style="margin-top:8px;padding:10px;background:#0f172a;border-radius:8px;text-align:center;"><div style="font-size:0.75rem;color:#94a3b8;">⏳ Next Event In</div><div id="calendarCountdown" style="font-size:1.4rem;font-weight:700;color:#fbbf24;">--</div></div><button onclick="viewFullCalendar()" class="secondary small-btn">📄 Full Calendar</button></div>
             </div>
-
-            <!-- CUT-OFF MARKS -->
+            <!-- ========== CUT-OFF MARKS ========== -->
             <div class="page-section" id="sectionCutoff">
                 <div class="card"><h3>📊 UNIOSUN Cut‑off Marks</h3><p class="small">Last year's data</p><div class="row"><input type="text" id="cutoffSearch" placeholder="Search..." style="flex:3;" onkeyup="filterCutoffMarks()"><select id="cutoffFaculty" style="flex:1;" onchange="filterCutoffMarks()"><option value="all">All Faculties</option><option value="Agriculture">Agriculture</option><option value="Education">Education</option><option value="Science">Science</option><option value="Social Sciences">Social Sciences</option><option value="Law">Law</option><option value="Medicine">Medicine</option><option value="Engineering">Engineering</option><option value="Arts">Arts</option><option value="Management">Management</option></select></div><div id="cutoffResults" style="margin-top:8px;max-height:300px;overflow-y:auto;"><span class="small">Loading...</span></div><div class="small" style="margin-top:4px;text-align:center;">GM = General Merit &nbsp;|&nbsp; IC = Indigene/Catchment</div></div>
             </div>
-
-            <!-- SCREENING CALCULATOR -->
+            <!-- ========== SCREENING CALCULATOR ========== -->
             <div class="page-section" id="sectionScreening">
                 <div class="card"><h3>🎯 UNIOSUN Screening Calculator</h3><p class="small">JAMB + O'level</p><div class="row"><input type="number" id="jambScore" placeholder="JAMB Score" min="0" max="400" style="flex:2;"></div><div class="row"><input type="text" id="subject1" placeholder="Subject 1" style="flex:2;"><select id="grade1" style="flex:1;"><option value="8">A1</option><option value="7">B2</option><option value="6">B3</option><option value="5">C4</option><option value="4">C5</option><option value="3">C6</option><option value="2">D7</option><option value="1">E8</option><option value="0">F9</option></select></div><div class="row"><input type="text" id="subject2" placeholder="Subject 2" style="flex:2;"><select id="grade2" style="flex:1;"><option value="8">A1</option><option value="7">B2</option><option value="6">B3</option><option value="5">C4</option><option value="4">C5</option><option value="3">C6</option><option value="2">D7</option><option value="1">E8</option><option value="0">F9</option></select></div><div class="row"><input type="text" id="subject3" placeholder="Subject 3" style="flex:2;"><select id="grade3" style="flex:1;"><option value="8">A1</option><option value="7">B2</option><option value="6">B3</option><option value="5">C4</option><option value="4">C5</option><option value="3">C6</option><option value="2">D7</option><option value="1">E8</option><option value="0">F9</option></select></div><div class="row"><input type="text" id="subject4" placeholder="Subject 4" style="flex:2;"><select id="grade4" style="flex:1;"><option value="8">A1</option><option value="7">B2</option><option value="6">B3</option><option value="5">C4</option><option value="4">C5</option><option value="3">C6</option><option value="2">D7</option><option value="1">E8</option><option value="0">F9</option></select></div><div class="row"><input type="text" id="subject5" placeholder="Subject 5" style="flex:2;"><select id="grade5" style="flex:1;"><option value="8">A1</option><option value="7">B2</option><option value="6">B3</option><option value="5">C4</option><option value="4">C5</option><option value="3">C6</option><option value="2">D7</option><option value="1">E8</option><option value="0">F9</option></select></div><button onclick="calcUNIOSUN()">📊 Calculate</button><div id="uniosunResult" style="margin-top:8px;font-weight:600;color:#fbbf24;text-align:center;"></div></div>
             </div>
-
-            <!-- COUNTDOWN -->
+            <!-- ========== COUNTDOWN ========== -->
             <div class="page-section" id="sectionCountdown">
                 <div class="card"><h3>⏳ Exam Countdown</h3><div class="row"><input type="date" id="examDate" style="flex:2;"><input type="text" id="examLabel" placeholder="Exam name" style="flex:2;"></div><button onclick="setCountdown()">🎯 Set</button><div class="countdown-display" id="countdownDisplay">--:--:--:--</div><div class="countdown-label" id="countdownLabel">No exam set</div><button onclick="clearCountdown()" class="secondary">🔄 Clear</button></div>
             </div>
-
-            <!-- PDF LIBRARY -->
+            <!-- ========== PDF LIBRARY ========== -->
             <div class="page-section" id="sectionPdfLibrary">
                 <div class="card"><h3>📄 PDF Library</h3><p class="small">Upload, view, summarise, quiz</p><div class="upload-area" id="uploadArea" onclick="document.getElementById('pdfUploadInput').click()"><div class="icon">📂</div><div style="font-weight:500;">Click or drag & drop PDF files</div><div style="font-size:0.75rem;color:#94a3b8;">Max 50MB</div><input type="file" id="pdfUploadInput" accept=".pdf,application/pdf" multiple style="display:none;" onchange="handleFileUpload(event)"></div><div style="margin-top:10px;"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span style="font-weight:600;">📑 My PDFs</span><div><span style="font-size:0.75rem;color:#94a3b8;" id="pdfCount">0 files</span><span style="font-size:0.7rem;color:#94a3b8;margin-left:8px;" id="storageInfo"></span></div></div><div id="pdfList" style="margin-top:6px;max-height:250px;overflow-y:auto;"><span class="small">No PDFs uploaded.</span></div></div><div class="pdf-viewer-container" id="pdfViewerContainer"><div class="pdf-viewer-placeholder" id="pdfViewerPlaceholder"><div class="icon">📄</div><div style="font-weight:500;margin-bottom:4px;">Select a PDF</div><div style="font-size:0.8rem;color:#64748b;">Click on any PDF above</div></div><iframe id="pdfViewer" style="display:none;width:100%;height:100%;border:none;"></iframe></div></div>
             </div>
-
-            <!-- GAMIFICATION STATS -->
+            <!-- ========== GAMIFICATION STATS ========== -->
             <div class="page-section" id="sectionGamification">
                 <div class="card">
                     <h3>🏆 Your Gamification Stats</h3>
@@ -1612,15 +1637,12 @@
                     </div>
                     <div style="margin-top:12px;">
                         <h4 style="font-size:0.85rem;margin-bottom:6px;">🏅 Your Badges</h4>
-                        <div class="badge-grid" id="gBadgeGrid">
-                            <span class="small">Complete activities to unlock badges!</span>
-                        </div>
+                        <div class="badge-grid" id="gBadgeGrid"><span class="small">Complete activities to unlock badges!</span></div>
                     </div>
                 </div>
                 <button onclick="forceSyncGamification()" class="secondary small-btn" style="width:auto;">🔄 Sync Stats</button>
             </div>
-
-            <!-- LEADERBOARD -->
+            <!-- ========== LEADERBOARD ========== -->
             <div class="page-section" id="sectionLeaderboard">
                 <div class="card">
                     <h3>📊 Global Leaderboard</h3>
@@ -1634,8 +1656,7 @@
                     <div id="leaderboardList"><span class="small">Loading...</span></div>
                 </div>
             </div>
-
-            <!-- DAILY CHALLENGE -->
+            <!-- ========== DAILY CHALLENGE ========== -->
             <div class="page-section" id="sectionChallenge">
                 <div class="card">
                     <h3>🎯 Daily Challenge – UNIOSUN Rain Semester</h3>
@@ -1660,8 +1681,7 @@
                     </div>
                 </div>
             </div>
-
-            <!-- FEEDBACK -->
+            <!-- ========== FEEDBACK ========== -->
             <div class="page-section" id="sectionFeedback">
                 <div class="card">
                     <h3>💬 Anonymous Feedback</h3>
@@ -1677,13 +1697,9 @@
                     <div class="small" id="feedbackStatus" style="text-align:center;margin-top:6px;"></div>
                 </div>
             </div>
-
-        </div> <!-- end container -->
-    </div> <!-- end appContainer -->
-
-    <!-- Back to Top Button -->
+        </div>
+    </div>
     <button id="backToTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆</button>
-
     <script>
         // ─── FIREBASE CONFIG ───
         const firebaseConfig = {
@@ -1694,7 +1710,6 @@
             messagingSenderId: "164294943184",
             appId: "1:164294943184:web:cd4921b4bdd929b738d9d5"
         };
-
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
@@ -1710,6 +1725,7 @@
         let currentUser = null;
         let userDocRef = null;
         let gamificationData = { xp: 0, level: 1, streak: 0, badges: [] };
+        const ADMIN_UID = 'iPogwKdntXVgd5lBGzwBF9VGFVE3';
 
         // ─── LEVEL SYSTEM ───
         const LEVELS = [
@@ -1730,6 +1746,14 @@
             { id: 'perfect_score', name: 'Perfect Score', icon: '⭐', desc: 'Get 100% on a quiz' },
             { id: 'top_10', name: 'Top 10', icon: '🏅', desc: 'Rank in top 10 leaderboard' },
             { id: 'xp_5000', name: 'XP Collector', icon: '💪', desc: 'Reach 5,000 XP' },
+        ];
+
+        // ─── MISSIONS DEFINITIONS ───
+        const MISSION_TYPES = [
+            { type: 'read_note', label: '📖 Read Notes', target: 5, xpReward: 10 },
+            { type: 'finish_quiz', label: '📝 Finish Quiz', target: 1, xpReward: 15 },
+            { type: 'complete_revision', label: '🔄 Complete Revision', target: 2, xpReward: 12 },
+            { type: 'answer_cbt', label: '💡 Answer CBT Questions', target: 20, xpReward: 20 },
         ];
 
         // ─── ACADEMIC EVENTS ───
@@ -1810,7 +1834,6 @@
         // ─── THEME TOGGLE ───
         const themes = ['default', 'ocean', 'purple', 'forest'];
         let currentTheme = localStorage.getItem('theme') || 'default';
-        applyTheme(currentTheme);
 
         function cycleTheme() {
             let idx = themes.indexOf(currentTheme) + 1;
@@ -1824,6 +1847,7 @@
             if (theme !== 'default') document.body.classList.add('theme-' + theme);
             localStorage.setItem('theme', theme);
         }
+        applyTheme(currentTheme);
 
         // ─── CONFETTI ───
         function fireConfetti() {
@@ -1833,7 +1857,6 @@
             canvas.height = window.innerHeight;
             const particles = [];
             const colors = ['#fbbf24', '#ef4444', '#22c55e', '#3b82f6', '#a78bfa', '#ec4899', '#f97316'];
-
             for (let i = 0; i < 150; i++) {
                 particles.push({
                     x: Math.random() * canvas.width,
@@ -1847,7 +1870,6 @@
                     rotSpeed: (Math.random() - 0.5) * 10,
                 });
             }
-
             let frames = 0;
             const maxFrames = 120;
 
@@ -1911,32 +1933,30 @@
                 const data = doc.data();
                 const newXP = (data.xp || 0) + amount;
                 const newLevel = getLevelFromXP(newXP);
-
                 await userRef.update({
                     xp: newXP,
                     level: newLevel,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-
                 await db.collection('xpTransactions').add({
                     userId: currentUser.uid,
                     amount: amount,
                     activity: activity,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-
                 const oldLevel = data.level || 1;
                 if (newLevel > oldLevel) {
                     fireConfetti();
                     showNotification(`🎉 LEVEL UP! You're now a ${getLevelData(newLevel).name} ${getLevelData(newLevel).icon}`,
                         5000);
                 }
-
                 await checkBadges();
                 updateGamificationUI();
                 updateDash();
                 showNotification(`⚡ +${amount} XP (${activity})`, 2000);
-
+                if (['note_read', 'finish_quiz', 'complete_revision', 'answer_cbt'].includes(activity)) {
+                    await updateMissionProgress(activity);
+                }
             } catch (err) {
                 console.error('XP award error:', err);
             }
@@ -1952,27 +1972,21 @@
                 const data = doc.data();
                 const unlocked = data.badges || [];
                 let newBadges = [];
-
                 const quizAttempts = await db.collection('quizAttempts')
                     .where('userId', '==', currentUser.uid)
                     .get();
-
                 const totalQuizzes = quizAttempts.size;
                 const perfectScores = quizAttempts.docs.filter(d => d.data().score === 100).length;
                 const highScores = quizAttempts.docs.filter(d => d.data().score >= 90).length;
-
                 const streak = data.streak || 0;
                 const xp = data.xp || 0;
-
                 const notesRead = await db.collection('xpTransactions')
                     .where('userId', '==', currentUser.uid)
                     .where('activity', '==', 'note_read')
                     .get();
-
                 for (const badge of BADGE_DEFS) {
                     if (unlocked.includes(badge.id)) continue;
                     let conditionMet = false;
-
                     switch (badge.id) {
                         case 'first_quiz':
                             conditionMet = totalQuizzes >= 1;
@@ -2005,14 +2019,12 @@
                             conditionMet = xp >= 5000;
                             break;
                     }
-
                     if (conditionMet) {
                         newBadges.push(badge.id);
                         fireConfetti();
                         showNotification(`🏅 Badge Unlocked: ${badge.icon} ${badge.name}`, 4000);
                     }
                 }
-
                 if (newBadges.length > 0) {
                     await userRef.update({
                         badges: firebase.firestore.FieldValue.arrayUnion(...newBadges),
@@ -2022,9 +2034,7 @@
                         await awardXP(50, 'badge_unlocked');
                     }
                 }
-
                 updateGamificationUI();
-
             } catch (err) {
                 console.error('Badge check error:', err);
             }
@@ -2040,40 +2050,31 @@
                 const data = doc.data();
                 const today = new Date().toDateString();
                 const lastActivity = data.lastActivityDate || '';
-
                 let currentStreak = data.streak || 0;
                 let bestStreak = data.bestStreak || 0;
-
                 if (lastActivity === today) return;
-
                 const yesterday = new Date();
                 yesterday.setDate(yesterday.getDate() - 1);
                 const yesterdayStr = yesterday.toDateString();
-
                 if (lastActivity === yesterdayStr) {
                     currentStreak += 1;
                 } else {
                     currentStreak = 1;
                 }
-
                 if (currentStreak > bestStreak) {
                     bestStreak = currentStreak;
                 }
-
                 await userRef.update({
                     streak: currentStreak,
                     bestStreak: bestStreak,
                     lastActivityDate: today,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-
                 if (currentStreak % 7 === 0) {
                     await awardXP(currentStreak * 10, 'streak_bonus');
                 }
-
                 updateGamificationUI();
                 updateStreakUI();
-
             } catch (err) {
                 console.error('Streak update error:', err);
             }
@@ -2093,12 +2094,10 @@
                 const levelData = getLevelData(level);
                 const nextXP = getNextLevelXP(level);
                 const progress = getXPProgress(xp, level);
-
                 document.getElementById('dashLevel').textContent = `${levelData.icon} ${levelData.name} (Lv.${level})`;
                 document.getElementById('dashXP').textContent = xp;
                 document.getElementById('dashXpBar').style.width = progress + '%';
                 document.getElementById('dashXpNext').textContent = nextXP === Infinity ? 'MAX' : (nextXP - xp);
-
                 document.getElementById('gLevelIcon').textContent = levelData.icon;
                 document.getElementById('gLevelName').textContent = levelData.name;
                 document.getElementById('gLevelNum').textContent = level;
@@ -2108,30 +2107,23 @@
                 document.getElementById('gXpNext').textContent = nextXP === Infinity ? 'MAX' : nextXP;
                 document.getElementById('gStreak').textContent = streak;
                 document.getElementById('gBadges').textContent = badges.length;
-
                 const grid = document.getElementById('gBadgeGrid');
                 grid.innerHTML = '';
                 BADGE_DEFS.forEach(b => {
                     const unlocked = badges.includes(b.id);
                     const div = document.createElement('div');
                     div.className = `badge-item ${unlocked ? 'unlocked' : 'locked'}`;
-                    div.innerHTML = `
-                        <div class="icon">${b.icon}</div>
-                        <div class="name">${b.name}</div>
-                        <div style="font-size:0.5rem;color:#64748b;">${unlocked ? '✅' : '🔒'}</div>
-                    `;
+                    div.innerHTML =
+                        `<div class="icon">${b.icon}</div><div class="name">${b.name}</div><div style="font-size:0.5rem;color:#64748b;">${unlocked ? '✅' : '🔒'}</div>`;
                     grid.appendChild(div);
                 });
-
                 const achContainer = document.getElementById('achievementBadges');
                 achContainer.innerHTML = badges.map(id => {
                     const b = BADGE_DEFS.find(bd => bd.id === id);
                     return b ? `<span class="badge">${b.icon} ${b.name}</span>` : '';
                 }).join('');
-
                 localStorage.setItem('gamification', JSON.stringify({ xp, level, streak, badges }));
                 gamificationData = { xp, level, streak, badges };
-
             }).catch(err => console.error('UI update error:', err));
         }
 
@@ -2140,21 +2132,18 @@
             showNotification('🔄 Stats synced!', 2000);
         }
 
-        // ─── LEADERBOARD (FIXED – NO INDEX REQUIRED) ───
+        // ─── LEADERBOARD ───
         async function loadLeaderboard(period = 'all_time') {
             const container = document.getElementById('leaderboardList');
             container.innerHTML = '<span class="small">⏳ Loading leaderboard...</span>';
-
             try {
                 const usersSnapshot = await db.collection('users')
                     .limit(100)
                     .get();
-
                 if (usersSnapshot.empty) {
                     container.innerHTML = '<span class="small">No users yet. Start earning XP to appear!</span>';
                     return;
                 }
-
                 const entries = usersSnapshot.docs.map(doc => {
                     const data = doc.data();
                     return {
@@ -2168,10 +2157,8 @@
                         badgeCount: (data.badges || []).length,
                     };
                 });
-
                 entries.sort((a, b) => b.xp - a.xp);
                 renderLeaderboardEntries(entries, container);
-
             } catch (err) {
                 console.error('Leaderboard error:', err);
                 const localXP = parseInt(localStorage.getItem('xp')) || 0;
@@ -2199,14 +2186,11 @@
                 container.innerHTML = '<span class="small">No entries yet. Start earning XP!</span>';
                 return;
             }
-
             let html = '';
             let rank = 1;
             const userUid = currentUser ? currentUser.uid : null;
             let userRank = null;
-
             entries.sort((a, b) => b.xp - a.xp);
-
             for (const entry of entries) {
                 const isUser = entry.userId === userUid;
                 if (isUser) userRank = rank;
@@ -2222,7 +2206,6 @@
                 `;
                 rank++;
             }
-
             if (userRank && userRank > 20) {
                 html += `
                     <div style="margin-top:8px;padding:8px;border:1px dashed #fbbf24;border-radius:8px;text-align:center;">
@@ -2230,390 +2213,232 @@
                     </div>
                 `;
             }
-
             container.innerHTML = html;
         }
 
-        // ─── 🎯 DAILY CHALLENGE – SHUFFLED OPTIONS ───
-        const QUESTION_BANK = {
-            'MTH 102': [
-                { question: 'Find the derivative of y = ln(sin(x²)).',
-                    options: ['2x cot(x²)', '2x tan(x²)', '2x sec²(x²)', '2x csc²(x²)'], correctIndex: 0 },
-                { question: 'Evaluate ∫₀^π/2 sin²(x) dx.', options: ['π/4', 'π/2', 'π/8', '1/2'], correctIndex: 0 },
-                { question: 'Solve dy/dx = y(1-y), y(0)=0.5.', options: ['y = 1/(1+e⁻ˣ)', 'y = 1/(1+eˣ)',
-                        'y = eˣ/(1+eˣ)', 'y = 1/(1+e⁻²ˣ)'
-                    ], correctIndex: 0 },
-                { question: 'The Laplace transform of tⁿ is:', options: ['n!/s^(n+1)', 'n!/s^n', '1/s^(n+1)',
-                        'n!/s^(n-1)'
-                    ], correctIndex: 0 },
-                { question: 'The Fourier series of a square wave has only:', options: ['odd harmonics', 'even harmonics',
-                        'all harmonics', 'no harmonics'
-                    ], correctIndex: 0 },
-                { question: 'The mean of a Poisson distribution with parameter λ is:', options: ['λ', 'λ²', '1/λ', '√λ'],
-                    correctIndex: 0 },
-                { question: 'The variance of a binomial distribution with n trials and probability p is:', options: [
-                        'np(1-p)', 'np', 'n²p', 'np(1+p)'
-                    ], correctIndex: 0 },
-                { question: 'The determinant of a 3×3 matrix A is zero. What can we conclude?', options: [
-                        'A is singular', 'A is invertible', 'A is diagonalizable', 'A is symmetric'
-                    ], correctIndex: 0 },
-                { question: 'The eigenvalue of a projection matrix is either 0 or:', options: ['1', '2', '-1', '0.5'],
-                    correctIndex: 0 },
-                { question: 'The gradient of f(x,y)=x²+y² at (1,1) is:', options: ['(2,2)', '(1,1)', '(0,0)', '(2,0)'],
-                    correctIndex: 0 },
-            ],
-            'CHM 102': [
-                { question: 'Which of the following is the most stable carbocation?', options: ['tertiary', 'secondary',
-                        'primary', 'methyl'
-                    ], correctIndex: 0 },
-                { question: 'The IUPAC name of CH₃–CH(OH)–CH₂–CH₃ is:', options: ['butan-2-ol', 'butan-1-ol',
-                        '2-methylpropan-1-ol', 'butan-3-ol'
-                    ], correctIndex: 0 },
-                { question: 'The product of the addition of HBr to propene (without peroxide) is:', options: [
-                        '2-bromopropane', '1-bromopropane', '1,2-dibromopropane', 'propan-2-ol'
-                    ], correctIndex: 0 },
-                { question: 'Which of the following is an aromatic compound?', options: ['benzene', 'cyclohexane',
-                        'cyclohexene', 'hexane'
-                    ], correctIndex: 0 },
-                { question: 'The reaction of an alkene with KMnO₄ gives a:', options: ['diol', 'ketone', 'carboxylic acid',
-                        'alkane'
-                    ], correctIndex: 0 },
-                { question: 'The basicity of amines in aqueous solution follows the order:', options: [
-                        'tertiary > secondary > primary', 'primary > secondary > tertiary',
-                        'secondary > primary > tertiary', 'all are equal'
-                    ], correctIndex: 0 },
-                { question: 'The hydrolysis of an ester in basic medium is called:', options: ['saponification',
-                        'esterification', 'hydrogenation', 'dehydration'
-                    ], correctIndex: 0 },
-                { question: 'The pKa of acetic acid is approximately:', options: ['4.76', '1.0', '7.0', '10.0'],
-                    correctIndex: 0 },
-                { question: 'The Markovnikov rule applies to the addition of:', options: ['HX to alkenes',
-                        'H₂O to alkenes', 'H₂ to alkenes', 'X₂ to alkenes'
-                    ], correctIndex: 0 },
-                { question: 'The anti‑Markovnikov addition of HBr requires:', options: ['peroxide', 'acid', 'base',
-                        'heat'
-                    ], correctIndex: 0 },
-            ],
-            'PHY 102': [
-                { question: 'The electric field inside a charged conductor is:', options: ['zero', 'maximum',
-                        'minimum', 'constant'
-                    ], correctIndex: 0 },
-                { question: 'The capacitance of a parallel‑plate capacitor is proportional to:', options: ['area/distance',
-                        'distance/area', 'area × distance', '1/(area × distance)'
-                    ], correctIndex: 0 },
-                { question: 'The magnetic force on a moving charge is given by:', options: ['q v × B', 'q E', 'q v B',
-                        'q B'
-                    ], correctIndex: 0 },
-                { question: 'The law of electromagnetic induction is due to:', options: ['Faraday', 'Lenz', 'Ampere',
-                        'Gauss'
-                    ], correctIndex: 0 },
-                { question: 'The inductance of a solenoid is proportional to:', options: ['N²A/l', 'N A/l', 'N²/l',
-                        'A/l'
-                    ], correctIndex: 0 },
-                { question: 'The energy stored in an inductor is:', options: ['1/2 L I²', '1/2 C V²', '1/2 I² R',
-                        '1/2 L I'
-                    ], correctIndex: 0 },
-                { question: 'The speed of light in a medium is:', options: ['c/n', 'c n', 'c', 'n/c'], correctIndex: 0 },
-                { question: 'The critical angle for total internal reflection occurs when:', options: [
-                        'sin θc = n₂/n₁', 'sin θc = n₁/n₂', 'θc = 90°', 'θc = 0°'
-                    ], correctIndex: 0 },
-                { question: 'The Bohr model postulates that the angular momentum of an electron is quantised as:',
-                    options: ['n h/2π', 'n h', 'n h/π', 'n h/4π'], correctIndex: 0 },
-                { question: 'The de Broglie wavelength of a particle is:', options: ['h/p', 'p/h', 'h/p²', 'p²/h'],
-                    correctIndex: 0 },
-            ],
-            'BIO 102': [
-                { question: 'Which of the following is NOT a characteristic of all animals?', options: ['Photosynthetic',
-                        'Heterotrophic', 'Motile at some stage', 'Multicellular'
-                    ], correctIndex: 0 },
-                { question: 'The phylum with the largest number of species is:', options: ['Arthropoda', 'Mollusca',
-                        'Chordata', 'Annelida'
-                    ], correctIndex: 0 },
-                { question: 'In which class do animals have feathers?', options: ['Aves', 'Mammalia', 'Reptilia',
-                        'Amphibia'
-                    ], correctIndex: 0 },
-                { question: 'The notochord is a feature of the phylum:', options: ['Chordata', 'Echinodermata',
-                        'Hemichordata', 'Urochordata'
-                    ], correctIndex: 0 },
-                { question: 'Which of the following is a characteristic of angiosperms?', options: ['Flowers and fruits',
-                        'Naked seeds', 'Vascular tissue', 'Sporophylls'
-                    ], correctIndex: 0 },
-                { question: 'The main photosynthetic pigment in plants is:', options: ['chlorophyll a', 'chlorophyll b',
-                        'carotenoids', 'phycobilins'
-                    ], correctIndex: 0 },
-                { question: 'The alternation of generations in plants involves:', options: ['sporophyte and gametophyte',
-                        'haploid and diploid', 'meiosis and mitosis', 'all of the above'
-                    ], correctIndex: 3 },
-                { question: 'The end product of glycolysis is:', options: ['pyruvate', 'acetyl‑CoA', 'lactate',
-                        'ethanol'
-                    ], correctIndex: 0 },
-                { question: 'The Krebs cycle occurs in the:', options: ['mitochondrial matrix', 'cytoplasm',
-                        'inner mitochondrial membrane', 'intermembrane space'
-                    ], correctIndex: 0 },
-                { question: 'The electron transport chain produces ATP via:', options: ['oxidative phosphorylation',
-                        'substrate‑level phosphorylation', 'photophosphorylation', 'cyclic phosphorylation'
-                    ], correctIndex: 0 },
-            ],
-            'GNS 102': [
-                { question: 'The correct plural of "analysis" is:', options: ['analyses', 'analysises', 'analysi',
-                        'analysiss'
-                    ], correctIndex: 0 },
-                { question: 'Which of the following sentences is grammatically correct?', options: [
-                        'She and I are going.', 'Her and me are going.', 'She and me are going.', 'Her and I are going.'
-                    ], correctIndex: 0 },
-                { question: 'The word "benevolent" is closest in meaning to:', options: ['kind', 'wicked', 'lazy',
-                        'angry'
-                    ], correctIndex: 0 },
-                { question: 'The antonym of "taciturn" is:', options: ['loquacious', 'quiet', 'shy', 'reserved'],
-                    correctIndex: 0 },
-                { question: 'The phrase "kick the bucket" is an example of:', options: ['idiom', 'proverb',
-                        'collocation', 'euphemism'
-                    ], correctIndex: 0 },
-                { question: 'The suffix "-tion" is used to form:', options: ['nouns', 'verbs', 'adjectives', 'adverbs'],
-                    correctIndex: 0 },
-                { question: 'The correct spelling is:', options: ['accommodate', 'accomodate', 'acommodate',
-                        'accomodation'
-                    ], correctIndex: 0 },
-                { question: 'The use of "affect" vs. "effect" is often confused. "Affect" is usually a:', options: [
-                        'verb', 'noun', 'adjective', 'adverb'
-                    ], correctIndex: 0 },
-                { question: 'The term "syntax" refers to:', options: ['sentence structure', 'word meaning',
-                        'sound system', 'social use of language'
-                    ], correctIndex: 0 },
-                { question: 'The study of meaning in language is called:', options: ['semantics', 'phonology',
-                        'morphology', 'pragmatics'
-                    ], correctIndex: 0 },
-            ],
-            'GNS 104': [
-                { question: 'The 1963 Republican Constitution of Nigeria introduced:', options: ['a presidential system',
-                        'a parliamentary system', 'a federal system', 'a unitary system'
-                    ], correctIndex: 0 },
-                { question: 'The first military coup in Nigeria took place in:', options: ['1966', '1967', '1965',
-                        '1968'
-                    ], correctIndex: 0 },
-                { question: 'The Nigerian civil war ended in:', options: ['1970', '1969', '1971', '1968'],
-                    correctIndex: 0 },
-                { question: 'The major ethnic groups in Nigeria are the:', options: ['Hausa, Yoruba, Igbo',
-                        'Yoruba, Igbo, Fulani', 'Hausa, Yoruba, Fulani', 'Igbo, Fulani, Tiv'
-                    ], correctIndex: 0 },
-                { question: 'The capital of Nigeria was moved from Lagos to Abuja in:', options: ['1991', '1981',
-                        '1976', '1986'
-                    ], correctIndex: 0 },
-                { question: 'The Nigerian national assembly is composed of the:', options: ['Senate and House of Representatives',
-                        'House of Commons and House of Lords', 'Congress and Senate', 'Parliament and Council'
-                    ], correctIndex: 0 },
-                { question: 'The first executive president of Nigeria was:', options: ['Shehu Shagari', 'Nnamdi Azikiwe',
-                        'Olusegun Obasanjo', 'Yakubu Gowon'
-                    ], correctIndex: 0 },
-                { question: 'The Nigerian constitution is based on the:', options: ['American model', 'British model',
-                        'French model', 'Russian model'
-                    ], correctIndex: 0 },
-                { question: 'The principle of federalism in Nigeria means:', options: ['shared power between central and state governments',
-                        'central government controls everything', 'states are independent', 'no power sharing'
-                    ], correctIndex: 0 },
-                { question: 'The Nigerian currency is the:', options: ['Naira', 'Cedi', 'Shilling', 'Pound'],
-                    correctIndex: 0 },
-            ]
-        };
-
-        // ─── SHUFFLE OPTIONS ───
-        function shuffleOptions(question) {
-            const indices = [0, 1, 2, 3];
-            for (let i = indices.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [indices[i], indices[j]] = [indices[j], indices[i]];
+        // ─── MISSIONS SYSTEM ───
+        async function generateDailyMissions() {
+            if (!currentUser) return;
+            const today = new Date().toISOString().split('T')[0];
+            try {
+                const missionsRef = db.collection('missions');
+                const existing = await missionsRef
+                    .where('userId', '==', currentUser.uid)
+                    .where('date', '==', today)
+                    .get();
+                if (!existing.empty) return;
+                const shuffled = MISSION_TYPES.sort(() => Math.random() - 0.5);
+                const selected = shuffled.slice(0, 3);
+                await missionsRef.add({
+                    userId: currentUser.uid,
+                    date: today,
+                    tasks: selected.map(m => ({
+                        type: m.type,
+                        label: m.label,
+                        target: m.target,
+                        progress: 0,
+                        completed: false,
+                        xpReward: m.xpReward,
+                    })),
+                    allCompleted: false,
+                    bonusXpRewarded: false,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                });
+                renderMissions();
+            } catch (err) {
+                console.error('Generate missions error:', err);
             }
-            const oldOptions = question.options;
-            const newOptions = indices.map(i => oldOptions[i]);
-            const newCorrect = indices.indexOf(question.correctIndex);
-            return {
-                ...question,
-                options: newOptions,
-                correctIndex: newCorrect
-            };
         }
 
-        function shuffleArray(arr) {
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
+        async function getTodayMissions() {
+            if (!currentUser) return null;
+            const today = new Date().toISOString().split('T')[0];
+            try {
+                const snap = await db.collection('missions')
+                    .where('userId', '==', currentUser.uid)
+                    .where('date', '==', today)
+                    .get();
+                if (snap.empty) return null;
+                return { id: snap.docs[0].id, ...snap.docs[0].data() };
+            } catch (err) {
+                console.error('Get missions error:', err);
+                return null;
             }
-            return arr;
         }
 
-        function getRandomSubject() {
-            const subjects = Object.keys(QUESTION_BANK);
-            return subjects[Math.floor(Math.random() * subjects.length)];
-        }
-
-        function getQuestionsForSubject(subject) {
-            const qs = QUESTION_BANK[subject] || [];
-            const shuffledQs = shuffleArray([...qs]);
-            return shuffledQs.slice(0, 5).map(q => shuffleOptions(q));
-        }
-
-        // ─── DAILY CHALLENGE ENGINE ───
-        let challengeQuestions = [];
-        let challengeIndex = 0;
-        let challengeScore = 0;
-        let challengeAnswered = false;
-
-        function startDailyChallenge(subject) {
-            if (subject === 'random' || !subject) subject = getRandomSubject();
-            let questions = getQuestionsForSubject(subject);
-            if (questions.length < 5) {
-                subject = getRandomSubject();
-                questions = getQuestionsForSubject(subject);
-            }
-            challengeQuestions = questions;
-            challengeIndex = 0;
-            challengeScore = 0;
-            challengeAnswered = false;
-
-            document.getElementById('challengeQuestions').style.display = 'block';
-            document.getElementById('challengeResult').style.display = 'none';
-            document.getElementById('startChallengeBtn').style.display = 'none';
-
-            const containerDiv = document.getElementById('challengeContainer');
-            const existing = containerDiv.querySelector('.small');
-            if (existing) existing.remove();
-            const subjectLabel = document.createElement('p');
-            subjectLabel.className = 'small';
-            subjectLabel.style.margin = '4px 0';
-            subjectLabel.textContent = `📚 Subject: ${subject} • ${challengeQuestions.length} questions`;
-            containerDiv.insertBefore(subjectLabel, containerDiv.firstChild);
-
-            renderChallengeQuestion();
-        }
-
-        function renderChallengeQuestion() {
-            const container = document.getElementById('challengeQuestions');
-            if (challengeIndex >= challengeQuestions.length) { finishChallenge(); return; }
-            const q = challengeQuestions[challengeIndex];
-            container.innerHTML = `
-                <div style="margin-bottom:8px;">
-                    <span class="small">Question ${challengeIndex+1} of ${challengeQuestions.length}</span>
-                    <div style="font-size:1rem;font-weight:500;margin:8px 0;">${q.question}</div>
-                </div>
-                <div id="challengeOptions">
-                    ${q.options.map((opt, idx) => `
-                        <button class="quiz-option" data-index="${idx}" onclick="answerChallenge(${idx})">
-                            ${String.fromCharCode(65 + idx)}. ${opt}
-                        </button>
-                    `).join('')}
-                </div>
-                <div class="small" style="margin-top:6px;">Score: <span id="challengeLiveScore">${challengeScore}</span></div>
-            `;
-            challengeAnswered = false;
-        }
-
-        function answerChallenge(index) {
-            if (challengeAnswered) return;
-            challengeAnswered = true;
-            const q = challengeQuestions[challengeIndex];
-            const buttons = document.querySelectorAll('#challengeOptions .quiz-option');
-            buttons.forEach((btn, i) => {
-                btn.classList.add('disabled');
-                if (i === q.correctIndex) btn.classList.add('correct');
-                if (i === index && i !== q.correctIndex) btn.classList.add('wrong');
+        async function updateMissionProgress(activityType) {
+            const mission = await getTodayMissions();
+            if (!mission || mission.allCompleted) return;
+            let updated = false;
+            mission.tasks.forEach(task => {
+                if (task.type === activityType && !task.completed) {
+                    task.progress++;
+                    if (task.progress >= task.target) {
+                        task.completed = true;
+                        awardXP(task.xpReward, 'mission_complete');
+                        showNotification(`✅ Mission complete: ${task.label} (+${task.xpReward} XP)`);
+                    }
+                    updated = true;
+                }
             });
-            if (index === q.correctIndex) {
-                challengeScore++;
-                document.getElementById('challengeLiveScore').textContent = challengeScore;
-            }
-            setTimeout(() => { challengeIndex++;
-                renderChallengeQuestion(); }, 1500);
-        }
-
-        function finishChallenge() {
-            document.getElementById('challengeQuestions').style.display = 'none';
-            document.getElementById('challengeResult').style.display = 'block';
-            document.getElementById('challengeScore').textContent = `${challengeScore}/${challengeQuestions.length}`;
-            const xpEarned = challengeScore * 10 + (challengeScore === challengeQuestions.length ? 20 : 0);
-            document.getElementById('challengeXP').textContent = xpEarned;
-            if (xpEarned > 0) {
-                awardXP(xpEarned, 'daily_challenge');
-                if (challengeScore === challengeQuestions.length) { fireConfetti();
-                    showNotification('🎉 Perfect Score! Bonus XP awarded!', 3000); }
-            }
-            document.getElementById('startChallengeBtn').style.display = 'inline-block';
-            document.getElementById('startChallengeBtn').textContent = '🔄 Try Again';
-        }
-
-        // ─── DAILY CHALLENGE SCHEDULER ───
-        function checkDailyChallengeReset() {
-            const today = new Date().toDateString();
-            const lastChallenge = localStorage.getItem('lastChallengeDate');
-            if (lastChallenge !== today) {
-                localStorage.setItem('lastChallengeDate', today);
-                localStorage.setItem('challengeCompleted', 'false');
-                document.getElementById('challengeResult').style.display = 'none';
-                document.getElementById('challengeQuestions').style.display = 'none';
-                document.getElementById('startChallengeBtn').style.display = 'inline-block';
-                document.getElementById('startChallengeBtn').textContent = '🚀 Start Challenge';
-                const container = document.getElementById('challengeContainer');
-                const existing = container.querySelector('.small');
-                if (existing) existing.remove();
+            if (updated) {
+                const allDone = mission.tasks.every(t => t.completed);
+                if (allDone && !mission.bonusXpRewarded) {
+                    mission.bonusXpRewarded = true;
+                    awardXP(20, 'mission_bonus');
+                    showNotification('🎉 All missions complete! Bonus +20 XP!');
+                    fireConfetti();
+                }
+                await db.collection('missions').doc(mission.id).update({
+                    tasks: mission.tasks,
+                    allCompleted: allDone,
+                    bonusXpRewarded: mission.bonusXpRewarded,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                renderMissions();
             }
         }
 
-        // ─── STREAK ───
-        function getStreakStats() {
-            const streak = parseInt(localStorage.getItem('streak')) || 0;
-            const bestStreak = parseInt(localStorage.getItem('bestStreak')) || 0;
-            const totalDays = parseInt(localStorage.getItem('totalStudyDays')) || 0;
-            return { streak, bestStreak, totalDays };
+        async function renderMissions() {
+            const container = document.getElementById('missionsContainer');
+            if (!container) return;
+            const mission = await getTodayMissions();
+            if (!mission || !mission.tasks) {
+                container.innerHTML =
+                    `<div class="small" style="text-align:center;padding:10px;">No missions for today. Check back tomorrow! 🎯</div>`;
+                return;
+            }
+            let html = `<div style="display:flex;flex-direction:column;gap:6px;">`;
+            mission.tasks.forEach(task => {
+                const progress = Math.min((task.progress / task.target) * 100, 100);
+                const done = task.completed ? '✅' : '⏳';
+                const isComplete = task.completed;
+                html += `
+                    <div class="mission-item ${isComplete ? 'completed' : ''}">
+                        <span class="icon">${task.label.split(' ')[0]}</span>
+                        <div class="info">
+                            <div class="label">${task.label}</div>
+                            <div class="progress-text">${task.progress}/${task.target}</div>
+                            <div class="progress-bar"><div class="fill" style="width:${progress}%;"></div></div>
+                        </div>
+                        <span class="status">${done}</span>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            if (mission.allCompleted) {
+                html += `<div style="text-align:center;margin-top:8px;color:#fbbf24;">🎉 All missions complete! +20 XP bonus!</div>`;
+            }
+            container.innerHTML = html;
         }
 
-        function updateStreakUI() {
-            const stats = getStreakStats();
-            document.getElementById('currentStreak').innerText = stats.streak;
-            document.getElementById('bestStreak').innerText = stats.bestStreak;
-            document.getElementById('totalStudyDays').innerText = stats.totalDays;
-            document.getElementById('streakDisplay').innerText = stats.streak;
-            const badge = document.getElementById('streakBadge');
-            if (stats.streak >= 100) badge.innerText = '🏆 Legendary';
-            else if (stats.streak >= 30) badge.innerText = '🥇 Elite';
-            else if (stats.streak >= 14) badge.innerText = '🥈 Dedicated';
-            else if (stats.streak >= 7) badge.innerText = '🥉 Consistent';
-            else if (stats.streak >= 3) badge.innerText = '💪 Getting Started';
-            else badge.innerText = '📚 Start your streak!';
+        // ─── FACULTY RANKINGS ───
+        async function loadFacultyRankings() {
+            const container = document.getElementById('facultyRankings');
+            if (!container) return;
+            try {
+                const users = await db.collection('users').get();
+                const facultyMap = {};
+                users.forEach(doc => {
+                    const data = doc.data();
+                    const faculty = data.faculty || 'Unknown';
+                    if (!facultyMap[faculty]) {
+                        facultyMap[faculty] = { totalXP: 0, count: 0 };
+                    }
+                    facultyMap[faculty].totalXP += (data.xp || 0);
+                    facultyMap[faculty].count++;
+                });
+                const sorted = Object.entries(facultyMap)
+                    .map(([name, data]) => ({ name, ...data }))
+                    .sort((a, b) => b.totalXP - a.totalXP);
+                if (sorted.length === 0) {
+                    container.innerHTML = '<span class="small">No faculty data yet.</span>';
+                    return;
+                }
+                let html = `<div style="display:flex;flex-direction:column;gap:4px;">`;
+                sorted.forEach((faculty, index) => {
+                    const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`;
+                    const isTop = index < 3;
+                    html += `
+                        <div class="faculty-rank-item ${isTop ? 'top' : ''}">
+                            <span class="name">${medal} ${faculty.name}</span>
+                            <span class="stats">${faculty.totalXP.toLocaleString()} XP • ${faculty.count} students</span>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+                container.innerHTML = html;
+            } catch (err) {
+                console.error('Faculty rankings error:', err);
+                container.innerHTML = '<span class="small">Error loading faculty rankings.</span>';
+            }
         }
 
-        function logStudyDay() {
-            const today = new Date().toDateString();
-            const lastStudy = localStorage.getItem('lastStudyDay');
-            const streak = parseInt(localStorage.getItem('streak')) || 0;
-            const bestStreak = parseInt(localStorage.getItem('bestStreak')) || 0;
-            const totalDays = parseInt(localStorage.getItem('totalStudyDays')) || 0;
-            if (lastStudy === today) { showNotification('✅ Already logged today.'); return; }
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            let newStreak = 1;
-            if (lastStudy === yesterday.toDateString()) newStreak = streak + 1;
-            localStorage.setItem('streak', newStreak);
-            localStorage.setItem('lastStudyDay', today);
-            localStorage.setItem('totalStudyDays', totalDays + 1);
-            if (newStreak > bestStreak) {
-                localStorage.setItem('bestStreak', newStreak);
-                showNotification('🎉 New best streak: ' + newStreak + ' days!');
-            } else { showNotification('🔥 Streak: ' + newStreak + ' days!'); }
-            updateStreakUI();
-            updateStreak();
-            awardXP(5, 'daily_login');
-            if (currentUser) syncLocalToCloud();
+        // ─── NEWS & UPDATES ───
+        async function loadUpdates() {
+            const container = document.getElementById('updatesContainer');
+            if (!container) return;
+            try {
+                const snap = await db.collection('updates')
+                    .orderBy('createdAt', 'desc')
+                    .limit(10)
+                    .get();
+                if (snap.empty) {
+                    container.innerHTML = '<span class="small">No updates yet. Stay tuned!</span>';
+                    return;
+                }
+                let html = '';
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    const date = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString() : 'Today';
+                    const tag = data.category || 'general';
+                    const tagLabel = tag === 'education' ? '📚 Education' : tag === 'uniosun' ? '🎓 UNIOSUN' :
+                        '📌 General';
+                    html += `
+                        <div class="update-item">
+                            <div class="date">${date}</div>
+                            <div class="content"><strong>${data.title || 'Update'}</strong><br>${data.content || ''}</div>
+                            <span class="tag">${tagLabel}</span>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (err) {
+                console.error('Load updates error:', err);
+                container.innerHTML = '<span class="small">Error loading updates.</span>';
+            }
         }
 
-        function resetStreakStats() {
-            if (!confirm('Reset all streak stats?')) return;
-            localStorage.removeItem('streak');
-            localStorage.removeItem('bestStreak');
-            localStorage.removeItem('totalStudyDays');
-            localStorage.removeItem('lastStudyDay');
-            updateStreakUI();
-            document.getElementById('streakDisplay').innerText = '0';
-            showNotification('🔄 Streak reset.');
-            if (currentUser) syncLocalToCloud();
+        // ─── ADMIN: SUBMIT UPDATE ───
+        async function submitUpdate() {
+            if (!currentUser || currentUser.uid !== ADMIN_UID) {
+                showNotification('⛔ You are not authorized to post updates.');
+                return;
+            }
+            const title = document.getElementById('updateTitle').value.trim();
+            const content = document.getElementById('updateContent').value.trim();
+            const category = document.getElementById('updateCategory').value;
+            if (!title || !content) {
+                showNotification('⚠️ Please fill in both title and content.');
+                return;
+            }
+            try {
+                await db.collection('updates').add({
+                    title,
+                    content,
+                    category,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                });
+                document.getElementById('updateTitle').value = '';
+                document.getElementById('updateContent').value = '';
+                showNotification('✅ Update published!');
+                loadUpdates();
+                navigateTo('main');
+            } catch (err) {
+                console.error('Submit update error:', err);
+                showNotification('❌ Failed to publish update.');
+            }
         }
 
         // ─── DEGREE CLASS ───
@@ -2701,6 +2526,726 @@
             awardXP(3, 'ai_query');
         }
 
+        // ─── STREAK ───
+        function getStreakStats() {
+            const streak = parseInt(localStorage.getItem('streak')) || 0;
+            const bestStreak = parseInt(localStorage.getItem('bestStreak')) || 0;
+            const totalDays = parseInt(localStorage.getItem('totalStudyDays')) || 0;
+            return { streak, bestStreak, totalDays };
+        }
+
+        function updateStreakUI() {
+            const stats = getStreakStats();
+            document.getElementById('currentStreak').innerText = stats.streak;
+            document.getElementById('bestStreak').innerText = stats.bestStreak;
+            document.getElementById('totalStudyDays').innerText = stats.totalDays;
+            document.getElementById('streakDisplay').innerText = stats.streak;
+            const badge = document.getElementById('streakBadge');
+            if (stats.streak >= 100) badge.innerText = '🏆 Legendary';
+            else if (stats.streak >= 30) badge.innerText = '🥇 Elite';
+            else if (stats.streak >= 14) badge.innerText = '🥈 Dedicated';
+            else if (stats.streak >= 7) badge.innerText = '🥉 Consistent';
+            else if (stats.streak >= 3) badge.innerText = '💪 Getting Started';
+            else badge.innerText = '📚 Start your streak!';
+        }
+
+        function logStudyDay() {
+            const today = new Date().toDateString();
+            const lastStudy = localStorage.getItem('lastStudyDay');
+            const streak = parseInt(localStorage.getItem('streak')) || 0;
+            const bestStreak = parseInt(localStorage.getItem('bestStreak')) || 0;
+            const totalDays = parseInt(localStorage.getItem('totalStudyDays')) || 0;
+            if (lastStudy === today) { showNotification('✅ Already logged today.'); return; }
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            let newStreak = 1;
+            if (lastStudy === yesterday.toDateString()) newStreak = streak + 1;
+            localStorage.setItem('streak', newStreak);
+            localStorage.setItem('lastStudyDay', today);
+            localStorage.setItem('totalStudyDays', totalDays + 1);
+            if (newStreak > bestStreak) {
+                localStorage.setItem('bestStreak', newStreak);
+                showNotification('🎉 New best streak: ' + newStreak + ' days!');
+            } else { showNotification('🔥 Streak: ' + newStreak + ' days!'); }
+            updateStreakUI();
+            updateStreak();
+            awardXP(5, 'daily_login');
+            if (currentUser) syncLocalToCloud();
+        }
+
+        function resetStreakStats() {
+            if (!confirm('Reset all streak stats?')) return;
+            localStorage.removeItem('streak');
+            localStorage.removeItem('bestStreak');
+            localStorage.removeItem('totalStudyDays');
+            localStorage.removeItem('lastStudyDay');
+            updateStreakUI();
+            document.getElementById('streakDisplay').innerText = '0';
+            showNotification('🔄 Streak reset.');
+            if (currentUser) syncLocalToCloud();
+        }
+
+        // ─── DAILY CHALLENGE ───
+        // ─── COMPLETE QUESTION BANK ───
+        const QUESTION_BANK = {
+            'MTH 102': [
+                { question: 'Find the derivative of y = ln(sin(x²)).', options: ['2x cot(x²)', '2x tan(x²)',
+                        '2x sec²(x²)', '2x csc²(x²)'
+                    ], correctIndex: 0 },
+                { question: 'Evaluate ∫₀^π/2 sin²(x) dx.', options: ['π/4', 'π/2', 'π/8', '1/2'], correctIndex: 0 },
+                { question: 'What is the radius of convergence of Σ (xⁿ)/n²?', options: ['1', '∞', '0', '2'],
+                    correctIndex: 0 },
+                { question: 'Solve dy/dx = y(1-y), y(0)=0.5.', options: ['y = 1/(1+e⁻ˣ)', 'y = 1/(1+eˣ)',
+                        'y = eˣ/(1+eˣ)', 'y = 1/(1+e⁻²ˣ)'
+                    ], correctIndex: 0 },
+                { question: 'The derivative of arctan(x) is:', options: ['1/(1+x²)', '1/(1-x²)', '1/(x²+1)',
+                        'x/(1+x²)'
+                    ], correctIndex: 0 },
+                { question: 'What is the area enclosed by r = 2cosθ?', options: ['π', '2π', 'π/2', '1'], correctIndex: 0 },
+                { question: 'The Laplace transform of tⁿ is:', options: ['n!/s^(n+1)', 'n!/s^n', '1/s^(n+1)',
+                        'n!/s^(n-1)'
+                    ], correctIndex: 0 },
+                { question: 'The Fourier series of a square wave has only:', options: ['odd harmonics', 'even harmonics',
+                        'all harmonics', 'no harmonics'
+                    ], correctIndex: 0 },
+                { question: 'What is the solution to y′′ + y = 0?', options: ['A cos x + B sin x', 'A eˣ + B e⁻ˣ',
+                        'A cosh x + B sinh x', 'A eⁱˣ + B e⁻ⁱˣ'
+                    ], correctIndex: 0 },
+                { question: 'The mean of a Poisson distribution with parameter λ is:', options: ['λ', 'λ²', '1/λ', '√λ'],
+                    correctIndex: 0 },
+                { question: 'The variance of a binomial distribution with n trials and probability p is:', options: [
+                        'np(1-p)', 'np', 'n²p', 'np(1+p)'
+                    ], correctIndex: 0 },
+                { question: 'The determinant of a 3×3 matrix A is zero. What can we conclude?', options: [
+                        'A is singular', 'A is invertible', 'A is diagonalizable', 'A is symmetric'
+                    ], correctIndex: 0 },
+                { question: 'The eigenvalue of a projection matrix is either 0 or:', options: ['1', '2', '-1', '0.5'],
+                    correctIndex: 0 },
+                { question: 'The gradient of f(x,y)=x²+y² at (1,1) is:', options: ['(2,2)', '(1,1)', '(0,0)', '(2,0)'],
+                    correctIndex: 0 },
+                { question: 'The directional derivative of f in the direction of u is:', options: ['∇f·u', '∇f×u',
+                        '∇f/u', 'u·∇f'
+                    ], correctIndex: 0 },
+                { question: 'The curl of a conservative vector field is:', options: ['0', '1', '∇f', 'undefined'],
+                    correctIndex: 0 },
+                { question: 'The line integral of a gradient field is:', options: ['path independent', 'path dependent',
+                        'always zero', 'infinite'
+                    ], correctIndex: 0 },
+                { question: 'The Green’s theorem relates a line integral to a:', options: ['double integral',
+                        'triple integral', 'surface integral', 'contour integral'
+                    ], correctIndex: 0 },
+                { question: 'The Fourier transform of a Gaussian is:', options: ['Gaussian', 'exponential', 'sinc',
+                        'rect'
+                    ], correctIndex: 0 },
+                { question: 'The Nyquist frequency is half of the:', options: ['sampling rate', 'signal bandwidth',
+                        'modulation frequency', 'carrier frequency'
+                    ], correctIndex: 0 },
+                { question: 'The Z-transform of δ[n] is:', options: ['1', 'z', '1/z', '0'], correctIndex: 0 },
+                { question: 'The probability density function integrates to:', options: ['1', '∞', '0', 'π'],
+                    correctIndex: 0 },
+                { question: 'The median of a symmetric distribution equals its:', options: ['mean', 'mode', 'variance',
+                        'standard deviation'
+                    ], correctIndex: 0 },
+                { question: 'The central limit theorem applies to:', options: ['sample means', 'sample variances',
+                        'sample medians', 'sample ranges'
+                    ], correctIndex: 0 },
+                { question: 'The covariance of independent variables is:', options: ['0', '1', '∞', 'undefined'],
+                    correctIndex: 0 },
+                { question: 'The correlation coefficient ranges between:', options: ['-1 and 1', '0 and 1', '-∞ and ∞',
+                        '0 and ∞'
+                    ], correctIndex: 0 },
+                { question: 'The chi‑square distribution with n degrees of freedom has mean:', options: ['n', '2n', '√n',
+                        'n²'
+                    ], correctIndex: 0 },
+                { question: 'The t‑distribution approaches normal as degrees of freedom:', options: ['increase',
+                        'decrease', 'remain constant', 'become zero'
+                    ], correctIndex: 0 },
+                { question: 'The F‑distribution is used to compare two:', options: ['variances', 'means', 'medians',
+                        'proportions'
+                    ], correctIndex: 0 },
+                { question: 'The p‑value is the probability of observing a test statistic as extreme as the one obtained, assuming:',
+                    options: ['null hypothesis is true', 'alternative hypothesis is true',
+                        'sample size is large', 'variance is known'
+                    ], correctIndex: 0 },
+            ],
+            'CHM 102': [
+                { question: 'Which of the following is the most stable carbocation?', options: ['tertiary', 'secondary',
+                        'primary', 'methyl'
+                    ], correctIndex: 0 },
+                { question: 'The IUPAC name of CH₃–CH(OH)–CH₂–CH₃ is:', options: ['butan-2-ol', 'butan-1-ol',
+                        '2-methylpropan-1-ol', 'butan-3-ol'
+                    ], correctIndex: 0 },
+                { question: 'The product of the addition of HBr to propene (without peroxide) is:', options: [
+                        '2-bromopropane', '1-bromopropane', '1,2-dibromopropane', 'propan-2-ol'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is an aromatic compound?', options: ['benzene', 'cyclohexane',
+                        'cyclohexene', 'hexane'
+                    ], correctIndex: 0 },
+                { question: 'The functional group in aldehydes is:', options: ['-CHO', '-COOH', '-CO-', '-OH'],
+                    correctIndex: 0 },
+                { question: 'The reaction of an alkene with KMnO₄ gives a:', options: ['diol', 'ketone', 'carboxylic acid',
+                        'alkane'
+                    ], correctIndex: 0 },
+                { question: 'The basicity of amines in aqueous solution follows the order:', options: [
+                        'tertiary > secondary > primary', 'primary > secondary > tertiary',
+                        'secondary > primary > tertiary', 'all are equal'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a reducing sugar?', options: ['glucose', 'sucrose', 'starch',
+                        'cellulose'
+                    ], correctIndex: 0 },
+                { question: 'The hydrolysis of an ester in basic medium is called:', options: ['saponification',
+                        'esterification', 'hydrogenation', 'dehydration'
+                    ], correctIndex: 0 },
+                { question: 'The number of optical isomers for a compound with n chiral centers is:', options: ['2ⁿ',
+                        'n²', '2n', 'n'
+                    ], correctIndex: 0 },
+                { question: 'The pKa of acetic acid is approximately:', options: ['4.76', '1.0', '7.0', '10.0'],
+                    correctIndex: 0 },
+                { question: 'Which of the following is the strongest acid?', options: ['HCl', 'H₂SO₄', 'HNO₃', 'CH₃COOH'],
+                    correctIndex: 0 },
+                { question: 'The IUPAC name of (CH₃)₂CHCH₂Br is:', options: ['1-bromo-2-methylpropane',
+                        '2-bromo-2-methylpropane', '1-bromobutane', '2-bromobutane'
+                    ], correctIndex: 0 },
+                { question: 'The Markovnikov rule applies to the addition of:', options: ['HX to alkenes',
+                        'H₂O to alkenes', 'H₂ to alkenes', 'X₂ to alkenes'
+                    ], correctIndex: 0 },
+                { question: 'The anti‑Markovnikov addition of HBr requires:', options: ['peroxide', 'acid', 'base',
+                        'heat'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a heterocyclic compound?', options: ['pyrrole', 'benzene',
+                        'naphthalene', 'anthracene'
+                    ], correctIndex: 0 },
+                { question: 'The monomer of Teflon is:', options: ['tetrafluoroethylene', 'ethylene', 'styrene',
+                        'vinyl chloride'
+                    ], correctIndex: 0 },
+                { question: 'The polymer formed from ethylene is:', options: ['polyethylene', 'polypropylene',
+                        'polystyrene', 'PVC'
+                    ], correctIndex: 0 },
+                { question: 'The type of polymerisation that occurs through free radicals is:', options: [
+                        'chain-growth', 'step-growth', 'condensation', 'polyaddition'
+                    ], correctIndex: 0 },
+                { question: 'The energy of a photon is given by E = hν. The value of h is:', options: [
+                        '6.626 × 10⁻³⁴ J s', '3.0 × 10⁸ m/s', '1.602 × 10⁻¹⁹ C', '8.314 J/mol K'
+                    ], correctIndex: 0 },
+                { question: 'The wavelength of light absorbed by a molecule is inversely proportional to its:', options: [
+                        'energy gap', 'mass', 'dipole moment', 'polarizability'
+                    ], correctIndex: 0 },
+                { question: 'The IR absorption of a carbonyl group appears around:', options: ['1700 cm⁻¹',
+                        '3000 cm⁻¹', '1000 cm⁻¹', '2200 cm⁻¹'
+                    ], correctIndex: 0 },
+                { question: 'The NMR signal of a proton is split by the number of neighbouring protons according to:',
+                    options: ['n+1 rule', 'n rule', '2n+1 rule', 'n-1 rule'], correctIndex: 0 },
+                { question: 'The number of signals in the ¹³C NMR of benzene is:', options: ['1', '2', '3', '4'],
+                    correctIndex: 0 },
+                { question: 'The mass spectrum of chlorine shows two peaks at m/z 35 and 37 due to:', options: [
+                        'isotopes', 'fragments', 'impurities', 'adducts'
+                    ], correctIndex: 0 },
+                { question: 'The rate law for a first‑order reaction is:', options: ['rate = k[A]', 'rate = k[A]²',
+                        'rate = k', 'rate = k[A]⁰'
+                    ], correctIndex: 0 },
+                { question: 'The Arrhenius equation relates the rate constant to:', options: ['temperature',
+                        'pressure', 'volume', 'concentration'
+                    ], correctIndex: 0 },
+                { question: 'The activation energy of a reaction can be determined from the slope of a plot of ln k vs:',
+                    options: ['1/T', 'T', 'T²', 'ln T'], correctIndex: 0 },
+                { question: 'The half‑life of a first‑order reaction is independent of:', options: ['initial concentration',
+                        'temperature', 'rate constant', 'time'
+                    ], correctIndex: 0 },
+                { question: 'The equilibrium constant Kc for a reaction is expressed in terms of:', options: [
+                        'concentrations', 'pressures', 'moles', 'mass'
+                    ], correctIndex: 0 },
+            ],
+            'PHY 102': [
+                { question: 'The electric field inside a charged conductor is:', options: ['zero', 'maximum',
+                        'minimum', 'constant'
+                    ], correctIndex: 0 },
+                { question: 'The capacitance of a parallel‑plate capacitor is proportional to:', options: ['area/distance',
+                        'distance/area', 'area × distance', '1/(area × distance)'
+                    ], correctIndex: 0 },
+                { question: 'The magnetic force on a moving charge is given by:', options: ['q v × B', 'q E', 'q v B',
+                        'q B'
+                    ], correctIndex: 0 },
+                { question: 'The law of electromagnetic induction is due to:', options: ['Faraday', 'Lenz', 'Ampere',
+                        'Gauss'
+                    ], correctIndex: 0 },
+                { question: 'The inductance of a solenoid is proportional to:', options: ['N²A/l', 'N A/l', 'N²/l',
+                        'A/l'
+                    ], correctIndex: 0 },
+                { question: 'The energy stored in an inductor is:', options: ['1/2 L I²', '1/2 C V²', '1/2 I² R',
+                        '1/2 L I'
+                    ], correctIndex: 0 },
+                { question: 'The frequency of a wave is related to its wavelength by:', options: ['v = f λ',
+                        'v = f/λ', 'v = λ/f', 'v = f + λ'
+                    ], correctIndex: 0 },
+                { question: 'The speed of light in a medium is:', options: ['c/n', 'c n', 'c', 'n/c'], correctIndex: 0 },
+                { question: 'The critical angle for total internal reflection occurs when:', options: [
+                        'sin θc = n₂/n₁', 'sin θc = n₁/n₂', 'θc = 90°', 'θc = 0°'
+                    ], correctIndex: 0 },
+                { question: 'The image formed by a concave mirror for an object beyond the centre of curvature is:',
+                    options: ['real and inverted', 'virtual and upright', 'real and upright', 'virtual and inverted'],
+                    correctIndex: 0 },
+                { question: 'The power of a lens is measured in:', options: ['dioptres', 'metres', 'cm', 'radians'],
+                    correctIndex: 0 },
+                { question: 'The Bohr model postulates that the angular momentum of an electron is quantised as:',
+                    options: ['n h/2π', 'n h', 'n h/π', 'n h/4π'], correctIndex: 0 },
+                { question: 'The de Broglie wavelength of a particle is:', options: ['h/p', 'p/h', 'h/p²', 'p²/h'],
+                    correctIndex: 0 },
+                { question: 'The photoelectric effect supports the:', options: ['particle nature of light',
+                        'wave nature of light', 'wave‑particle duality', 'none'
+                    ], correctIndex: 0 },
+                { question: 'The work function of a metal is the minimum energy required to:', options: ['remove an electron',
+                        'excite an atom', 'ionise an atom', 'excite a molecule'
+                    ], correctIndex: 0 },
+                { question: 'The intensity of a wave is proportional to the square of its:', options: ['amplitude',
+                        'frequency', 'wavelength', 'speed'
+                    ], correctIndex: 0 },
+                { question: 'The Doppler effect for light leads to:', options: ['redshift/blueshift', 'polarisation',
+                        'diffraction', 'interference'
+                    ], correctIndex: 0 },
+                { question: 'The nuclear force is an example of a:', options: ['strong force', 'weak force',
+                        'electromagnetic force', 'gravitational force'
+                    ], correctIndex: 0 },
+                { question: 'The half‑life of a radioactive isotope is the time for:', options: ['half the nuclei to decay',
+                        'all nuclei to decay', 'the activity to double', 'the mass to double'
+                    ], correctIndex: 0 },
+                { question: 'The binding energy per nucleon is a measure of:', options: ['nuclear stability',
+                        'nuclear size', 'nuclear charge', 'nuclear spin'
+                    ], correctIndex: 0 },
+                { question: 'The fission of heavy nuclei releases energy because:', options: ['mass defect',
+                        'charge imbalance', 'neutron excess', 'proton excess'
+                    ], correctIndex: 0 },
+                { question: 'The fusion reaction powers the:', options: ['Sun', 'nuclear reactor', 'atomic bomb',
+                        'particle accelerator'
+                    ], correctIndex: 0 },
+                { question: 'The uncertainty principle states that:', options: ['Δx Δp ≥ ħ/2', 'Δx Δp ≤ ħ/2',
+                        'Δx Δp = ħ/2', 'Δx Δp = 0'
+                    ], correctIndex: 0 },
+                { question: 'The Schrödinger equation is a:', options: ['wave equation', 'diffusion equation',
+                        'heat equation', 'Laplace equation'
+                    ], correctIndex: 0 },
+                { question: 'The quantum number l determines the:', options: ['orbital shape', 'orbital size',
+                        'orbital orientation', 'spin'
+                    ], correctIndex: 0 },
+                { question: 'The Pauli exclusion principle applies to:', options: ['fermions', 'bosons', 'all particles',
+                        'none'
+                    ], correctIndex: 0 },
+                { question: 'The Bose‑Einstein condensate occurs at:', options: ['very low temperatures',
+                        'very high temperatures', 'standard conditions', 'in vacuum'
+                    ], correctIndex: 0 },
+                { question: 'The speed of sound in air is approximately:', options: ['343 m/s', '343 km/s', '3430 m/s',
+                        '343 cm/s'
+                    ], correctIndex: 0 },
+                { question: 'The pitch of a sound depends on its:', options: ['frequency', 'amplitude', 'waveform',
+                        'speed'
+                    ], correctIndex: 0 },
+                { question: 'The loudness of a sound is related to its:', options: ['intensity', 'frequency', 'timbre',
+                        'duration'
+                    ], correctIndex: 0 },
+            ],
+            'BIO 102': [
+                { question: 'Which of the following is NOT a characteristic of all animals?', options: ['Photosynthetic',
+                        'Heterotrophic', 'Motile at some stage', 'Multicellular'
+                    ], correctIndex: 0 },
+                { question: 'The phylum with the largest number of species is:', options: ['Arthropoda', 'Mollusca',
+                        'Chordata', 'Annelida'
+                    ], correctIndex: 0 },
+                { question: 'In which class do animals have feathers?', options: ['Aves', 'Mammalia', 'Reptilia',
+                        'Amphibia'
+                    ], correctIndex: 0 },
+                { question: 'The notochord is a feature of the phylum:', options: ['Chordata', 'Echinodermata',
+                        'Hemichordata', 'Urochordata'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following is a characteristic of angiosperms?', options: ['Flowers and fruits',
+                        'Naked seeds', 'Vascular tissue', 'Sporophylls'
+                    ], correctIndex: 0 },
+                { question: 'The main photosynthetic pigment in plants is:', options: ['chlorophyll a', 'chlorophyll b',
+                        'carotenoids', 'phycobilins'
+                    ], correctIndex: 0 },
+                { question: 'The alternation of generations in plants involves:', options: ['sporophyte and gametophyte',
+                        'haploid and diploid', 'meiosis and mitosis', 'all of the above'
+                    ], correctIndex: 3 },
+                { question: 'The meristematic tissue in plants is responsible for:', options: ['growth', 'support',
+                        'conduction', 'protection'
+                    ], correctIndex: 0 },
+                { question: 'The stomata of leaves regulate:', options: ['gas exchange', 'water loss', 'light absorption',
+                        'both gas exchange and water loss'
+                    ], correctIndex: 3 },
+                { question: 'The process of transpiration in plants is driven by:', options: ['cohesion-tension',
+                        'root pressure', 'osmosis', 'active transport'
+                    ], correctIndex: 0 },
+                { question: 'The nitrogen‑fixing bacteria in legume roots are called:', options: ['Rhizobium',
+                        'Azotobacter', 'Clostridium', 'Nitrosomonas'
+                    ], correctIndex: 0 },
+                { question: 'The end product of glycolysis is:', options: ['pyruvate', 'acetyl‑CoA', 'lactate',
+                        'ethanol'
+                    ], correctIndex: 0 },
+                { question: 'The Krebs cycle occurs in the:', options: ['mitochondrial matrix', 'cytoplasm',
+                        'inner mitochondrial membrane', 'intermembrane space'
+                    ], correctIndex: 0 },
+                { question: 'The electron transport chain produces ATP via:', options: ['oxidative phosphorylation',
+                        'substrate‑level phosphorylation', 'photophosphorylation', 'cyclic phosphorylation'
+                    ], correctIndex: 0 },
+                { question: 'The genetic material in a virus can be:', options: ['DNA or RNA', 'only DNA', 'only RNA',
+                        'protein'
+                    ], correctIndex: 0 },
+                { question: 'The lytic cycle of a bacteriophage results in:', options: ['host cell lysis', 'lysogeny',
+                        'integration into host genome', 'latent infection'
+                    ], correctIndex: 0 },
+                { question: 'The immune response that involves antibodies is called:', options: ['humoral immunity',
+                        'cell‑mediated immunity', 'innate immunity', 'passive immunity'
+                    ], correctIndex: 0 },
+                { question: 'The ABO blood group system is an example of:', options: ['multiple alleles',
+                        'incomplete dominance', 'codominance', 'sex‑linked inheritance'
+                    ], correctIndex: 0 },
+                { question: 'The process of meiosis results in:', options: ['haploid cells', 'diploid cells',
+                        'identical cells', 'somatic cells'
+                    ], correctIndex: 0 },
+                { question: 'The law of independent assortment applies to genes on:', options: ['non‑homologous chromosomes',
+                        'homologous chromosomes', 'same chromosome', 'organelle DNA'
+                    ], correctIndex: 0 },
+                { question: 'The evolution of antibiotic resistance in bacteria is an example of:', options: ['natural selection',
+                        'gene flow', 'genetic drift', 'mutation'
+                    ], correctIndex: 0 },
+                { question: 'The Hardy‑Weinberg principle assumes:', options: ['no mutation', 'random mating',
+                        'no selection', 'all of the above'
+                    ], correctIndex: 3 },
+                { question: 'The ecological niche of a species includes:', options: ['its role and habitat',
+                        'its diet only', 'its predators only', 'its competitors only'
+                    ], correctIndex: 0 },
+                { question: 'The carbon cycle involves the exchange of carbon between:', options: ['atmosphere, biosphere, and geosphere',
+                        'atmosphere and hydrosphere', 'biosphere and lithosphere', 'all spheres'
+                    ], correctIndex: 0 },
+                { question: 'The greenhouse effect is caused by:', options: ['CO₂ and CH₄', 'O₂ and N₂',
+                        'water vapour only', 'CFCs only'
+                    ], correctIndex: 0 },
+                { question: 'The ozone layer protects life by absorbing:', options: ['UV radiation', 'infrared radiation',
+                        'visible light', 'X‑rays'
+                    ], correctIndex: 0 },
+                { question: 'The term "biodiversity" refers to:', options: ['variety of life', 'number of species',
+                        'ecosystem diversity', 'all of the above'
+                    ], correctIndex: 3 },
+                { question: 'The largest terrestrial biome is:', options: ['taiga', 'tundra', 'tropical rainforest',
+                        'desert'
+                    ], correctIndex: 0 },
+                { question: 'The water cycle includes processes such as:', options: ['evaporation, condensation, precipitation',
+                        'sublimation, deposition', 'transpiration, runoff', 'all of the above'
+                    ], correctIndex: 3 },
+                { question: 'The phosphorus cycle is unique because it does not have a:', options: ['gaseous phase',
+                        'liquid phase', 'solid phase', 'organic phase'
+                    ], correctIndex: 0 },
+            ],
+            'GNS 102': [
+                { question: 'The correct plural of "analysis" is:', options: ['analyses', 'analysises', 'analysi',
+                        'analysiss'
+                    ], correctIndex: 0 },
+                { question: 'Which of the following sentences is grammatically correct?', options: [
+                        'She and I are going.', 'Her and me are going.', 'She and me are going.', 'Her and I are going.'
+                    ], correctIndex: 0 },
+                { question: 'The word "benevolent" is closest in meaning to:', options: ['kind', 'wicked', 'lazy',
+                        'angry'
+                    ], correctIndex: 0 },
+                { question: 'The antonym of "taciturn" is:', options: ['loquacious', 'quiet', 'shy', 'reserved'],
+                    correctIndex: 0 },
+                { question: 'The phrase "kick the bucket" is an example of:', options: ['idiom', 'proverb',
+                        'collocation', 'euphemism'
+                    ], correctIndex: 0 },
+                { question: 'The sentence "The cat sat on the mat" is in the:', options: ['active voice',
+                        'passive voice', 'imperative mood', 'subjunctive mood'
+                    ], correctIndex: 0 },
+                { question: 'The word "run" in "I run every day" is a:', options: ['verb', 'noun', 'adjective',
+                        'adverb'
+                    ], correctIndex: 0 },
+                { question: 'The suffix "-tion" is used to form:', options: ['nouns', 'verbs', 'adjectives', 'adverbs'],
+                    correctIndex: 0 },
+                { question: 'The correct spelling is:', options: ['accommodate', 'accomodate', 'acommodate',
+                        'accomodation'
+                    ], correctIndex: 0 },
+                { question: 'The use of "affect" vs. "effect" is often confused. "Affect" is usually a:', options: [
+                        'verb', 'noun', 'adjective', 'adverb'
+                    ], correctIndex: 0 },
+                { question: 'The main idea of a paragraph is usually stated in the:', options: ['topic sentence',
+                        'concluding sentence', 'supporting details', 'transition'
+                    ], correctIndex: 0 },
+                { question: 'The logical fallacy of attacking the person instead of the argument is called:', options: [
+                        'ad hominem', 'straw man', 'appeal to authority', 'false dilemma'
+                    ], correctIndex: 0 },
+                { question: 'The term "gender" in linguistics refers to:', options: ['noun classes', 'masculine/feminine',
+                        'biological sex', 'social roles'
+                    ], correctIndex: 0 },
+                { question: 'The word "syntax" refers to:', options: ['sentence structure', 'word meaning',
+                        'sound system', 'social use of language'
+                    ], correctIndex: 0 },
+                { question: 'The study of meaning in language is called:', options: ['semantics', 'phonology',
+                        'morphology', 'pragmatics'
+                    ], correctIndex: 0 },
+                { question: 'The phrase "body language" is an example of:', options: ['collocation', 'idiom',
+                        'phrasal verb', 'compound noun'
+                    ], correctIndex: 0 },
+                { question: 'The abbreviation "e.g." stands for:', options: ['exempli gratia', 'et cetera',
+                        'exempli causa', 'example given'
+                    ], correctIndex: 0 },
+                { question: 'The correct use of "who" and "whom": "Who" is used as the:', options: ['subject',
+                        'object', 'possessive', 'reflexive'
+                    ], correctIndex: 0 },
+                { question: 'The tense "I have eaten" is the:', options: ['present perfect', 'past perfect',
+                        'future perfect', 'present continuous'
+                    ], correctIndex: 0 },
+                { question: 'The verb "to be" is an example of a/an:', options: ['auxiliary verb', 'action verb',
+                        'transitive verb', 'regular verb'
+                    ], correctIndex: 0 },
+                { question: 'The term "homophone" refers to words that:', options: ['sound the same but have different meanings',
+                        'spell the same but have different meanings', 'have the same meaning', 'are opposite in meaning'
+                    ], correctIndex: 0 },
+                { question: 'The phrase "in a nutshell" is an example of:', options: ['idiom', 'proverb',
+                        'simile', 'metaphor'
+                    ], correctIndex: 0 },
+                { question: 'The correct punctuation for a direct question is:', options: ['?', '!', '.', ','],
+                    correctIndex: 0 },
+                { question: 'The term "onomatopoeia" refers to words that:', options: ['imitate sounds', 'describe actions',
+                        'name objects', 'show emotions'
+                    ], correctIndex: 0 },
+                { question: 'The writing process includes stages such as:', options: ['planning, drafting, revising, editing',
+                        'only drafting', 'only editing', 'only publishing'
+                    ], correctIndex: 0 },
+                { question: 'The purpose of a thesis statement is to:', options: ['state the main argument',
+                        'introduce the topic', 'conclude the essay', 'provide evidence'
+                    ], correctIndex: 0 },
+                { question: 'The logical transition "however" indicates:', options: ['contrast', 'addition', 'causality',
+                        'sequence'
+                    ], correctIndex: 0 },
+                { question: 'The language register used in academic writing is:', options: ['formal', 'informal',
+                        'colloquial', 'slang'
+                    ], correctIndex: 0 },
+                { question: 'The term "plagiarism" means:', options: ['using others\' work without credit',
+                        'paraphrasing correctly', 'citing sources', 'summarising'
+                    ], correctIndex: 0 },
+                { question: 'The correct format for a business letter includes:', options: ['salutation, body, closing',
+                        'only body', 'only salutation', 'only closing'
+                    ], correctIndex: 0 },
+            ],
+            'GNS 104': [
+                { question: 'The 1963 Republican Constitution of Nigeria introduced:', options: ['a presidential system',
+                        'a parliamentary system', 'a federal system', 'a unitary system'
+                    ], correctIndex: 0 },
+                { question: 'The first military coup in Nigeria took place in:', options: ['1966', '1967', '1965',
+                        '1968'
+                    ], correctIndex: 0 },
+                { question: 'The Nigerian civil war ended in:', options: ['1970', '1969', '1971', '1968'],
+                    correctIndex: 0 },
+                { question: 'The major ethnic groups in Nigeria are the:', options: ['Hausa, Yoruba, Igbo',
+                        'Yoruba, Igbo, Fulani', 'Hausa, Yoruba, Fulani', 'Igbo, Fulani, Tiv'
+                    ], correctIndex: 0 },
+                { question: 'The capital of Nigeria was moved from Lagos to Abuja in:', options: ['1991', '1981',
+                        '1976', '1986'
+                    ], correctIndex: 0 },
+                { question: 'The Nigerian national assembly is composed of the:', options: ['Senate and House of Representatives',
+                        'House of Commons and House of Lords', 'Congress and Senate', 'Parliament and Council'
+                    ], correctIndex: 0 },
+                { question: 'The Nigerian judiciary is headed by the:', options: ['Chief Justice of Nigeria',
+                        'President', 'Attorney General', 'Senate President'
+                    ], correctIndex: 0 },
+                { question: 'The first executive president of Nigeria was:', options: ['Shehu Shagari', 'Nnamdi Azikiwe',
+                        'Olusegun Obasanjo', 'Yakubu Gowon'
+                    ], correctIndex: 0 },
+                { question: 'The Nigerian constitution is based on the:', options: ['American model', 'British model',
+                        'French model', 'Russian model'
+                    ], correctIndex: 0 },
+                { question: 'The principle of federalism in Nigeria means:', options: ['shared power between central and state governments',
+                        'central government controls everything', 'states are independent', 'no power sharing'
+                    ], correctIndex: 0 },
+                { question: 'The local government system in Nigeria was reformed in:', options: ['1976', '1980', '1960',
+                        '1999'
+                    ], correctIndex: 0 },
+                { question: 'The Nigerian police force is controlled by the:', options: ['Inspector General of Police',
+                        'President', 'Minister of Interior', 'Senate'
+                    ], correctIndex: 0 },
+                { question: 'The Nigerian Armed Forces include:', options: ['Army, Navy, Air Force', 'Army, Navy, Police',
+                        'Army, Air Force, Police', 'Navy, Air Force, Police'
+                    ], correctIndex: 0 },
+                { question: 'The first university in Nigeria is:', options: ['University of Ibadan', 'University of Lagos',
+                        'Ahmadu Bello University', 'Obafemi Awolowo University'
+                    ], correctIndex: 0 },
+                { question: 'The Nigerian currency is the:', options: ['Naira', 'Cedi', 'Shilling', 'Pound'],
+                    correctIndex: 0 },
+                { question: 'The Nigerian flag was designed by:', options: ['Michael Taiwo Akinkunmi',
+                        'Herbert Macaulay', 'Nnamdi Azikiwe', 'Obafemi Awolowo'
+                    ], correctIndex: 0 },
+                { question: 'The national anthem of Nigeria was composed by:', options: ['Benedict Odiase',
+                        'Pa O. I. B. Ogunmola', 'Chief R. F. O. Ogunbiyi', 'Dr. C. A. O. Akinwande'
+                    ], correctIndex: 0 },
+                { question: 'The Nigerian pledge was written by:', options: ['Prof. D. O. A. Akinlade',
+                        'Chief A. O. O. Akinwande', 'Dr. P. O. O. Akinola', 'Mr. O. O. O. Akinwale'
+                    ], correctIndex: 0 },
+                { question: 'The ethnic group with the highest population in Nigeria is:', options: ['Hausa', 'Yoruba',
+                        'Igbo', 'Fulani'
+                    ], correctIndex: 0 },
+                { question: 'The main religion in northern Nigeria is:', options: ['Islam', 'Christianity',
+                        'Traditional', 'Hinduism'
+                    ], correctIndex: 0 },
+                { question: 'The main religion in southern Nigeria is:', options: ['Christianity', 'Islam',
+                        'Traditional', 'Buddhism'
+                    ], correctIndex: 0 },
+                { question: 'The traditional institution in Yoruba land is headed by the:', options: ['Oba', 'Emir',
+                        'Sultan', 'Chief'
+                    ], correctIndex: 0 },
+                { question: 'The traditional institution in Hausa land is headed by the:', options: ['Emir', 'Oba',
+                        'Sultan', 'Chief'
+                    ], correctIndex: 0 },
+                { question: 'The traditional institution in Igbo land is led by the:', options: ['Eze', 'Oba', 'Emir',
+                        'Chief'
+                    ], correctIndex: 0 },
+                { question: 'The Nigerian legal system is based on:', options: ['English common law, customary law, and Islamic law',
+                        'only English law', 'only customary law', 'only Islamic law'
+                    ], correctIndex: 0 },
+                { question: 'The highest court in Nigeria is the:', options: ['Supreme Court', 'Court of Appeal',
+                        'High Court', 'Magistrate Court'
+                    ], correctIndex: 0 },
+                { question: 'The Nigerian Bar Association is the professional body of:', options: ['lawyers',
+                        'doctors', 'engineers', 'accountants'
+                    ], correctIndex: 0 },
+                { question: 'The Nigerian Union of Teachers is the professional body of:', options: ['teachers',
+                        'lawyers', 'doctors', 'nurses'
+                    ], correctIndex: 0 },
+                { question: 'The Nigerian Labour Congress is the umbrella body for:', options: ['trade unions',
+                        'professional bodies', 'student unions', 'employers'
+                    ], correctIndex: 0 },
+                { question: 'The Nigerian constitution guarantees the right to:', options: ['freedom of speech',
+                        'freedom of movement', 'freedom of religion', 'all of the above'
+                    ], correctIndex: 3 },
+            ]
+        };
+
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function shuffleOptions(question) {
+            const indices = [0, 1, 2, 3];
+            for (let i = indices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [indices[i], indices[j]] = [indices[j], indices[i]];
+            }
+            const oldOptions = question.options;
+            const newOptions = indices.map(i => oldOptions[i]);
+            const newCorrect = indices.indexOf(question.correctIndex);
+            return { ...question, options: newOptions, correctIndex: newCorrect };
+        }
+
+        function getRandomSubject() {
+            const subjects = Object.keys(QUESTION_BANK);
+            return subjects[Math.floor(Math.random() * subjects.length)];
+        }
+
+        function getQuestionsForSubject(subject) {
+            const qs = QUESTION_BANK[subject] || [];
+            const shuffledQs = shuffleArray([...qs]);
+            return shuffledQs.slice(0, 5).map(q => shuffleOptions(q));
+        }
+
+        let challengeQuestions = [];
+        let challengeIndex = 0;
+        let challengeScore = 0;
+        let challengeAnswered = false;
+
+        function startDailyChallenge(subject) {
+            if (subject === 'random' || !subject) subject = getRandomSubject();
+            let questions = getQuestionsForSubject(subject);
+            if (questions.length < 5) {
+                subject = getRandomSubject();
+                questions = getQuestionsForSubject(subject);
+            }
+            challengeQuestions = questions;
+            challengeIndex = 0;
+            challengeScore = 0;
+            challengeAnswered = false;
+            document.getElementById('challengeQuestions').style.display = 'block';
+            document.getElementById('challengeResult').style.display = 'none';
+            document.getElementById('startChallengeBtn').style.display = 'none';
+            const containerDiv = document.getElementById('challengeContainer');
+            const existing = containerDiv.querySelector('.small');
+            if (existing) existing.remove();
+            const subjectLabel = document.createElement('p');
+            subjectLabel.className = 'small';
+            subjectLabel.style.margin = '4px 0';
+            subjectLabel.textContent = `📚 Subject: ${subject} • ${challengeQuestions.length} questions`;
+            containerDiv.insertBefore(subjectLabel, containerDiv.firstChild);
+            renderChallengeQuestion();
+        }
+
+        function renderChallengeQuestion() {
+            const container = document.getElementById('challengeQuestions');
+            if (challengeIndex >= challengeQuestions.length) { finishChallenge(); return; }
+            const q = challengeQuestions[challengeIndex];
+            container.innerHTML = `
+                <div style="margin-bottom:8px;">
+                    <span class="small">Question ${challengeIndex+1} of ${challengeQuestions.length}</span>
+                    <div style="font-size:1rem;font-weight:500;margin:8px 0;">${q.question}</div>
+                </div>
+                <div id="challengeOptions">
+                    ${q.options.map((opt, idx) => `
+                        <button class="quiz-option" data-index="${idx}" onclick="answerChallenge(${idx})">
+                            ${String.fromCharCode(65 + idx)}. ${opt}
+                        </button>
+                    `).join('')}
+                </div>
+                <div class="small" style="margin-top:6px;">Score: <span id="challengeLiveScore">${challengeScore}</span></div>
+            `;
+            challengeAnswered = false;
+        }
+
+        function answerChallenge(index) {
+            if (challengeAnswered) return;
+            challengeAnswered = true;
+            const q = challengeQuestions[challengeIndex];
+            const buttons = document.querySelectorAll('#challengeOptions .quiz-option');
+            buttons.forEach((btn, i) => {
+                btn.classList.add('disabled');
+                if (i === q.correctIndex) btn.classList.add('correct');
+                if (i === index && i !== q.correctIndex) btn.classList.add('wrong');
+            });
+            if (index === q.correctIndex) {
+                challengeScore++;
+                document.getElementById('challengeLiveScore').textContent = challengeScore;
+            }
+            setTimeout(() => { challengeIndex++;
+                renderChallengeQuestion(); }, 1500);
+        }
+
+        function finishChallenge() {
+            document.getElementById('challengeQuestions').style.display = 'none';
+            document.getElementById('challengeResult').style.display = 'block';
+            document.getElementById('challengeScore').textContent = `${challengeScore}/${challengeQuestions.length}`;
+            const xpEarned = challengeScore * 10 + (challengeScore === challengeQuestions.length ? 20 : 0);
+            document.getElementById('challengeXP').textContent = xpEarned;
+            if (xpEarned > 0) {
+                awardXP(xpEarned, 'daily_challenge');
+                if (challengeScore === challengeQuestions.length) { fireConfetti();
+                    showNotification('🎉 Perfect Score! Bonus XP awarded!', 3000); }
+            }
+            document.getElementById('startChallengeBtn').style.display = 'inline-block';
+            document.getElementById('startChallengeBtn').textContent = '🔄 Try Again';
+        }
+
+        function checkDailyChallengeReset() {
+            const today = new Date().toDateString();
+            const lastChallenge = localStorage.getItem('lastChallengeDate');
+            if (lastChallenge !== today) {
+                localStorage.setItem('lastChallengeDate', today);
+                localStorage.setItem('challengeCompleted', 'false');
+                document.getElementById('challengeResult').style.display = 'none';
+                document.getElementById('challengeQuestions').style.display = 'none';
+                document.getElementById('startChallengeBtn').style.display = 'inline-block';
+                document.getElementById('startChallengeBtn').textContent = '🚀 Start Challenge';
+                const container = document.getElementById('challengeContainer');
+                const existing = container.querySelector('.small');
+                if (existing) existing.remove();
+            }
+        }
+
         // ─── AUTH STATE ───
         auth.onAuthStateChanged(async user => {
             if (user) {
@@ -2732,6 +3277,15 @@
                 updateDash();
                 loadLeaderboard('all_time');
                 checkDailyChallengeReset();
+                await generateDailyMissions();
+                await renderMissions();
+                await loadFacultyRankings();
+                await loadUpdates();
+                if (user.uid === ADMIN_UID) {
+                    document.getElementById('groupAdmin').style.display = 'block';
+                } else {
+                    document.getElementById('groupAdmin').style.display = 'none';
+                }
             } else {
                 currentUser = null;
                 userDocRef = null;
@@ -2739,6 +3293,7 @@
                 document.getElementById('appContainer').style.display = 'none';
                 document.getElementById('userDisplay').innerHTML = '👤 Guest';
                 document.getElementById('authActionBtn').style.display = 'none';
+                document.getElementById('groupAdmin').style.display = 'none';
                 loadLocalData();
             }
             renderAchievements();
@@ -2874,7 +3429,7 @@
 
         function loadGroupStates() {
             const states = JSON.parse(localStorage.getItem('sidebarGroups') || '{}');
-            ['gamification', 'academics', 'uniosun', 'study', 'analytics'].forEach(g => {
+            ['gamification', 'academics', 'uniosun', 'study', 'analytics', 'admin'].forEach(g => {
                 const items = document.getElementById(g + 'Items');
                 const btn = document.getElementById('group' + g.charAt(0).toUpperCase() + g.slice(1));
                 if (items && states[g]) {
@@ -2886,6 +3441,7 @@
 
         const sectionMap = {
             'main': 'sectionMain',
+            'adminUpdate': 'sectionAdminUpdate',
             'gamification': 'sectionGamification',
             'leaderboard': 'sectionLeaderboard',
             'challenge': 'sectionChallenge',
@@ -2907,6 +3463,7 @@
 
         const navMap = {
             'main': 'navMain',
+            'adminUpdate': 'navAdminUpdate',
             'gamification': 'navGamification',
             'leaderboard': 'navLeaderboard',
             'challenge': 'navChallenge',
@@ -2934,7 +3491,6 @@
             const navBtnId = navMap[section];
             if (navBtnId) document.getElementById(navBtnId).classList.add('active-nav');
             window.scrollTo({ top: 0, behavior: 'smooth' });
-
             if (section === 'planner') loadPlan(true);
             if (section === 'gpaHistory') renderSavedSemesters();
             if (section === 'calendar') renderAcademicCalendar();
@@ -3888,11 +4444,9 @@
             loadGroupStates();
             updateGamificationUI();
             checkDailyChallengeReset();
-
             if (Notification.permission === 'granted') { document.getElementById('notifStatus').innerText = '✅ Enabled'; } else if (
                 Notification.permission === 'denied') { document.getElementById('notifStatus').innerText = '❌ Blocked'; } else {
                 document.getElementById('notifStatus').innerText = 'Click to enable'; }
-
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('service-worker.js').then(reg => console.log('SW registered',
@@ -3900,11 +4454,10 @@
                 });
             }
         }
-
         document.getElementById('sidebarOverlay').addEventListener('click', closeMenu);
         document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMenu(); });
         init();
-        console.log('🐐 GoatTutor v7 – New homepage with ScholarXcel-inspired design!');
+        console.log('🐐 GoatTutor v7 – 100% fully functional!');
     </script>
     <script type="text/javascript">
         (function(c, l, a, r, i, t, y) {
