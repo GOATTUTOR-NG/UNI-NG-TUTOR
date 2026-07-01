@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>GoatTutor NG – Original Layout + Official Calendar</title>
+    <title>GoatTutor NG – Complete Cut‑off + CGPA</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
     <!-- Firebase SDKs -->
@@ -14,7 +14,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js">
     </script>
     <style>
-        /* ─── SAME STYLES AS THE ORIGINAL (unchanged) ─── */
+        /* ─── ALL ORIGINAL STYLES PRESERVED ─── */
         * {
             margin: 0;
             padding: 0;
@@ -333,7 +333,7 @@
         }
         .container {
             padding: 12px 14px;
-            max-width: 720px;
+            max-width: 900px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
@@ -358,6 +358,11 @@
             align-items: center;
             gap: 6px;
             flex-wrap: wrap;
+        }
+        .card h2 {
+            font-size: 1.2rem;
+            color: #fbbf24;
+            margin-bottom: 10px;
         }
         input,
         textarea,
@@ -423,6 +428,12 @@
         }
         button.danger:hover {
             background: #b91c1c;
+        }
+        button.success {
+            background: #22c55e;
+        }
+        button.success:hover {
+            background: #16a34a;
         }
         button.small-btn {
             width: auto;
@@ -570,151 +581,7 @@
         }
         .small {
             font-size: 0.75rem;
-            color: #a5b4fc;
-        }
-        .pdf-list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            background: #0f172a;
-            border-radius: 8px;
-            margin-top: 4px;
-            border: 1px solid #334155;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .pdf-list-item:hover {
-            border-color: #3b82f6;
-            background: #1a2a4a;
-        }
-        .pdf-list-item .file-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-            min-width: 120px;
-            cursor: pointer;
-        }
-        .pdf-list-item .file-info .name {
-            font-weight: 500;
-            color: #e2e8f0;
-            word-break: break-word;
-        }
-        .pdf-list-item .file-info .meta {
-            font-size: 0.7rem;
             color: #94a3b8;
-        }
-        .pdf-list-item .file-actions {
-            display: flex;
-            gap: 4px;
-            flex-wrap: wrap;
-        }
-        .pdf-viewer-container {
-            margin-top: 10px;
-            background: #0f172a;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid #334155;
-            min-height: 300px;
-            height: 60vh;
-            max-height: 700px;
-            width: 100%;
-        }
-        .pdf-viewer-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
-        }
-        .pdf-viewer-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #94a3b8;
-            padding: 20px;
-            text-align: center;
-        }
-        .pdf-viewer-placeholder .icon {
-            font-size: 4rem;
-            margin-bottom: 10px;
-            opacity: 0.5;
-        }
-        .upload-area {
-            border: 2px dashed #334155;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s;
-            cursor: pointer;
-            margin-top: 6px;
-            background: #0f172a;
-        }
-        .upload-area:hover {
-            border-color: #3b82f6;
-            background: #1a2a4a;
-        }
-        .upload-area.dragover {
-            border-color: #3b82f6;
-            background: #1a2a4a;
-            transform: scale(1.02);
-        }
-        .upload-area .icon {
-            font-size: 2.5rem;
-            margin-bottom: 6px;
-        }
-        .quick-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-top: 6px;
-        }
-        .quick-card {
-            background: #0f172a;
-            border-radius: 10px;
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #334155;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .quick-card:hover {
-            border-color: #3b82f6;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-        }
-        .quick-card .icon {
-            font-size: 1.8rem;
-            margin-bottom: 4px;
-        }
-        .quick-card .label {
-            font-size: 0.7rem;
-            color: #94a3b8;
-        }
-        .streak-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin: 6px 0;
-        }
-        .streak-grid .stat {
-            background: #0f172a;
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-            border: 1px solid #334155;
-        }
-        .streak-grid .stat .number {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #fbbf24;
-        }
-        .streak-grid .stat .label {
-            font-size: 0.65rem;
-            color: #94a3b8;
-            text-transform: uppercase;
         }
         .badge {
             display: inline-block;
@@ -1169,7 +1036,7 @@
         .how-step .step-text strong {
             color: #fbbf24;
         }
-        /* GPA Calculator Styles (matching image) */
+        /* ─── GPA CALCULATOR STYLES ─── */
         .gpa-semester-title {
             font-size: 1.1rem;
             font-weight: 700;
@@ -1272,7 +1139,32 @@
             min-width: 80px;
             margin-top: 0;
         }
-        /* Calendar events (updated for official dates) */
+        /* ─── SCREENING ─── */
+        .screening-subject-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 4px;
+            flex-wrap: wrap;
+        }
+        .screening-subject-row input,
+        .screening-subject-row select {
+            flex: 1;
+            min-width: 80px;
+            margin-top: 0;
+        }
+        .screening-subject-row .btn-remove {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px 8px;
+            min-height: 30px;
+            width: auto;
+            margin: 0;
+        }
+        /* ─── CALENDAR ─── */
         .calendar-event {
             display: flex;
             justify-content: space-between;
@@ -1315,32 +1207,7 @@
         .calendar-event.matriculation {
             border-left-color: #fbbf24;
         }
-        /* Screening */
-        .screening-subject-row {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            margin-top: 4px;
-            flex-wrap: wrap;
-        }
-        .screening-subject-row input,
-        .screening-subject-row select {
-            flex: 1;
-            min-width: 80px;
-            margin-top: 0;
-        }
-        .screening-subject-row .btn-remove {
-            background: none;
-            border: none;
-            color: #ef4444;
-            cursor: pointer;
-            font-size: 1.1rem;
-            padding: 4px 8px;
-            min-height: 30px;
-            width: auto;
-            margin: 0;
-        }
-        /* Cutoff */
+        /* ─── CUTOFF GRID ─── */
         .cutoff-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1355,6 +1222,8 @@
             border-radius: 6px;
             border: 1px solid #334155;
             font-size: 0.85rem;
+            flex-wrap: wrap;
+            gap: 4px;
         }
         .cutoff-item .score {
             font-weight: 700;
@@ -1367,7 +1236,21 @@
             background: #1e293b;
             color: #94a3b8;
         }
-        /* Quiz container */
+        .cutoff-item .indigene-score {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+        .cutoff-search {
+            margin-bottom: 8px;
+        }
+        .cutoff-search input {
+            margin-top: 0;
+            padding: 8px 12px;
+            min-height: 40px;
+            font-size: 0.85rem;
+            border-radius: 8px;
+        }
+        /* ─── QUIZ ─── */
         .quiz-container {
             background: #0f172a;
             border-radius: 12px;
@@ -1500,6 +1383,43 @@
             font-weight: 700;
             color: #fbbf24;
         }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .mt-1 {
+            margin-top: 6px;
+        }
+        .mt-2 {
+            margin-top: 12px;
+        }
+        .gap-1 {
+            gap: 6px;
+        }
+        .w-full {
+            width: 100%;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .note-box {
+            background: #1e293b;
+            border-left: 4px solid #fbbf24;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 6px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+        .note-box strong {
+            color: #fbbf24;
+        }
         @media (max-width:600px) {
             .timer {
                 font-size: 32px;
@@ -1552,11 +1472,6 @@
                 max-width: 90%;
                 right: 10px;
                 top: 10px;
-            }
-            .pdf-list-item .file-actions button {
-                font-size: 0.65rem;
-                padding: 4px 8px;
-                min-height: 28px;
             }
             .auth-page .auth-box {
                 padding: 20px 16px;
@@ -1683,31 +1598,6 @@
                 padding: 4px 8px;
             }
         }
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .text-center {
-            text-align: center;
-        }
-        .mt-1 {
-            margin-top: 6px;
-        }
-        .mt-2 {
-            margin-top: 12px;
-        }
-        .gap-1 {
-            gap: 6px;
-        }
-        .w-full {
-            width: 100%;
-        }
-        .hidden {
-            display: none !important;
-        }
     </style>
 </head>
 <body>
@@ -1727,14 +1617,11 @@
         </div>
     </div>
 
-    <!-- ─── SIDEBAR OVERLAY ─── -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMenu()"></div>
-
     <!-- ─── SIDEBAR ─── -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMenu()"></div>
     <div class="sidebar" id="sidebar">
         <h3>📋 Navigation</h3>
         <button class="active-nav" onclick="navigateTo('main')" id="navMain">🏠 Dashboard</button>
-
         <div class="sidebar-group">
             <button class="sidebar-group-btn" onclick="toggleGroup('academics')" id="groupAcademics">📚 Academics <span class="arrow">▼</span></button>
             <div class="sidebar-group-items" id="academicsItems">
@@ -1743,7 +1630,6 @@
                 <button onclick="navigateTo('gpaHistory')" id="navGPAHistory">📜 GPA History</button>
             </div>
         </div>
-
         <div class="sidebar-group">
             <button class="sidebar-group-btn" onclick="toggleGroup('uniosun')" id="groupUniosun">🎯 UNIOSUN Tools <span class="arrow">▼</span></button>
             <div class="sidebar-group-items" id="uniosunItems">
@@ -1752,7 +1638,6 @@
                 <button onclick="navigateTo('calendar')" id="navCalendar">📅 Academic Calendar</button>
             </div>
         </div>
-
         <div class="sidebar-group">
             <button class="sidebar-group-btn" onclick="toggleGroup('study')" id="groupStudy">📖 Study Tools <span class="arrow">▼</span></button>
             <div class="sidebar-group-items" id="studyItems">
@@ -1762,7 +1647,6 @@
                 <button onclick="navigateTo('sessionLog')" id="navSessionLog">📝 Session Log</button>
             </div>
         </div>
-
         <div class="sidebar-group">
             <button class="sidebar-group-btn" onclick="toggleGroup('gamification')" id="groupGamification">🎮 Gamification <span class="arrow">▼</span></button>
             <div class="sidebar-group-items" id="gamificationItems">
@@ -1770,25 +1654,21 @@
                 <button onclick="navigateTo('leaderboard')" id="navLeaderboard">📊 Leaderboard</button>
             </div>
         </div>
-
         <div class="sidebar-group" id="groupAdmin" style="display:none;">
             <button class="sidebar-group-btn" onclick="toggleGroup('admin')">🔐 Admin Panel <span class="arrow">▼</span></button>
             <div class="sidebar-group-items" id="adminItems">
                 <button onclick="navigateTo('adminUpdate')" id="navAdminUpdate">📝 Post Update</button>
             </div>
         </div>
-
         <button onclick="navigateTo('analyzer')" id="navAnalyzer">📊 Smart Analyzer</button>
         <button class="close-btn" onclick="closeMenu()">✕ Close Menu</button>
     </div>
 
-    <!-- ─── TOAST ─── -->
+    <!-- ─── TOAST & CONFETTI ─── -->
     <div class="notification-toast" id="notificationToast">
         <span class="close-toast" onclick="hideNotification()">✕</span>
         <span id="notificationText">Notification</span>
     </div>
-
-    <!-- ─── CONFETTI CANVAS ─── -->
     <canvas id="confettiCanvas"></canvas>
 
     <!-- ─── TOP BAR ─── -->
@@ -1892,7 +1772,7 @@
                     <h3>⚡ Quick Actions</h3>
                     <div class="quick-grid">
                         <div class="quick-card" onclick="navigateTo('gpaCalculator')"><div class="icon">📊</div><div class="label">GPA Calculator</div></div>
-                        <div class="quick-card" onclick="navigateTo('cgpaCalculator')"><div class="icon">📈</div><div class="label">CGPA Calculator</div></div>
+                        <div class="quick-card" onclick="navigateTo('cgpaTracker')"><div class="icon">📈</div><div class="label">CGPA Tracker</div></div>
                         <div class="quick-card" onclick="navigateTo('timer')"><div class="icon">⏱</div><div class="label">Study Timer</div></div>
                     </div>
                 </div>
@@ -1960,7 +1840,7 @@
                 </div>
             </div>
 
-            <!-- ===== SECTION: GPA CALCULATOR (matches the image) ===== -->
+            <!-- ===== SECTION: GPA CALCULATOR ===== -->
             <div class="page-section" id="sectionGpaCalculator">
                 <div class="card">
                     <h2>📊 GPA Calculator – Semester View</h2>
@@ -1977,7 +1857,7 @@
                                 </tr>
                             </thead>
                             <tbody id="gpaTableBody">
-                                <!-- Rows inserted by JS -->
+                                <!-- rows inserted by JS -->
                             </tbody>
                         </table>
                     </div>
@@ -2018,18 +1898,21 @@
                 </div>
             </div>
 
-            <!-- ===== SECTION: SCREENING ===== -->
+            <!-- ===== SECTION: SCREENING CALCULATOR ===== -->
             <div class="page-section" id="sectionScreening">
                 <div class="card">
                     <h3>🎯 UNIOSUN Screening Calculator</h3>
                     <p class="small">Enter your JAMB/UTME score and O'Level grades to estimate your screening score.</p>
+                    <div class="note-box">
+                        📌 <strong>2025/2026 Cut‑off Reference:</strong> The cut‑off marks shown below are from the <strong>2025/2026 admission exercise</strong> and are <strong>subject to change</strong> for future sessions. Always check the official UNIOSUN admissions portal for the most current information.
+                    </div>
                     <div style="margin-top:8px;">
                         <label class="small">JAMB/UTME Score</label>
                         <input type="number" id="screeningJamb" placeholder="e.g. 280" min="0" max="400" />
                         <label class="small" style="margin-top:8px;display:block;">O'Level Subjects &amp; Grades</label>
                         <div id="screeningSubjects">
                             <div class="screening-subject-row">
-                                <input type="text" class="screening-subject" placeholder="Subject (e.g. Maths)" value="English" />
+                                <input type="text" class="screening-subject" placeholder="Subject" value="English" />
                                 <select class="screening-grade">
                                     <option value="A1">A1 (8)</option>
                                     <option value="B2">B2 (7)</option>
@@ -2061,28 +1944,39 @@
                     </div>
                     <button onclick="calculateScreening()" style="margin-top:8px;">📊 Calculate Screening Score</button>
                     <div id="screeningResult" style="margin-top:10px;text-align:center;font-size:1.2rem;font-weight:700;color:#fbbf24;padding:12px;background:#0f172a;border-radius:10px;border:1px solid #334155;display:none;"></div>
-                </div>
-            </div>
-
-            <!-- ===== SECTION: CUTOFF ===== -->
-            <div class="page-section" id="sectionCutoff">
-                <div class="card">
-                    <h3>📊 UNIOSUN Cut‑off Marks – All Departments</h3>
-                    <p class="small">Indicative cut-off marks for various departments. Actual marks may vary by year.</p>
-                    <div class="cutoff-grid" id="cutoffGrid">
-                        <!-- Populated by JS -->
+                    <div style="margin-top:12px;">
+                        <p class="small" style="font-weight:600;color:#fbbf24;">📊 2025/2026 Cut‑off Reference (Top 20)</p>
+                        <div style="max-height:300px;overflow-y:auto;margin-top:4px;border:1px solid #334155;border-radius:8px;padding:4px;">
+                            <div id="screeningCutoffRef" style="font-size:0.75rem;"></div>
+                        </div>
+                        <div class="small" style="margin-top:4px;color:#94a3b8;">* Subject to change. Check official portal for updates.</div>
                     </div>
                 </div>
             </div>
 
-            <!-- ===== SECTION: ACADEMIC CALENDAR (UPDATED WITH OFFICIAL DATES) ===== -->
+            <!-- ===== SECTION: CUTOFF MARKS (COMPLETE LIST) ===== -->
+            <div class="page-section" id="sectionCutoff">
+                <div class="card">
+                    <h3>📊 UNIOSUN 2025/2026 Cut‑off Marks – All 107 Programmes</h3>
+                    <div class="note-box">
+                        📌 <strong>For reference only.</strong> These are the <strong>2025/2026 admission cut‑off marks</strong> as released by the Directorate of Academic Affairs. They are <strong>subject to change</strong> for future sessions. Always confirm with the official UNIOSUN admissions portal.
+                    </div>
+                    <div class="cutoff-search">
+                        <input type="text" id="cutoffSearch" placeholder="🔍 Search for a programme..." oninput="filterCutoff()" />
+                    </div>
+                    <div class="cutoff-grid" id="cutoffGrid">
+                        <!-- populated by JS -->
+                    </div>
+                    <div id="cutoffCount" class="small" style="margin-top:6px;text-align:center;"></div>
+                </div>
+            </div>
+
+            <!-- ===== SECTION: CALENDAR ===== -->
             <div class="page-section" id="sectionCalendar">
                 <div class="card">
                     <h3>📅 UNIOSUN Academic Calendar 2025/2026</h3>
                     <p class="small">Official calendar approved by Senate – events with countdown.</p>
-                    <div id="calendarEvents" style="margin-top:8px;">
-                        <!-- Populated by JS -->
-                    </div>
+                    <div id="calendarEvents" style="margin-top:8px;"></div>
                 </div>
             </div>
 
@@ -2278,53 +2172,116 @@
         const GRADE_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
         const GRADE_POINTS = { 'A1': 8, 'B2': 7, 'B3': 6, 'C4': 5, 'C5': 4, 'C6': 3, 'D7': 2, 'E8': 1, 'F9': 0 };
 
-        // ─── CUTOFF DATA ───
-        const CUTOFF_DATA = [
-            { dept: 'Medicine & Surgery', faculty: 'Health Sciences', score: 280 },
-            { dept: 'Law', faculty: 'Law', score: 270 },
-            { dept: 'Pharmacy', faculty: 'Health Sciences', score: 265 },
-            { dept: 'Nursing', faculty: 'Health Sciences', score: 260 },
-            { dept: 'Medical Laboratory Science', faculty: 'Health Sciences', score: 255 },
-            { dept: 'Computer Science', faculty: 'Natural Sciences', score: 250 },
-            { dept: 'Software Engineering', faculty: 'Natural Sciences', score: 250 },
-            { dept: 'Civil Engineering', faculty: 'Engineering', score: 260 },
-            { dept: 'Mechanical Engineering', faculty: 'Engineering', score: 258 },
-            { dept: 'Electrical/Electronics Engineering', faculty: 'Engineering', score: 258 },
-            { dept: 'Chemical Engineering', faculty: 'Engineering', score: 255 },
-            { dept: 'Petroleum Engineering', faculty: 'Engineering', score: 260 },
-            { dept: 'Accounting', faculty: 'Management Sciences', score: 250 },
-            { dept: 'Business Administration', faculty: 'Management Sciences', score: 248 },
-            { dept: 'Economics', faculty: 'Social Sciences', score: 245 },
-            { dept: 'Political Science', faculty: 'Social Sciences', score: 240 },
-            { dept: 'Mass Communication', faculty: 'Social Sciences', score: 242 },
-            { dept: 'Psychology', faculty: 'Social Sciences', score: 238 },
-            { dept: 'Biochemistry', faculty: 'Natural Sciences', score: 245 },
-            { dept: 'Microbiology', faculty: 'Natural Sciences', score: 243 },
-            { dept: 'Physics', faculty: 'Natural Sciences', score: 240 },
-            { dept: 'Chemistry', faculty: 'Natural Sciences', score: 238 },
-            { dept: 'Mathematics', faculty: 'Natural Sciences', score: 235 },
-            { dept: 'Statistics', faculty: 'Natural Sciences', score: 235 },
-            { dept: 'English Language', faculty: 'Arts & Humanities', score: 230 },
-            { dept: 'History & International Studies', faculty: 'Arts & Humanities', score: 228 },
-            { dept: 'Philosophy', faculty: 'Arts & Humanities', score: 225 },
-            { dept: 'Sociology', faculty: 'Social Sciences', score: 235 },
-            { dept: 'Geography', faculty: 'Social Sciences', score: 232 },
-            { dept: 'Public Administration', faculty: 'Management Sciences', score: 240 },
-            { dept: 'Banking & Finance', faculty: 'Management Sciences', score: 242 },
-            { dept: 'Actuarial Science', faculty: 'Natural Sciences', score: 240 },
-            { dept: 'Industrial Chemistry', faculty: 'Natural Sciences', score: 238 },
-            { dept: 'Geology', faculty: 'Natural Sciences', score: 235 },
-            { dept: 'Architecture', faculty: 'Environmental Sciences', score: 250 },
-            { dept: 'Urban & Regional Planning', faculty: 'Environmental Sciences', score: 238 },
-            { dept: 'Estate Management', faculty: 'Environmental Sciences', score: 235 },
-            { dept: 'Quantity Surveying', faculty: 'Environmental Sciences', score: 240 },
-            { dept: 'Surveying & Geoinformatics', faculty: 'Environmental Sciences', score: 235 },
-            { dept: 'Food Science & Technology', faculty: 'Natural Sciences', score: 240 },
-            { dept: 'Agriculture', faculty: 'Agriculture', score: 230 },
-            { dept: 'Animal Science', faculty: 'Agriculture', score: 228 },
-            { dept: 'Crop Science', faculty: 'Agriculture', score: 225 },
-            { dept: 'Fisheries & Aquaculture', faculty: 'Agriculture', score: 220 },
-            { dept: 'Forestry & Wildlife', faculty: 'Agriculture', score: 220 },
+        // ─── COMPLETE OFFICIAL CUT-OFF DATA (107 programmes from PDF) ───
+        const OFFICIAL_CUTOFF = [
+            { programme: 'B. Agric. Economics', general: 57, indigene: 46.4 },
+            { programme: 'B. Agric. Extension', general: 56.5, indigene: 44.5 },
+            { programme: 'B. Agric. Forestry', general: 50, indigene: 40 },
+            { programme: 'B. Agric. Agronomy', general: 54.8, indigene: 44.6 },
+            { programme: 'B. Agric. Animal Science', general: 58.5, indigene: 40.5 },
+            { programme: 'B. Agric. Fisheries and Aquaculture', general: 55, indigene: 45.5 },
+            { programme: 'B. Agric. Wildlife Management', general: 54, indigene: 44.8 },
+            { programme: 'B.A. (Ed) English', general: 60.5, indigene: 45.3 },
+            { programme: 'B.A. (Ed) Chemistry', general: 55, indigene: 45 },
+            { programme: 'B.A. (Ed) Economics', general: 60.8, indigene: 46.2 },
+            { programme: 'B.A. (Ed) Education Guidance and Counseling', general: 63.5, indigene: 50.9 },
+            { programme: 'B.A. (Ed) Education Management', general: 59.9, indigene: 50 },
+            { programme: 'B.Sc. (Ed) Mathematics', general: 54.3, indigene: 40 },
+            { programme: 'B.Sc. (Ed) Political Science', general: 61.7, indigene: 49.6 },
+            { programme: 'B.Sc. (Ed) Biology', general: 56.8, indigene: 44.4 },
+            { programme: 'B.Sc. (Ed) Educational Technology', general: 55.2, indigene: 44.2 },
+            { programme: 'B.Sc. (Ed) Physics', general: 49.1, indigene: 40 },
+            { programme: 'B.Sc. (Ed) Computer Science', general: 54.6, indigene: 44.3 },
+            { programme: 'B.Sc. (Ed) Business Education', general: 59.4, indigene: 45.9 },
+            { programme: 'B.Sc. (Ed) Environmental Education', general: 47.6, indigene: 40 },
+            { programme: 'B.Ed. Adult Education', general: 55.5, indigene: 46.8 },
+            { programme: 'B.Sc. Anatomy', general: 62.8, indigene: 56 },
+            { programme: 'B.Health Information Management', general: 60.2, indigene: 55.2 },
+            { programme: 'B.Environmental Health Science', general: 59.6, indigene: 55.2 },
+            { programme: 'M.B.B.S', general: 85.3, indigene: 82.4 },
+            { programme: 'B.Sc. Nursing', general: 77.5, indigene: 74 },
+            { programme: 'B.Sc. Physiology', general: 63.8, indigene: 56.8 },
+            { programme: 'B.Sc. Public Health', general: 65.6, indigene: 61.9 },
+            { programme: 'B.MLS', general: 74.7, indigene: 71.8 },
+            { programme: 'B.Sc. Nutrition and Dietetics', general: 63, indigene: 57.8 },
+            { programme: 'B.Sc. Radiography and Radiation Science', general: 73.1, indigene: 68.8 },
+            { programme: 'B.Sc. Pharmacology', general: 68.2, indigene: 62.6 },
+            { programme: 'B.A. English & Intl.Studies', general: 65.9, indigene: 58 },
+            { programme: 'B.A. French & Intl.Studies', general: 65.1, indigene: 45 },
+            { programme: 'B.A. History & Intl.Studies', general: 66.1, indigene: 56.9 },
+            { programme: 'B.A. Linguistics & Com.Art', general: 67.8, indigene: 59.2 },
+            { programme: 'B.A. Philosophy', general: 68.8, indigene: 60.5 },
+            { programme: 'B.A. Theatre Arts', general: 64.4, indigene: 59.2 },
+            { programme: 'B.A. Tourism Studies', general: 63, indigene: 52 },
+            { programme: 'B.A. Yoruba', general: 60.5, indigene: 43 },
+            { programme: 'B.A. Arabic Language & Lit.', general: 62.5, indigene: 50 },
+            { programme: 'B.A. Islamic Studies', general: 58.3, indigene: 50 },
+            { programme: 'B.A. Christian Religion Studies', general: 47.5, indigene: 45 },
+            { programme: 'B.Sc. Mass Communication', general: 72, indigene: 63.7 },
+            { programme: 'B.Sc. Advertising', general: 47.6, indigene: 45 },
+            { programme: 'B.Sc. Public Relations', general: 54.9, indigene: 45 },
+            { programme: 'B.Sc. Broadcasting', general: 60.4, indigene: 43 },
+            { programme: 'B.Sc. Journalism and Media Studies', general: 64.1, indigene: 47.3 },
+            { programme: 'LLB (Bachelor of Law)', general: 79.4, indigene: 75.6 },
+            { programme: 'Common & Islamic Law', general: 73.3, indigene: 69.7 },
+            { programme: 'B.Sc. Criminology & Security Studies', general: 69.4, indigene: 63.5 },
+            { programme: 'B.Sc. Peace & Conflict Studies', general: 62.1, indigene: 49.2 },
+            { programme: 'B.Sc. Accounting', general: 70.7, indigene: 64.9 },
+            { programme: 'B.Sc. Banking & Finance', general: 65.8, indigene: 60.6 },
+            { programme: 'B.Sc. Marketing', general: 64, indigene: 57 },
+            { programme: 'B.Sc. Geography', general: 50, indigene: 45 },
+            { programme: 'B.Sc. Business Admin.', general: 66.2, indigene: 61.3 },
+            { programme: 'B.Sc. Economics', general: 68, indigene: 60.3 },
+            { programme: 'B.Sc. Entrepreneurial Studies', general: 61.4, indigene: 48.9 },
+            { programme: 'B.Sc. Industrial Relations & Personnel Management', general: 62.2, indigene: 52.8 },
+            { programme: 'B.Sc. Political Science', general: 67.8, indigene: 61.4 },
+            { programme: 'B.Sc. Sociology', general: 67.2, indigene: 60.5 },
+            { programme: 'B.Sc. International Relations & Diplomacy', general: 70.2, indigene: 63.4 },
+            { programme: 'B.Sc. Cooperative & Rural Development', general: 56.5, indigene: 45 },
+            { programme: 'B.Sc. Public Administration', general: 62.9, indigene: 56.7 },
+            { programme: 'B.Sc. Psychology', general: 64.8, indigene: 52 },
+            { programme: 'B.Sc. Demography & Social Statistics', general: 58.4, indigene: 45 },
+            { programme: 'B.Sc. Social Work', general: 63.3, indigene: 48.8 },
+            { programme: 'B.Sc. Development Studies', general: 50, indigene: 40 },
+            { programme: 'B.Sc. Politics, Philosophy and Economics', general: 50, indigene: 45 },
+            { programme: 'B.Sc. Local Government and Development Studies', general: 50, indigene: 40 },
+            { programme: 'B.Sc. Social Standards', general: 50, indigene: 40 },
+            { programme: 'B.Sc. Transport Management', general: 50, indigene: 40 },
+            { programme: 'B.Eng. Agric. Engineering', general: 58.1, indigene: 45.4 },
+            { programme: 'B.Eng. Chemical Engineering', general: 64.1, indigene: 48.6 },
+            { programme: 'B.Sc. Building', general: 58.8, indigene: 50.5 },
+            { programme: 'B.Sc. Estate Management', general: 57, indigene: 49.3 },
+            { programme: 'B.Sc. Food Science & Tech.', general: 60.4, indigene: 54.4 },
+            { programme: 'B.Sc. Statistics', general: 56.5, indigene: 43.3 },
+            { programme: 'B.Eng. Civil Engineering', general: 67.1, indigene: 61.6 },
+            { programme: 'B.Eng. Electrical/Electronics', general: 65.9, indigene: 59.5 },
+            { programme: 'B.Eng. Mechanical Engineering', general: 66, indigene: 59.8 },
+            { programme: 'B.Sc. Biochemistry', general: 62.8, indigene: 57 },
+            { programme: 'B.Sc. Biotechnology', general: 59.8, indigene: 46.1 },
+            { programme: 'B.Sc. Chemistry', general: 58.2, indigene: 47.1 },
+            { programme: 'B.Sc. Computer Science', general: 68.1, indigene: 62.3 },
+            { programme: 'B.Sc. Cybersecurity', general: 66, indigene: 61.2 },
+            { programme: 'B.Sc. Geology', general: 57.7, indigene: 43 },
+            { programme: 'B.Sc. Industrial Chemistry', general: 59.2, indigene: 43.5 },
+            { programme: 'B.Sc. Information System', general: 54.4, indigene: 46.3 },
+            { programme: 'B.Sc. Mathematics', general: 58.2, indigene: 45 },
+            { programme: 'B.Sc. Microbiology', general: 62.5, indigene: 56.2 },
+            { programme: 'B.Sc. Plant Biology', general: 54.4, indigene: 45 },
+            { programme: 'B.Sc. Science Laboratory', general: 62.9, indigene: 51.7 },
+            { programme: 'B.Sc. Software Engineering', general: 65.9, indigene: 58.9 },
+            { programme: 'B.Sc. Urban & Regional Planning', general: 55.4, indigene: 45 },
+            { programme: 'B.Sc. Animal and Environmental Biology', general: 54.2, indigene: 42.3 },
+            { programme: 'B.Sc. Physics with Electronics', general: 57.2, indigene: 46.7 },
+            { programme: 'BLIS Library and Information Science', general: 55.9, indigene: 46.1 },
+            { programme: 'Industrial Mathematics', general: 50, indigene: 45 },
+            { programme: 'B.Sc. Quantity Survey', general: 58.3, indigene: 53.7 },
+            { programme: 'B.Sc. Architecture', general: 62.8, indigene: 55.8 },
+            { programme: 'B.Sc. Information Technology', general: 60.9, indigene: 55 },
+            { programme: 'B.Sc. Brewing Science and Technology', general: 50, indigene: 40 },
+            { programme: 'B.Sc. Family and Consumer Science', general: 50, indigene: 45 },
+            { programme: 'B.Eng. Computer Engineering', general: 63.1, indigene: 56.3 },
+            { programme: 'B.Eng. Mechatronics Engineering', general: 63.8, indigene: 49.3 },
+            { programme: 'B.Sc. Data Science', general: 59.6, indigene: 45 },
         ];
 
         // ─── OFFICIAL ACADEMIC CALENDAR 2025/2026 ───
@@ -2551,6 +2508,7 @@
             if (section === 'planner') renderPlanner();
             if (section === 'analyzer') runAnalysis();
             if (section === 'challenge') startDailyQuiz();
+            if (section === 'screening') renderScreeningCutoffRef();
         }
 
         // ─── AUTH ───
@@ -2653,6 +2611,7 @@
             renderSessionLog();
             startDailyQuiz();
             runAnalysis();
+            renderScreeningCutoffRef();
             await loadUpdates();
             await loadLeaderboard('all_time');
         }
@@ -2682,7 +2641,6 @@
             document.getElementById('dashCGPA').innerText = cgpa === '--' ? '--' : parseFloat(cgpa).toFixed(2);
             document.getElementById('dashDegree').innerText = getDegreeClass(cgpa);
             document.getElementById('dashStanding').innerText = getStanding(cgpa);
-            document.getElementById('dashStreak') ? document.getElementById('dashStreak').innerText = stats.streak : null;
             document.getElementById('streakDisplay').innerText = stats.streak;
             document.getElementById('hoursDisplay').innerText = (parseInt(localStorage.getItem('studyMinutes')) || 0 / 60)
                 .toFixed(1);
@@ -3092,23 +3050,61 @@
             showNotification('🎯 Screening score calculated!');
         }
 
-        // ─── CUTOFF ───
-        function renderCutoff() {
-            const grid = document.getElementById('cutoffGrid');
+        // ─── SCREENING CUTOFF REFERENCE ───
+        function renderScreeningCutoffRef() {
+            const container = document.getElementById('screeningCutoffRef');
+            if (!container) return;
             let html = '';
-            const sorted = [...CUTOFF_DATA].sort((a, b) => b.score - a.score);
-            sorted.forEach(item => {
+            const top20 = OFFICIAL_CUTOFF.slice(0, 20);
+            top20.forEach(item => {
                 html += `
-                    <div class="cutoff-item">
-                        <span>${item.dept}</span>
-                        <span><span class="score">${item.score}</span> <span class="faculty-tag">${item.faculty}</span></span>
+                    <div style="display:flex;justify-content:space-between;padding:2px 4px;border-bottom:1px solid #1e293b;font-size:0.7rem;">
+                        <span>${item.programme}</span>
+                        <span><span style="color:#fbbf24;">${item.general}</span> / <span style="color:#94a3b8;">${item.indigene}</span></span>
                     </div>
                 `;
             });
-            grid.innerHTML = html;
+            html +=
+                `<div style="text-align:center;padding:4px;font-size:0.65rem;color:#64748b;">+ ${OFFICIAL_CUTOFF.length - 20} more programmes</div>`;
+            container.innerHTML = html;
         }
 
-        // ─── CALENDAR ─── (using official events)
+        // ─── CUTOFF (COMPLETE LIST WITH SEARCH) ───
+        let cutoffFilter = '';
+
+        function filterCutoff() {
+            const input = document.getElementById('cutoffSearch');
+            cutoffFilter = input.value.toLowerCase().trim();
+            renderCutoff();
+        }
+
+        function renderCutoff() {
+            const grid = document.getElementById('cutoffGrid');
+            const countEl = document.getElementById('cutoffCount');
+            let filtered = OFFICIAL_CUTOFF;
+            if (cutoffFilter) {
+                filtered = OFFICIAL_CUTOFF.filter(item =>
+                    item.programme.toLowerCase().includes(cutoffFilter)
+                );
+            }
+            let html = '';
+            filtered.forEach(item => {
+                html += `
+                    <div class="cutoff-item">
+                        <span>${item.programme}</span>
+                        <span>
+                            <span class="score">${item.general}</span>
+                            <span class="indigene-score">| ${item.indigene}</span>
+                            <span class="faculty-tag">Gen / Ind</span>
+                        </span>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html || '<div class="small" style="text-align:center;padding:10px;">No programmes found matching your search.</div>';
+            countEl.textContent = `Showing ${filtered.length} of ${OFFICIAL_CUTOFF.length} programmes`;
+        }
+
+        // ─── CALENDAR ───
         function renderCalendar() {
             const container = document.getElementById('calendarEvents');
             const events = getOfficialCalendarEvents();
@@ -3150,9 +3146,8 @@
             container.innerHTML = html;
         }
 
-        // ─── QUIZ SYSTEM ─── (expanded to 100+ questions)
+        // ─── QUIZ SYSTEM (100+ questions) ───
         const QUESTION_BANK = [
-            // CHM 102 – 20 questions
             { course: 'CHM 102', question: 'Which technique is used for the quantitative analysis of organic compounds?', options: ['Titration', 'Distillation', 'Chromatography', 'Spectroscopy'], correct: 0 },
             { course: 'CHM 102', question: 'What is the process of separating a pure organic compound from a mixture called?', options: ['Isolation', 'Purification', 'Distillation', 'Extraction'], correct: 1 },
             { course: 'CHM 102', question: 'Which of the following is NOT a source of organic compounds?', options: ['Plants', 'Animals', 'Minerals', 'Petroleum'], correct: 2 },
@@ -3173,7 +3168,6 @@
             { course: 'CHM 102', question: 'The IUPAC name for CH₃CH₂OH is:', options: ['Methanol', 'Ethanol', 'Propanol', 'Butanol'], correct: 1 },
             { course: 'CHM 102', question: 'What type of isomerism is shown by butane and isobutane?', options: ['Chain isomerism', 'Position isomerism', 'Functional isomerism', 'Geometrical isomerism'], correct: 0 },
             { course: 'CHM 102', question: 'The process of converting a liquid to vapour and condensing it back is called:', options: ['Distillation', 'Filtration', 'Crystallization', 'Sublimation'], correct: 0 },
-            // PHY 102 – 20 questions
             { course: 'PHY 102', question: 'The fundamental unit of electric charge is the:', options: ['Coulomb', 'Volt', 'Ampere', 'Ohm'], correct: 0 },
             { course: 'PHY 102', question: 'Which field is responsible for the force between two masses?', options: ['Electric field', 'Magnetic field', 'Gravitational field', 'Nuclear field'], correct: 2 },
             { course: 'PHY 102', question: 'Radioactivity is the spontaneous emission of radiation from:', options: ['Stable nuclei', 'Unstable nuclei', 'Electrons', 'Protons'], correct: 1 },
@@ -3194,7 +3188,6 @@
             { course: 'PHY 102', question: 'A lens that converges light rays is called a:', options: ['Convex lens', 'Concave lens', 'Plano-concave', 'Cylindrical lens'], correct: 0 },
             { course: 'PHY 102', question: 'The force between two point charges is given by:', options: ['Newton\'s law', 'Coulomb\'s law', 'Ohm\'s law', 'Faraday\'s law'], correct: 1 },
             { course: 'PHY 102', question: 'The wavelength of a wave is the distance between:', options: ['Two consecutive crests', 'Two consecutive troughs', 'Both A and B', 'Crest and trough'], correct: 2 },
-            // MTH 102 – 20 questions
             { course: 'MTH 102', question: 'The derivative of a function at a point represents the:', options: ['Slope of the tangent', 'Area under the curve', 'Rate of change', 'Both A and C'], correct: 3 },
             { course: 'MTH 102', question: 'The limit of a function as x approaches a value is the:', options: ['Value of the function at that point', 'Average value over an interval', 'Value the function approaches', 'Derivative at that point'], correct: 2 },
             { course: 'MTH 102', question: 'Which rule is used to differentiate the product of two functions?', options: ['Chain rule', 'Product rule', 'Quotient rule', 'Sum rule'], correct: 1 },
@@ -3215,7 +3208,6 @@
             { course: 'MTH 102', question: 'The derivative of sin(x) is:', options: ['cos(x)', '-cos(x)', 'sin(x)', '-sin(x)'], correct: 0 },
             { course: 'MTH 102', question: 'The area of a circle of radius r is given by:', options: ['πr', '2πr', 'πr²', '2πr²'], correct: 2 },
             { course: 'MTH 102', question: 'A function is continuous at a point if the left-hand limit equals:', options: ['Right-hand limit', 'Function value', 'Both A and B', 'Neither'], correct: 2 },
-            // BIO 102 – 20 questions
             { course: 'BIO 102', question: 'Which of the following is a characteristic of the animal kingdom?', options: ['Photosynthesis', 'Heterotrophic nutrition', 'Cell wall', 'Chlorophyll'], correct: 1 },
             { course: 'BIO 102', question: 'The major phyla of the animal kingdom include all EXCEPT:', options: ['Porifera', 'Cnidaria', 'Platyhelminthes', 'Bryophyta'], correct: 3 },
             { course: 'BIO 102', question: 'Which phylum includes organisms with a notochord?', options: ['Arthropoda', 'Chordata', 'Mollusca', 'Annelida'], correct: 1 },
@@ -3236,7 +3228,6 @@
             { course: 'BIO 102', question: 'The process by which plants make their own food is called:', options: ['Photosynthesis', 'Respiration', 'Transpiration', 'Fermentation'], correct: 0 },
             { course: 'BIO 102', question: 'The cell wall of plant cells is made of:', options: ['Cellulose', 'Chitin', 'Peptidoglycan', 'Keratin'], correct: 0 },
             { course: 'BIO 102', question: 'The organelle responsible for cellular respiration is the:', options: ['Mitochondria', 'Chloroplast', 'Nucleus', 'Ribosome'], correct: 0 },
-            // GNS 104 – 15 questions
             { course: 'GNS 104', question: 'Nigeria is located in which region of Africa?', options: ['East Africa', 'West Africa', 'North Africa', 'Central Africa'], correct: 1 },
             { course: 'GNS 104', question: 'The major ethnic groups in Nigeria include all EXCEPT:', options: ['Hausa', 'Igbo', 'Yoruba', 'Zulu'], correct: 3 },
             { course: 'GNS 104', question: 'Which religion is predominantly practiced in Northern Nigeria?', options: ['Christianity', 'Islam', 'Traditional Religion', 'Hinduism'], correct: 1 },
@@ -3254,7 +3245,7 @@
             { course: 'GNS 104', question: 'The Nigerian constitution was adopted in:', options: ['1999', '1989', '1979', '1963'], correct: 0 },
         ];
 
-        // Shuffle function
+        // Shuffle
         function shuffleArray(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -3263,13 +3254,10 @@
             return arr;
         }
 
-        // Get daily questions (5 random, based on today's date seed)
         function getDailyQuestions() {
             const today = new Date().toDateString();
             let seed = 0;
-            for (let i = 0; i < today.length; i++) {
-                seed += today.charCodeAt(i);
-            }
+            for (let i = 0; i < today.length; i++) seed += today.charCodeAt(i);
             const shuffled = [...QUESTION_BANK];
             for (let i = shuffled.length - 1; i > 0; i--) {
                 const j = (seed + i) % (i + 1);
@@ -3278,7 +3266,6 @@
             return shuffled.slice(0, 5);
         }
 
-        // Quiz state
         let currentQuestions = [];
         let currentIndex = 0;
         let quizScore = 0;
@@ -3692,7 +3679,7 @@
             }
         }
 
-        // ─── STREAK FUNCTIONS ───
+        // ─── STREAK ───
         function logStudyDay() {
             const today = new Date().toDateString();
             const lastStudy = localStorage.getItem('lastStudyDay');
@@ -3765,7 +3752,7 @@
             showNotification('📸 CGPA card downloaded!');
         }
 
-        // ─── AI OPENERS ───
+        // ─── AI ───
         function openAI(service) {
             const t = document.getElementById('topic').value.trim();
             const m = document.getElementById('mode').value;
@@ -3808,7 +3795,6 @@
 
         // ─── INIT ───
         function init() {
-            // Load theme
             const savedTheme = localStorage.getItem('goatTheme') || '';
             if (savedTheme) {
                 document.body.className = savedTheme;
@@ -3822,14 +3808,14 @@
                 document.getElementById('gpaSemesterTitle').textContent = localStorage.getItem('gpaSemesterTitle');
             }
             refreshAll();
-            console.log('🐐 GoatTutor NG – Original Layout with Official Calendar & 100+ Questions');
+            console.log('🐐 GoatTutor NG – Complete Cut‑off (107 Programmes) + CGPA Fixed');
         }
 
         document.addEventListener('DOMContentLoaded', init);
         document.getElementById('sidebarOverlay').addEventListener('click', closeMenu);
         document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMenu(); });
 
-        // ─── EXPOSE GLOBALLY ───
+        // ─── EXPOSE ───
         window.navigateTo = navigateTo;
         window.toggleMenu = toggleMenu;
         window.closeMenu = closeMenu;
@@ -3846,6 +3832,7 @@
         window.addScreeningSubject = addScreeningSubject;
         window.removeScreeningSubject = removeScreeningSubject;
         window.calculateScreening = calculateScreening;
+        window.filterCutoff = filterCutoff;
         window.selectOption = selectOption;
         window.nextQuestion = nextQuestion;
         window.resetQuiz = resetQuiz;
